@@ -1,0 +1,5 @@
+yt-dlp
+selenium-wire>=5.1.0
+webdriver-manager>=4.0.0
+blinker==1.5
+openai>=1.0.0

@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller build artifacts
+build/
+dist/
+*.manifest
+# NOTE: YouTubeTranscriptScraper.spec is kept (needed for builds)
+
+# Output directories
+transcripts/
+output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# API Keys and Secrets
+client_secret.json
+token.pickle
+*.key
+*.pem
+*_secret.json
+
+# Chrome driver cache
+webdriver_manager/
+
+# Temporary files
+*.tmp
+*.bak
+~*
