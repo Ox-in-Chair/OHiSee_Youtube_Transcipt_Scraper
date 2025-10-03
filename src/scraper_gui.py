@@ -1,498 +1,793 @@
 #!/usr/bin/env python3
-"""YouTube Transcript Scraper - Desktop GUI"""
+"""YouTube Research Assistant - World-Class Desktop Platform"""
 import tkinter as tk
 from tkinter import ttk, filedialog, scrolledtext, messagebox
-import threading, os, json
+import threading, os, json, re
 from pathlib import Path
+from datetime import datetime
 from scraper_core import TranscriptScraper
 from search_optimizer import optimize_search_query
 from filters import UPLOAD_DATE_OPTIONS, SORT_BY_OPTIONS, DURATION_OPTIONS, FEATURE_OPTIONS
 from config import Config
 
-# Preset configurations for common research tasks
-PRESETS = {
-    "Custom": {},
-    "Quick Overview": {"max_results": 10, "upload_date": "Last 30 days", "sort_by": "Relevance", "duration": "Any duration", "features": ["Subtitles/CC"]},
-    "Deep Research": {"max_results": 50, "upload_date": "Any time", "sort_by": "View count", "duration": "Long (> 20 min)", "features": ["Subtitles/CC"]},
-    "Recent Updates": {"max_results": 20, "upload_date": "Last 7 days", "sort_by": "Upload date", "duration": "Any duration", "features": ["Subtitles/CC"]},
-    "Creator Analysis": {"max_results": 30, "upload_date": "Any time", "sort_by": "View count", "duration": "Any duration", "features": []}
+# ============================================================================
+# RESEARCH TEMPLATES
+# ============================================================================
+RESEARCH_TEMPLATES = {
+    "Topic Overview": {
+        "desc": "Get a broad understanding of a subject",
+        "defaults": {"results": 15, "upload_date": "Last 90 days", "sort_by": "Relevance", "duration": "Any duration", "features": ["Subtitles/CC"]},
+        "example": "How BRCGS standards apply to food manufacturing",
+        "chips": {"topic": "BRCGS standards", "audience": "food manufacturers", "time_window": "Last 3 months", "quality": "Balanced", "sources": "Expert creators", "goals": ["Overview", "Key concepts"]}
+    },
+    "Fact Check": {
+        "desc": "Verify claims with authoritative sources",
+        "defaults": {"results": 10, "upload_date": "Last year", "sort_by": "Relevance", "duration": "Any duration", "features": ["Subtitles/CC"]},
+        "example": "Are BRCGS audits required for export to EU",
+        "chips": {"topic": "BRCGS export requirements", "audience": "exporters", "time_window": "Last year", "quality": "Deep dive", "sources": "Official channels", "goals": ["Citations", "Quotes"]}
+    },
+    "Competitor Scan": {
+        "desc": "See how others approach this topic",
+        "defaults": {"results": 25, "upload_date": "Last 6 months", "sort_by": "View count", "duration": "Any duration", "features": ["Subtitles/CC"]},
+        "example": "How competitors implement quality management systems",
+        "chips": {"topic": "quality management", "audience": "manufacturing companies", "time_window": "Last 6 months", "quality": "Balanced", "sources": "Any", "goals": ["Creators", "Trends"]}
+    },
+    "Citation Harvest": {
+        "desc": "Collect authoritative references for research",
+        "defaults": {"results": 30, "upload_date": "Any time", "sort_by": "Rating", "duration": "Long (> 20 min)", "features": ["Subtitles/CC"]},
+        "example": "Academic sources on ISO 9001 implementation",
+        "chips": {"topic": "ISO 9001", "audience": "researchers", "time_window": "All time", "quality": "Deep dive", "sources": "Expert creators", "goals": ["Citations", "Timestamps", "Quotes"]}
+    },
+    "Course Outline": {
+        "desc": "Build structured learning path on a topic",
+        "defaults": {"results": 20, "upload_date": "Last year", "sort_by": "Relevance", "duration": "Any duration", "features": ["Subtitles/CC"]},
+        "example": "Learning path for food safety management certification",
+        "chips": {"topic": "food safety certification", "audience": "learners", "time_window": "Last year", "quality": "Balanced", "sources": "Expert creators", "goals": ["Overview", "Progression"]}
+    },
+    "Custom": {
+        "desc": "Build your own research configuration",
+        "defaults": {"results": 20, "upload_date": "Last 30 days", "sort_by": "Relevance", "duration": "Any duration", "features": ["Subtitles/CC"]},
+        "example": "",
+        "chips": {}
+    }
 }
 
-class ToolTip:
-    def __init__(self, w, t):
-        self.w, self.t, self.tw = w, t, None
-        w.bind("<Enter>", self.show)
-        w.bind("<Leave>", self.hide)
-    def show(self, e=None):
-        if self.tw or not self.t: return
-        x, y = self.w.winfo_rootx() + 25, self.w.winfo_rooty() + 25
-        self.tw = tw = tk.Toplevel(self.w)
-        tw.wm_overrideredirect(True)
-        tw.wm_geometry(f"+{x}+{y}")
-        tk.Label(tw, text=self.t, justify='left', background="#FFFACD", relief='solid', borderwidth=1, font=('Segoe UI', 9)).pack()
-    def hide(self, e=None):
-        if self.tw: self.tw.destroy(); self.tw = None
+# ============================================================================
+# PROFESSIONAL TYPOGRAPHY & STYLING SYSTEM
+# ============================================================================
+class ProfessionalStyles:
+    FONTS = {
+        "display": ("Segoe UI", 24, "bold"),
+        "heading1": ("Segoe UI", 18, "bold"),
+        "heading2": ("Segoe UI", 14, "bold"),
+        "body": ("Segoe UI", 12),
+        "caption": ("Segoe UI", 10),
+        "code": ("Consolas", 11)
+    }
+    COLORS = {
+        "primary": "#2563EB", "success": "#059669", "warning": "#D97706", "danger": "#DC2626",
+        "text-primary": "#111827", "text-secondary": "#6B7280", "bg-primary": "#FFFFFF",
+        "bg-secondary": "#F9FAFB", "bg-tertiary": "#F3F4F6", "border": "#E5E7EB"
+    }
+    SPACING = {"xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32}
 
-class ScraperGUI:
+    @staticmethod
+    def apply(root):
+        s = ttk.Style()
+        s.theme_use('clam')
+        s.configure('TLabelframe', background=ProfessionalStyles.COLORS["bg-secondary"], borderwidth=1, relief='solid', bordercolor=ProfessionalStyles.COLORS["border"])
+        s.configure('TLabelframe.Label', background=ProfessionalStyles.COLORS["bg-secondary"], foreground=ProfessionalStyles.COLORS["text-primary"], font=ProfessionalStyles.FONTS["heading2"])
+        s.configure('TLabel', background=ProfessionalStyles.COLORS["bg-secondary"], foreground=ProfessionalStyles.COLORS["text-primary"], font=ProfessionalStyles.FONTS["body"])
+        s.configure('Caption.TLabel', font=ProfessionalStyles.FONTS["caption"], foreground=ProfessionalStyles.COLORS["text-secondary"])
+        s.configure('Heading1.TLabel', font=ProfessionalStyles.FONTS["heading1"], foreground=ProfessionalStyles.COLORS["text-primary"])
+        s.configure('Heading2.TLabel', font=ProfessionalStyles.FONTS["heading2"], foreground=ProfessionalStyles.COLORS["text-primary"])
+        s.configure('TButton', background=ProfessionalStyles.COLORS["primary"], foreground='white', font=ProfessionalStyles.FONTS["body"], borderwidth=0, padding=12)
+        s.map('TButton', background=[('active', '#1D4ED8'), ('disabled', '#9CA3AF')])
+        s.configure('Primary.TButton', background=ProfessionalStyles.COLORS["primary"], font=ProfessionalStyles.FONTS["heading2"], padding=15)
+        s.map('Primary.TButton', background=[('active', '#1D4ED8')])
+        s.configure('Success.TButton', background=ProfessionalStyles.COLORS["success"])
+        s.map('Success.TButton', background=[('active', '#047857')])
+        s.configure('Secondary.TButton', background=ProfessionalStyles.COLORS["bg-tertiary"], foreground=ProfessionalStyles.COLORS["text-primary"], padding=8)
+        s.map('Secondary.TButton', background=[('active', '#E5E7EB')])
+        root.configure(background=ProfessionalStyles.COLORS["bg-secondary"])
+
+# ============================================================================
+# WIZARD NAVIGATION COMPONENT
+# ============================================================================
+class WizardNav(ttk.Frame):
+    STEPS = [
+        ("1", "Define", "🎯"),
+        ("2", "Refine", "⚙️"),
+        ("3", "Review", "👁️"),
+        ("4", "Run", "▶️"),
+        ("5", "Export", "📦")
+    ]
+    def __init__(self, parent, on_step_change):
+        super().__init__(parent)
+        self.on_step_change = on_step_change
+        self.current_step = 0
+        self.configure(style='TFrame')
+        ttk.Label(self, text="Research Wizard", style='Heading1.TLabel').pack(pady=(0, ProfessionalStyles.SPACING["lg"]))
+        self.step_widgets = []
+        for i, (num, name, icon) in enumerate(self.STEPS):
+            frame = ttk.Frame(self)
+            frame.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+            self.step_widgets.append(frame)
+            btn = ttk.Button(frame, text=f"{icon} {num}. {name}", command=lambda idx=i: self.set_step(idx), width=15)
+            btn.pack(fill="x")
+        self.update_visual()
+    def set_step(self, step_index):
+        if step_index != self.current_step:
+            self.current_step = step_index
+            self.update_visual()
+            self.on_step_change(step_index)
+    def update_visual(self):
+        for i, widget in enumerate(self.step_widgets):
+            for child in widget.winfo_children():
+                if isinstance(child, ttk.Button):
+                    if i < self.current_step:
+                        child.configure(style='Success.TButton')
+                    elif i == self.current_step:
+                        child.configure(style='Primary.TButton')
+                    else:
+                        child.configure(style='Secondary.TButton')
+
+# ============================================================================
+# LIVE PREVIEW COMPONENT
+# ============================================================================
+class LivePreview(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.configure(style='TFrame')
+        ttk.Label(self, text="Live Preview", style='Heading1.TLabel').pack(pady=(0, ProfessionalStyles.SPACING["md"]))
+        preview_frame = ttk.LabelFrame(self, text="What will be executed", padding=ProfessionalStyles.SPACING["md"])
+        preview_frame.pack(fill="both", expand=True, pady=(0, ProfessionalStyles.SPACING["md"]))
+        ttk.Label(preview_frame, text="Plain Language Summary:", style='Heading2.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["sm"]))
+        self.summary_text = tk.Text(preview_frame, height=6, font=ProfessionalStyles.FONTS["body"], wrap='word', state='disabled', background='#E0F2FE', borderwidth=0)
+        self.summary_text.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        ttk.Label(preview_frame, text="Technical Configuration:", style='Heading2.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["sm"]))
+        self.config_text = tk.Text(preview_frame, height=8, font=ProfessionalStyles.FONTS["code"], wrap='word', state='disabled', background='#F3F4F6', borderwidth=0)
+        self.config_text.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        btn_frame = ttk.Frame(preview_frame)
+        btn_frame.pack(fill="x")
+        ttk.Button(btn_frame, text="📋 Copy Config", command=self.copy_config).pack(side="left", padx=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Button(btn_frame, text="💾 Export Config", command=self.export_config).pack(side="left")
+    def update_preview(self, config):
+        summary = f"Searching YouTube for '{config.get('query', 'N/A')}'\n"
+        summary += f"• Results: {config.get('max_results', 20)}\n"
+        summary += f"• Uploaded: {config.get('upload_date', 'Any time')}\n"
+        summary += f"• Sorted by: {config.get('sort_by', 'Relevance')}\n"
+        summary += f"• Duration: {config.get('duration', 'Any')}\n"
+        summary += f"• Required features: {', '.join(config.get('features', ['None']))}\n"
+        if config.get('ai_optimized'):
+            summary += f"• AI optimized with GPT-4"
+        self.summary_text.config(state="normal")
+        self.summary_text.delete("1.0", "end")
+        self.summary_text.insert("1.0", summary)
+        self.summary_text.config(state="disabled")
+        config_json = json.dumps(config, indent=2)
+        self.config_text.config(state="normal")
+        self.config_text.delete("1.0", "end")
+        self.config_text.insert("1.0", config_json)
+        self.config_text.config(state="disabled")
+    def copy_config(self):
+        self.clipboard_clear()
+        self.clipboard_append(self.config_text.get("1.0", "end"))
+        messagebox.showinfo("Copied", "Configuration copied to clipboard")
+    def export_config(self):
+        filename = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
+        if filename:
+            with open(filename, 'w') as f:
+                f.write(self.config_text.get("1.0", "end"))
+            messagebox.showinfo("Exported", f"Configuration exported to {filename}")
+
+# ============================================================================
+# CHIP INPUT COMPONENTS
+# ============================================================================
+class ChipInput(ttk.Frame):
+    def __init__(self, parent, placeholder="", on_change=None):
+        super().__init__(parent)
+        self.on_change = on_change
+        self.entry = ttk.Entry(self, font=ProfessionalStyles.FONTS["body"], width=30)
+        self.entry.pack(fill="x")
+        self.entry.insert(0, placeholder)
+        self.entry.bind("<FocusIn>", lambda e: self.entry.delete(0, "end") if self.entry.get() == placeholder else None)
+        self.entry.bind("<KeyRelease>", lambda e: self.on_change() if self.on_change else None)
+    def get(self):
+        return self.entry.get()
+    def set(self, value):
+        self.entry.delete(0, "end")
+        self.entry.insert(0, value)
+
+class ChipSelector(ttk.Frame):
+    def __init__(self, parent, options, on_change=None):
+        super().__init__(parent)
+        self.on_change = on_change
+        self.var = tk.StringVar(value=options[0] if options else "")
+        self.combo = ttk.Combobox(self, textvariable=self.var, values=options, state="readonly", font=ProfessionalStyles.FONTS["body"], width=28)
+        self.combo.pack(fill="x")
+        self.combo.bind("<<ComboboxSelected>>", lambda e: self.on_change() if self.on_change else None)
+    def get(self):
+        return self.var.get()
+    def set(self, value):
+        self.var.set(value)
+
+class ChipMultiSelect(ttk.Frame):
+    def __init__(self, parent, options, on_change=None):
+        super().__init__(parent)
+        self.on_change = on_change
+        self.vars = {}
+        for opt in options:
+            var = tk.BooleanVar()
+            cb = ttk.Checkbutton(self, text=opt, variable=var, command=lambda: self.on_change() if self.on_change else None)
+            cb.pack(anchor="w")
+            self.vars[opt] = var
+    def get(self):
+        return [k for k, v in self.vars.items() if v.get()]
+    def set(self, values):
+        for k, v in self.vars.items():
+            v.set(k in values)
+
+# ============================================================================
+# PROMPT COMPOSER COMPONENT
+# ============================================================================
+class PromptComposer(ttk.Frame):
+    def __init__(self, parent, on_change=None):
+        super().__init__(parent)
+        self.on_change = on_change
+        self.chips = {}
+        components = [
+            ("Topic", "What are you researching?", "text", "e.g., BRCGS automation"),
+            ("Audience", "Who is this for?", "text", "e.g., food manufacturers"),
+            ("Time Window", "When was it published?", "select", ["Last week", "Last month", "Last 3 months", "Last 6 months", "Last year", "All time"]),
+            ("Quality Bar", "How deep should we search?", "select", ["Quick scan", "Balanced", "Deep dive"]),
+            ("Sources", "What kind of sources?", "select", ["Expert creators", "Official channels", "Any"]),
+            ("Output Goals", "What do you want to extract?", "multi", ["Overview", "Citations", "Quotes", "Timestamps", "Trends"])
+        ]
+        for label, desc, widget_type, options in components:
+            frame = ttk.Frame(self)
+            frame.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+            ttk.Label(frame, text=label, style='Heading2.TLabel').pack(anchor="w")
+            ttk.Label(frame, text=desc, style='Caption.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["xs"]))
+            if widget_type == "text":
+                self.chips[label] = ChipInput(frame, placeholder=options, on_change=self.trigger_change)
+            elif widget_type == "select":
+                self.chips[label] = ChipSelector(frame, options, on_change=self.trigger_change)
+            elif widget_type == "multi":
+                self.chips[label] = ChipMultiSelect(frame, options, on_change=self.trigger_change)
+            self.chips[label].pack(fill="x")
+    def trigger_change(self):
+        if self.on_change:
+            self.on_change()
+    def get_values(self):
+        return {k: v.get() for k, v in self.chips.items()}
+    def set_values(self, values):
+        for k, v in values.items():
+            if k in self.chips:
+                self.chips[k].set(v)
+    def build_query(self):
+        values = self.get_values()
+        topic = values.get("Topic", "")
+        audience = values.get("Audience", "")
+        if not topic:
+            return ""
+        query = f"How {topic}"
+        if audience:
+            query += f" applies to {audience}"
+        return query
+
+# ============================================================================
+# AI TRANSPARENCY PANEL
+# ============================================================================
+class AITransparencyPanel(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.expanded = False
+        header = ttk.Frame(self)
+        header.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+        self.toggle_btn = ttk.Button(header, text="▶ AI Optimization Settings", command=self.toggle, style='Secondary.TButton')
+        self.toggle_btn.pack(side="left")
+        self.enabled_var = tk.BooleanVar(value=False)
+        ttk.Checkbutton(header, text="Enable AI optimization", variable=self.enabled_var).pack(side="left", padx=ProfessionalStyles.SPACING["md"])
+        self.details_frame = ttk.Frame(self)
+        info_frame = ttk.LabelFrame(self.details_frame, text="How AI optimization works", padding=ProfessionalStyles.SPACING["md"])
+        info_frame.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+        ttk.Label(info_frame, text="Model: GPT-4 (gpt-4-0613)", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w")
+        ttk.Label(info_frame, text="Technique: Semantic keyword expansion with synonym detection", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w")
+        ttk.Label(info_frame, text="Cost: ~$0.02-0.04 per optimization", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w", pady=(ProfessionalStyles.SPACING["sm"], 0))
+        ttk.Label(info_frame, text="Example transformation:", style='Heading2.TLabel').pack(anchor="w", pady=(ProfessionalStyles.SPACING["md"], ProfessionalStyles.SPACING["xs"]))
+        ttk.Label(info_frame, text="Before: 'BRCGS automation'", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w")
+        ttk.Label(info_frame, text="After: 'BRCGS food safety standard workflow automation manufacturing procedures quality management'", font=ProfessionalStyles.FONTS["body"], wraplength=500).pack(anchor="w")
+        params_frame = ttk.LabelFrame(self.details_frame, text="Advanced parameters", padding=ProfessionalStyles.SPACING["md"])
+        params_frame.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+        ttk.Label(params_frame, text="Temperature (creativity):").grid(row=0, column=0, sticky="w", pady=ProfessionalStyles.SPACING["xs"])
+        self.temp_var = tk.DoubleVar(value=0.3)
+        ttk.Scale(params_frame, from_=0.0, to=1.0, variable=self.temp_var, orient="horizontal").grid(row=0, column=1, sticky="ew", padx=ProfessionalStyles.SPACING["sm"])
+        ttk.Label(params_frame, textvariable=self.temp_var).grid(row=0, column=2)
+        ttk.Label(params_frame, text="Max tokens:").grid(row=1, column=0, sticky="w", pady=ProfessionalStyles.SPACING["xs"])
+        self.tokens_var = tk.IntVar(value=80)
+        ttk.Spinbox(params_frame, from_=20, to=200, textvariable=self.tokens_var, width=10).grid(row=1, column=1, sticky="w", padx=ProfessionalStyles.SPACING["sm"])
+    def toggle(self):
+        self.expanded = not self.expanded
+        if self.expanded:
+            self.details_frame.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+            self.toggle_btn.config(text="▼ AI Optimization Settings")
+        else:
+            self.details_frame.pack_forget()
+            self.toggle_btn.config(text="▶ AI Optimization Settings")
+    def is_enabled(self):
+        return self.enabled_var.get()
+
+# ============================================================================
+# QUALITY GATE SYSTEM
+# ============================================================================
+class QueryQualityGate:
+    @staticmethod
+    def score_query(chips):
+        score, feedback = 0, []
+        topic = chips.get("Topic", "")
+        if not topic or topic.startswith("e.g.,"):
+            feedback.append("⚠ Enter a topic to continue")
+        elif len(topic) < 3:
+            feedback.append("💡 Topic too vague - be more specific")
+        elif len(topic) > 100:
+            feedback.append("💡 Topic too complex - try breaking it down")
+        else:
+            score += 60
+            feedback.append("✓ Topic looks good")
+        if chips.get("Audience", "") and not chips["Audience"].startswith("e.g.,"):
+            score += 20
+            feedback.append("✓ Audience specified")
+        if chips.get("Time Window", "") != "All time":
+            score += 10
+        if chips.get("Output Goals", []):
+            score += 10
+        return min(score, 100), feedback, score >= 60
+
+# ============================================================================
+# CONNECTION MANAGER MODAL
+# ============================================================================
+class ConnectionManager(tk.Toplevel):
+    def __init__(self, parent, config):
+        super().__init__(parent)
+        self.config = config
+        self.title("API Connection Manager")
+        self.geometry("600x500")
+        self.transient(parent)
+        self.grab_set()
+        notebook = ttk.Notebook(self)
+        notebook.pack(fill="both", expand=True, padx=ProfessionalStyles.SPACING["md"], pady=ProfessionalStyles.SPACING["md"])
+        key_tab = ttk.Frame(notebook)
+        notebook.add(key_tab, text="API Key")
+        ttk.Label(key_tab, text="OpenAI API Key", style='Heading2.TLabel').pack(anchor="w", pady=ProfessionalStyles.SPACING["md"])
+        ttk.Label(key_tab, text="Enter your OpenAI API key for AI-powered query optimization", style='Caption.TLabel').pack(anchor="w")
+        self.key_entry = ttk.Entry(key_tab, show="*", font=ProfessionalStyles.FONTS["body"], width=50)
+        self.key_entry.pack(fill="x", pady=ProfessionalStyles.SPACING["md"])
+        if config.load_api_key():
+            self.key_entry.insert(0, config.load_api_key())
+        btn_frame = ttk.Frame(key_tab)
+        btn_frame.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+        ttk.Button(btn_frame, text="Test Connection", command=self.test_connection).pack(side="left", padx=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Button(btn_frame, text="Save Key", command=self.save_key, style='Primary.TButton').pack(side="left")
+        ttk.Label(key_tab, text="Model Selection", style='Heading2.TLabel').pack(anchor="w", pady=(ProfessionalStyles.SPACING["lg"], ProfessionalStyles.SPACING["sm"]))
+        self.model_var = tk.StringVar(value="gpt-4")
+        for model in ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]:
+            ttk.Radiobutton(key_tab, text=model, variable=self.model_var, value=model).pack(anchor="w")
+        security_tab = ttk.Frame(notebook)
+        notebook.add(security_tab, text="Security & Privacy")
+        ttk.Label(security_tab, text="Data Security", style='Heading2.TLabel').pack(anchor="w", pady=ProfessionalStyles.SPACING["md"])
+        ttk.Label(security_tab, text="• Encryption: AES-256 encryption at rest", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w", pady=ProfessionalStyles.SPACING["xs"])
+        ttk.Label(security_tab, text="• Storage: ~/.youtube_scraper_config.json (encrypted)", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w", pady=ProfessionalStyles.SPACING["xs"])
+        ttk.Label(security_tab, text="• Network: HTTPS only, no third-party sharing", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w", pady=ProfessionalStyles.SPACING["xs"])
+        ttk.Label(security_tab, text="\nData Usage Policy", style='Heading2.TLabel').pack(anchor="w", pady=(ProfessionalStyles.SPACING["md"], ProfessionalStyles.SPACING["sm"]))
+        ttk.Label(security_tab, text="Your API key is used exclusively for query optimization. No queries, transcripts, or personal data are sent to third parties. All processing is done locally except for OpenAI API calls which are governed by OpenAI's privacy policy.", font=ProfessionalStyles.FONTS["body"], wraplength=550).pack(anchor="w")
+        close_btn = ttk.Button(self, text="Close", command=self.destroy, style='Secondary.TButton')
+        close_btn.pack(side="bottom", pady=ProfessionalStyles.SPACING["md"])
+    def test_connection(self):
+        key = self.key_entry.get()
+        if not key:
+            messagebox.showerror("Error", "Please enter an API key first")
+            return
+        try:
+            from openai import OpenAI
+            client = OpenAI(api_key=key)
+            client.models.list()
+            messagebox.showinfo("Success", "✓ Connection successful! API key is valid.")
+        except Exception as e:
+            messagebox.showerror("Connection Failed", f"Could not connect to OpenAI API:\n{str(e)}")
+    def save_key(self):
+        key = self.key_entry.get()
+        if key:
+            self.config.save_api_key(key)
+            messagebox.showinfo("Saved", "API key saved securely")
+            self.destroy()
+
+# ============================================================================
+# MAIN APPLICATION
+# ============================================================================
+class ResearchPlatform:
     def __init__(self, root):
         self.root = root
-        self.root.title("Your Intelligent YouTube Research Assistant")
-        self.root.geometry("800x900")
+        self.root.title("YouTube Research Assistant - World-Class Platform")
+        self.root.geometry("1400x900")
         self.config = Config()
         self.api_key = self.config.load_api_key()
         self.output_path = str(Path.home())
-        self.recent_locations = self.load_recent_locations()
-        self.panel_states = {"search": True, "refine": False, "results": False}
-        self.current_query = None
-        self.result_data = []
-        self.setup_styles()
-        self.create_widgets()
+        self.current_config = {}
+        ProfessionalStyles.apply(root)
+        container = ttk.Frame(root)
+        container.pack(fill="both", expand=True, padx=ProfessionalStyles.SPACING["lg"], pady=ProfessionalStyles.SPACING["lg"])
+        left_panel = ttk.Frame(container, width=200)
+        left_panel.pack(side="left", fill="y", padx=(0, ProfessionalStyles.SPACING["lg"]))
+        left_panel.pack_propagate(False)
+        self.wizard = WizardNav(left_panel, self.on_step_change)
+        self.wizard.pack(fill="both", expand=True)
+        right_panel = ttk.Frame(container, width=400)
+        right_panel.pack(side="right", fill="both", expand=False, padx=(ProfessionalStyles.SPACING["lg"], 0))
+        right_panel.pack_propagate(False)
+        self.live_preview = LivePreview(right_panel)
+        self.live_preview.pack(fill="both", expand=True)
+        center_panel = ttk.Frame(container)
+        center_panel.pack(side="left", fill="both", expand=True)
+        self.step_frames = {}
+        self.create_step_define(center_panel)
+        self.create_step_refine(center_panel)
+        self.create_step_review(center_panel)
+        self.create_step_run(center_panel)
+        self.create_step_export(center_panel)
+        self.show_step(0)
         self.check_first_run()
-
-    def setup_styles(self):
-        style = ttk.Style()
-        style.theme_use('clam')
-        # Panel frames with better contrast
-        style.configure('TLabelframe', background='#F7F9FC', borderwidth=2, relief='solid')
-        style.configure('TLabelframe.Label', background='#F7F9FC', foreground='#2C3E50', font=('Segoe UI', 13, 'bold'))
-        # Labels with larger, more readable font
-        style.configure('TLabel', background='#F7F9FC', foreground='#2C3E50', font=('Segoe UI', 11))
-        style.configure('Heading.TLabel', background='#F7F9FC', foreground='#2C3E50', font=('Segoe UI', 12, 'bold'))
-        style.configure('Small.TLabel', background='#F7F9FC', foreground='#5A6C7D', font=('Segoe UI', 9))
-        # Buttons with improved spacing
-        style.configure('TButton', background='#4A90E2', foreground='white', font=('Segoe UI', 11, 'bold'), borderwidth=0, relief='flat', padding=12)
-        style.map('TButton', background=[('active', '#3A7BC8'), ('disabled', '#95A5A6')])
-        style.configure('Accent.TButton', background='#50C878', font=('Segoe UI', 12, 'bold'), padding=15)
-        style.map('Accent.TButton', background=[('active', '#40B868'), ('disabled', '#95A5A6')])
-        style.configure('Secondary.TButton', background='#95A5A6', font=('Segoe UI', 10), padding=8)
-        style.map('Secondary.TButton', background=[('active', '#7F8C8D')])
-        self.root.configure(background='#F7F9FC')
-
-    def create_widgets(self):
-        # Main container with scrollable canvas if needed
-        main_container = ttk.Frame(self.root)
-        main_container.pack(fill="both", expand=True, padx=15, pady=15)
-
-        # PANEL 1: Define Your Research
-        self.panel_search = ttk.LabelFrame(main_container, text="Step 1: Define Your Research", padding=15)
-        self.panel_search.pack(fill="x", pady=(0, 10))
-
-        # Preset selector
-        preset_frame = ttk.Frame(self.panel_search)
-        preset_frame.pack(fill="x", pady=(0, 10))
-        ttk.Label(preset_frame, text="Research Type:", style='Heading.TLabel').pack(side="left", padx=(0, 10))
-        self.preset_var = tk.StringVar(value="Custom")
-        preset_dropdown = ttk.Combobox(preset_frame, textvariable=self.preset_var, values=list(PRESETS.keys()), state="readonly", width=20, font=('Segoe UI', 11))
-        preset_dropdown.pack(side="left")
-        preset_dropdown.bind("<<ComboboxSelected>>", self.apply_preset)
-        ToolTip(preset_dropdown, "Choose a preset configuration for common research tasks")
-
-        # Research question
-        ttk.Label(self.panel_search, text="Research Question", style='Heading.TLabel').pack(anchor="w", pady=(10, 5))
-        self.query_text = scrolledtext.ScrolledText(self.panel_search, height=5, font=('Segoe UI', 11), wrap='word')
-        self.query_text.pack(fill="x", pady=(0, 5))
-        self.query_text.insert("1.0", "Example: How to implement BRCGS quality standards in manufacturing")
-        self.query_text.bind("<FocusIn>", self.clear_placeholder)
-        ttk.Label(self.panel_search, text="Describe what you want to learn. AI will enhance your search with related keywords.", style='Small.TLabel').pack(anchor="w", pady=(0, 10))
-
-        # Controls row
-        controls = ttk.Frame(self.panel_search)
-        controls.pack(fill="x", pady=(0, 10))
-
-        # AI optimization
-        self.optimize_var = tk.BooleanVar(value=False)
-        ai_check = ttk.Checkbutton(controls, text="Optimize with AI", variable=self.optimize_var)
-        ai_check.pack(side="left", padx=(0, 10))
-        ToolTip(ai_check, "Uses GPT-4 to expand your query with semantic keywords for better YouTube search results")
-
-        # Results limit
-        ttk.Label(controls, text="Results Limit:").pack(side="left", padx=(20, 5))
-        self.max_results = tk.Spinbox(controls, from_=1, to=100, width=6, font=('Segoe UI', 11))
-        self.max_results.delete(0, "end")
-        self.max_results.insert(0, "20")
-        self.max_results.pack(side="left")
-        ttk.Label(controls, text="(recommended: 10-20)", style='Small.TLabel').pack(side="left", padx=(5, 0))
-
-        # Next button
-        next_btn = ttk.Button(self.panel_search, text="Next: Refine Sources →", command=self.show_refine_panel)
-        next_btn.pack(fill="x", pady=(10, 0))
-
-        # PANEL 2: Refine Sources (initially hidden)
-        self.panel_refine = ttk.LabelFrame(main_container, text="Step 2: Refine Your Sources", padding=15)
-
-        # Upload date filter
-        date_frame = ttk.Frame(self.panel_refine)
-        date_frame.grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 10))
-        ttk.Label(date_frame, text="📅 Uploaded:", style='Heading.TLabel').pack(side="left", padx=(0, 10))
-        self.upload_date = ttk.Combobox(date_frame, values=list(UPLOAD_DATE_OPTIONS.keys()), state="readonly", width=18, font=('Segoe UI', 11))
-        self.upload_date.set("Any time")
-        self.upload_date.pack(side="left")
-
-        # Sort priority filter
-        sort_frame = ttk.Frame(self.panel_refine)
-        sort_frame.grid(row=0, column=2, columnspan=2, sticky="w", pady=(0, 10), padx=(20, 0))
-        ttk.Label(sort_frame, text="⭐ Sort By:", style='Heading.TLabel').pack(side="left", padx=(0, 10))
-        self.sort_by = ttk.Combobox(sort_frame, values=list(SORT_BY_OPTIONS.keys()), state="readonly", width=15, font=('Segoe UI', 11))
+    def create_step_define(self, parent):
+        frame = ttk.Frame(parent)
+        self.step_frames[0] = frame
+        ttk.Label(frame, text="Step 1: Define Your Research", style='Heading1.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["lg"]))
+        template_frame = ttk.LabelFrame(frame, text="Choose a Research Template", padding=ProfessionalStyles.SPACING["md"])
+        template_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        self.template_var = tk.StringVar(value="Custom")
+        template_grid = ttk.Frame(template_frame)
+        template_grid.pack(fill="x")
+        for i, (name, data) in enumerate(RESEARCH_TEMPLATES.items()):
+            row, col = divmod(i, 2)
+            btn = ttk.Button(template_grid, text=f"{name}\n{data['desc']}", command=lambda n=name: self.apply_template(n), width=35)
+            btn.grid(row=row, column=col, padx=ProfessionalStyles.SPACING["sm"], pady=ProfessionalStyles.SPACING["sm"], sticky="ew")
+        composer_frame = ttk.LabelFrame(frame, text="Build Your Research Question", padding=ProfessionalStyles.SPACING["md"])
+        composer_frame.pack(fill="both", expand=True, pady=(0, ProfessionalStyles.SPACING["md"]))
+        self.composer = PromptComposer(composer_frame, on_change=self.on_composer_change)
+        self.composer.pack(fill="both", expand=True)
+        quality_frame = ttk.Frame(frame)
+        quality_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        ttk.Label(quality_frame, text="Query Quality:", style='Heading2.TLabel').pack(side="left", padx=(0, ProfessionalStyles.SPACING["sm"]))
+        self.quality_label = ttk.Label(quality_frame, text="0/100", font=ProfessionalStyles.FONTS["body"])
+        self.quality_label.pack(side="left", padx=(0, ProfessionalStyles.SPACING["sm"]))
+        self.quality_progress = ttk.Progressbar(quality_frame, length=200, mode='determinate')
+        self.quality_progress.pack(side="left")
+        self.quality_feedback = ttk.Label(frame, text="", style='Caption.TLabel', wraplength=700)
+        self.quality_feedback.pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["md"]))
+        self.ai_panel = AITransparencyPanel(frame)
+        self.ai_panel.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        nav_frame = ttk.Frame(frame)
+        nav_frame.pack(fill="x")
+        self.next_btn = ttk.Button(nav_frame, text="Next: Refine Parameters →", command=lambda: self.wizard.set_step(1), style='Primary.TButton', state='disabled')
+        self.next_btn.pack(side="right")
+    def create_step_refine(self, parent):
+        frame = ttk.Frame(parent)
+        self.step_frames[1] = frame
+        ttk.Label(frame, text="Step 2: Refine Your Search", style='Heading1.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["lg"]))
+        filters_frame = ttk.LabelFrame(frame, text="Search Filters", padding=ProfessionalStyles.SPACING["md"])
+        filters_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        grid = ttk.Frame(filters_frame)
+        grid.pack(fill="x")
+        ttk.Label(grid, text="Uploaded:").grid(row=0, column=0, sticky="w", padx=ProfessionalStyles.SPACING["sm"], pady=ProfessionalStyles.SPACING["xs"])
+        self.upload_date = ttk.Combobox(grid, values=list(UPLOAD_DATE_OPTIONS.keys()), state="readonly", width=20)
+        self.upload_date.set("Last 30 days")
+        self.upload_date.grid(row=0, column=1, sticky="w", padx=ProfessionalStyles.SPACING["sm"])
+        self.upload_date.bind("<<ComboboxSelected>>", lambda e: self.update_preview())
+        ttk.Label(grid, text="Sort By:").grid(row=0, column=2, sticky="w", padx=(ProfessionalStyles.SPACING["lg"], ProfessionalStyles.SPACING["sm"]), pady=ProfessionalStyles.SPACING["xs"])
+        self.sort_by = ttk.Combobox(grid, values=list(SORT_BY_OPTIONS.keys()), state="readonly", width=20)
         self.sort_by.set("Relevance")
-        self.sort_by.pack(side="left")
-
-        # Duration filter
-        duration_frame = ttk.Frame(self.panel_refine)
-        duration_frame.grid(row=1, column=0, columnspan=2, sticky="w", pady=(0, 10))
-        ttk.Label(duration_frame, text="⏱️ Duration:", style='Heading.TLabel').pack(side="left", padx=(0, 10))
-        self.duration = ttk.Combobox(duration_frame, values=list(DURATION_OPTIONS.keys()), state="readonly", width=18, font=('Segoe UI', 11))
+        self.sort_by.grid(row=0, column=3, sticky="w", padx=ProfessionalStyles.SPACING["sm"])
+        self.sort_by.bind("<<ComboboxSelected>>", lambda e: self.update_preview())
+        ttk.Label(grid, text="Duration:").grid(row=1, column=0, sticky="w", padx=ProfessionalStyles.SPACING["sm"], pady=ProfessionalStyles.SPACING["xs"])
+        self.duration = ttk.Combobox(grid, values=list(DURATION_OPTIONS.keys()), state="readonly", width=20)
         self.duration.set("Any duration")
-        self.duration.pack(side="left")
-
-        # Required attributes
-        features_frame = ttk.Frame(self.panel_refine)
-        features_frame.grid(row=1, column=2, columnspan=2, sticky="w", pady=(0, 10), padx=(20, 0))
-        ttk.Label(features_frame, text="✓ Required:", style='Heading.TLabel').pack(anchor="w", pady=(0, 5))
+        self.duration.grid(row=1, column=1, sticky="w", padx=ProfessionalStyles.SPACING["sm"])
+        self.duration.bind("<<ComboboxSelected>>", lambda e: self.update_preview())
+        results_frame = ttk.LabelFrame(frame, text="Results Configuration", padding=ProfessionalStyles.SPACING["md"])
+        results_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        ttk.Label(results_frame, text="How many results do you need?", style='Heading2.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["sm"]))
+        slider_container = ttk.Frame(results_frame)
+        slider_container.pack(fill="x")
+        preset_frame = ttk.Frame(slider_container)
+        preset_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Button(preset_frame, text="Quick Scan (10)", command=lambda: self.set_results(10), style='Secondary.TButton').pack(side="left", padx=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Button(preset_frame, text="Balanced (20)", command=lambda: self.set_results(20), style='Secondary.TButton').pack(side="left", padx=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Button(preset_frame, text="Deep Dive (50)", command=lambda: self.set_results(50), style='Secondary.TButton').pack(side="left")
+        self.results_var = tk.IntVar(value=20)
+        slider = ttk.Scale(slider_container, from_=1, to=100, variable=self.results_var, orient="horizontal", command=lambda v: self.on_results_change())
+        slider.pack(fill="x", pady=ProfessionalStyles.SPACING["sm"])
+        self.results_label = ttk.Label(slider_container, text="20 results | Est. runtime: 4-6 min | ~1000 tokens", style='Caption.TLabel')
+        self.results_label.pack(anchor="w")
+        features_frame = ttk.LabelFrame(frame, text="Required Features", padding=ProfessionalStyles.SPACING["md"])
+        features_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
         self.feature_vars = {}
         for feat in FEATURE_OPTIONS:
             var = tk.BooleanVar(value=(feat == "Subtitles/CC"))
-            cb = ttk.Checkbutton(features_frame, text=feat, variable=var)
-            cb.pack(anchor="w", padx=(10, 0))
+            cb = ttk.Checkbutton(features_frame, text=feat, variable=var, command=self.update_preview)
+            cb.pack(anchor="w")
             self.feature_vars[feat] = var
-            if feat == "Subtitles/CC":
-                ToolTip(cb, "Required for transcript extraction - leave enabled")
-
-        # Collection naming
-        collection_frame = ttk.Frame(self.panel_refine)
-        collection_frame.grid(row=2, column=0, columnspan=4, sticky="ew", pady=(15, 10))
-        ttk.Label(collection_frame, text="💾 Collection Name:", style='Heading.TLabel').pack(anchor="w", pady=(0, 5))
-        self.topic_entry = ttk.Entry(collection_frame, font=('Segoe UI', 11))
-        self.topic_entry.pack(fill="x", pady=(0, 5))
-        ttk.Label(collection_frame, text="Leave blank for auto-generated name based on your query", style='Small.TLabel').pack(anchor="w")
-
-        # Save location
-        location_frame = ttk.Frame(self.panel_refine)
-        location_frame.grid(row=3, column=0, columnspan=4, sticky="ew", pady=(0, 15))
-        ttk.Label(location_frame, text="📁 Save Location:", style='Heading.TLabel').pack(anchor="w", pady=(0, 5))
-        path_row = ttk.Frame(location_frame)
-        path_row.pack(fill="x")
-        self.path_label = ttk.Label(path_row, text=self.output_path, relief="sunken", background="white", padding=5)
-        self.path_label.pack(side="left", fill="x", expand=True, padx=(0, 10))
-        ttk.Button(path_row, text="Browse...", command=self.browse).pack(side="left", padx=(0, 5))
-        if self.recent_locations:
-            self.recent_btn = ttk.Button(path_row, text="Recent ▼", style='Secondary.TButton', command=self.show_recent_locations)
-            self.recent_btn.pack(side="left")
-
-        # Action buttons
-        action_frame = ttk.Frame(self.panel_refine)
-        action_frame.grid(row=4, column=0, columnspan=4, sticky="ew")
-        ttk.Button(action_frame, text="← Back", style='Secondary.TButton', command=self.show_search_panel).pack(side="left", padx=(0, 10))
-        self.start_btn = ttk.Button(action_frame, text="🔍 Find & Extract Knowledge", style='Accent.TButton', command=self.start)
-        self.start_btn.pack(side="left", fill="x", expand=True)
-
-        # PANEL 3: Results & Progress (initially hidden)
-        self.panel_results = ttk.LabelFrame(main_container, text="Step 3: Results & Progress", padding=15)
-
-        # Query echo area
-        self.query_echo_frame = ttk.Frame(self.panel_results)
-        self.query_echo_frame.pack(fill="x", pady=(0, 15))
-        ttk.Label(self.query_echo_frame, text="Your Search:", style='Heading.TLabel').pack(anchor="w", pady=(0, 5))
-        self.query_echo = tk.Text(self.query_echo_frame, height=3, font=('Segoe UI', 10), wrap='word', state='disabled', background='#E8F4F8')
-        self.query_echo.pack(fill="x", pady=(0, 5))
-        self.edit_query_btn = ttk.Button(self.query_echo_frame, text="✏️ Edit Query", style='Secondary.TButton', command=self.edit_query)
-
-        # Progress state indicator
-        self.state_frame = ttk.Frame(self.panel_results)
-        self.state_frame.pack(fill="x", pady=(0, 10))
-        self.state_label = ttk.Label(self.state_frame, text="Idle", style='Heading.TLabel')
-        self.state_label.pack(side="left", padx=(0, 10))
-        self.state_icon = ttk.Label(self.state_frame, text="⏸️")
-        self.state_icon.pack(side="left")
-
-        # Progress bar
-        self.progress_bar = ttk.Progressbar(self.panel_results, mode='determinate', length=700)
-        self.progress_bar.pack(fill="x", pady=(0, 10))
-
-        # Progress log
-        log_frame = ttk.Frame(self.panel_results)
-        log_frame.pack(fill="both", expand=True, pady=(0, 10))
-        ttk.Label(log_frame, text="Activity Log:", style='Heading.TLabel').pack(anchor="w", pady=(0, 5))
-        self.progress = scrolledtext.ScrolledText(log_frame, height=10, state="disabled", font=('Consolas', 10))
-        self.progress.pack(fill="both", expand=True)
-
-        # Results display area
-        self.results_frame = ttk.Frame(self.panel_results)
-        self.results_frame.pack(fill="both", expand=True, pady=(10, 0))
-        ttk.Label(self.results_frame, text="Extracted Transcripts:", style='Heading.TLabel').pack(anchor="w", pady=(0, 5))
-        self.results_list = tk.Listbox(self.results_frame, height=8, font=('Segoe UI', 10))
+        output_frame = ttk.LabelFrame(frame, text="Output Configuration", padding=ProfessionalStyles.SPACING["md"])
+        output_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        ttk.Label(output_frame, text="Collection Name:").pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["xs"]))
+        self.collection_entry = ttk.Entry(output_frame, font=ProfessionalStyles.FONTS["body"])
+        self.collection_entry.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Label(output_frame, text="Save Location:").pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["xs"]))
+        path_frame = ttk.Frame(output_frame)
+        path_frame.pack(fill="x")
+        self.path_label = ttk.Label(path_frame, text=self.output_path, relief="sunken", padding=ProfessionalStyles.SPACING["sm"])
+        self.path_label.pack(side="left", fill="x", expand=True, padx=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Button(path_frame, text="Browse", command=self.browse_output).pack(side="left")
+        nav_frame = ttk.Frame(frame)
+        nav_frame.pack(fill="x", pady=(ProfessionalStyles.SPACING["lg"], 0))
+        ttk.Button(nav_frame, text="← Back", command=lambda: self.wizard.set_step(0), style='Secondary.TButton').pack(side="left")
+        ttk.Button(nav_frame, text="Next: Review Configuration →", command=lambda: self.wizard.set_step(2), style='Primary.TButton').pack(side="right")
+    def create_step_review(self, parent):
+        frame = ttk.Frame(parent)
+        self.step_frames[2] = frame
+        ttk.Label(frame, text="Step 3: Review & Confirm", style='Heading1.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["lg"]))
+        ttk.Label(frame, text="Review your research configuration before proceeding:", font=ProfessionalStyles.FONTS["body"]).pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["md"]))
+        review_frame = ttk.LabelFrame(frame, text="Configuration Summary", padding=ProfessionalStyles.SPACING["md"])
+        review_frame.pack(fill="both", expand=True, pady=(0, ProfessionalStyles.SPACING["md"]))
+        self.review_text = scrolledtext.ScrolledText(review_frame, height=15, font=ProfessionalStyles.FONTS["body"], wrap='word', state='disabled')
+        self.review_text.pack(fill="both", expand=True)
+        nav_frame = ttk.Frame(frame)
+        nav_frame.pack(fill="x")
+        ttk.Button(nav_frame, text="← Back to Refine", command=lambda: self.wizard.set_step(1), style='Secondary.TButton').pack(side="left")
+        ttk.Button(nav_frame, text="▶ Start Research", command=self.start_research, style='Success.TButton').pack(side="right")
+    def create_step_run(self, parent):
+        frame = ttk.Frame(parent)
+        self.step_frames[3] = frame
+        ttk.Label(frame, text="Step 4: Research in Progress", style='Heading1.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["lg"]))
+        status_frame = ttk.LabelFrame(frame, text="Status", padding=ProfessionalStyles.SPACING["md"])
+        status_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        self.status_label = ttk.Label(status_frame, text="Initializing...", style='Heading2.TLabel')
+        self.status_label.pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["sm"]))
+        self.progress_bar = ttk.Progressbar(status_frame, mode='determinate', length=700)
+        self.progress_bar.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["sm"]))
+        log_frame = ttk.LabelFrame(frame, text="Activity Log", padding=ProfessionalStyles.SPACING["md"])
+        log_frame.pack(fill="both", expand=True, pady=(0, ProfessionalStyles.SPACING["md"]))
+        self.log_text = scrolledtext.ScrolledText(log_frame, height=15, font=ProfessionalStyles.FONTS["code"], state='disabled')
+        self.log_text.pack(fill="both", expand=True)
+        nav_frame = ttk.Frame(frame)
+        nav_frame.pack(fill="x")
+        ttk.Button(nav_frame, text="Cancel", command=self.cancel_research, style='Secondary.TButton', state='disabled').pack(side="left")
+        self.export_nav_btn = ttk.Button(nav_frame, text="Next: Export Results →", command=lambda: self.wizard.set_step(4), style='Primary.TButton', state='disabled')
+        self.export_nav_btn.pack(side="right")
+    def create_step_export(self, parent):
+        frame = ttk.Frame(parent)
+        self.step_frames[4] = frame
+        ttk.Label(frame, text="Step 5: Export & Review Results", style='Heading1.TLabel').pack(anchor="w", pady=(0, ProfessionalStyles.SPACING["lg"]))
+        results_frame = ttk.LabelFrame(frame, text="Extracted Transcripts", padding=ProfessionalStyles.SPACING["md"])
+        results_frame.pack(fill="both", expand=True, pady=(0, ProfessionalStyles.SPACING["md"]))
+        self.results_list = tk.Listbox(results_frame, height=15, font=ProfessionalStyles.FONTS["body"])
         self.results_list.pack(fill="both", expand=True)
-
-        # Bottom actions
-        bottom_actions = ttk.Frame(self.panel_results)
-        bottom_actions.pack(fill="x", pady=(15, 0))
-        ttk.Button(bottom_actions, text="← New Search", style='Secondary.TButton', command=self.new_search).pack(side="left", padx=(0, 10))
-        self.export_btn = ttk.Button(bottom_actions, text="📂 Open Collection Folder", command=self.open_collection_folder)
-        self.export_btn.pack(side="left")
-
-        # AI Settings (collapsible, at bottom)
-        self.ai_settings_frame = ttk.LabelFrame(main_container, text="🔑 AI Search Settings (Optional)", padding=15)
-        self.ai_settings_frame.pack(fill="x", pady=(10, 0))
-        settings_row = ttk.Frame(self.ai_settings_frame)
-        settings_row.pack(fill="x")
-        ttk.Label(settings_row, text="OpenAI API Key:").pack(side="left", padx=(0, 10))
-        self.api_entry = ttk.Entry(settings_row, show="*", font=('Segoe UI', 11))
-        if self.api_key:
-            self.api_entry.insert(0, self.api_key)
-        self.api_entry.pack(side="left", fill="x", expand=True, padx=(0, 10))
-        ttk.Button(settings_row, text="Save", command=self.save_api_key).pack(side="left")
-        ttk.Label(self.ai_settings_frame, text="Required only if you enable AI optimization. Your key is stored locally and encrypted.", style='Small.TLabel').pack(anchor="w", pady=(5, 0))
-
-    def clear_placeholder(self, event):
-        if self.query_text.get("1.0", "end").strip() == "Example: How to implement BRCGS quality standards in manufacturing":
-            self.query_text.delete("1.0", "end")
-
-    def apply_preset(self, event=None):
-        preset_name = self.preset_var.get()
-        if preset_name == "Custom":
-            return
-        preset = PRESETS[preset_name]
-        self.max_results.delete(0, "end")
-        self.max_results.insert(0, str(preset.get("max_results", 20)))
-        self.upload_date.set(preset.get("upload_date", "Any time"))
-        self.sort_by.set(preset.get("sort_by", "Relevance"))
-        self.duration.set(preset.get("duration", "Any duration"))
+        actions_frame = ttk.Frame(frame)
+        actions_frame.pack(fill="x", pady=(0, ProfessionalStyles.SPACING["md"]))
+        ttk.Button(actions_frame, text="📂 Open Folder", command=self.open_results_folder).pack(side="left", padx=(0, ProfessionalStyles.SPACING["sm"]))
+        ttk.Button(actions_frame, text="🔄 New Research", command=self.new_research, style='Primary.TButton').pack(side="left")
+        nav_frame = ttk.Frame(frame)
+        nav_frame.pack(fill="x")
+        ttk.Button(nav_frame, text="← Back to Results", command=lambda: self.wizard.set_step(3), style='Secondary.TButton').pack(side="left")
+    def on_step_change(self, step_index):
+        self.show_step(step_index)
+        if step_index == 2:
+            self.update_review()
+    def show_step(self, step_index):
+        for i, frame in self.step_frames.items():
+            frame.pack_forget()
+        if step_index in self.step_frames:
+            self.step_frames[step_index].pack(fill="both", expand=True)
+    def apply_template(self, template_name):
+        self.template_var.set(template_name)
+        template = RESEARCH_TEMPLATES[template_name]
+        if template["chips"]:
+            self.composer.set_values(template["chips"])
+        self.upload_date.set(template["defaults"]["upload_date"])
+        self.sort_by.set(template["defaults"]["sort_by"])
+        self.duration.set(template["defaults"]["duration"])
+        self.results_var.set(template["defaults"]["results"])
         for feat, var in self.feature_vars.items():
-            var.set(feat in preset.get("features", []))
-
-    def show_panel(self, panel_name):
-        panels = {"search": self.panel_search, "refine": self.panel_refine, "results": self.panel_results}
-        for name, panel in panels.items():
-            panel.pack_forget()
-            self.panel_states[name] = False
-        if panel_name == "refine":
-            query = self.query_text.get("1.0", "end").strip()
-            if not query or query == "Example: How to implement BRCGS quality standards in manufacturing":
-                messagebox.showwarning("Missing Information", "Please enter a research question first")
-                return
-        target = panels[panel_name]
-        target.pack(fill="both" if panel_name == "results" else "x", expand=(panel_name == "results"), pady=(0, 10))
-        self.panel_states[panel_name] = True
-    def show_refine_panel(self): self.show_panel("refine")
-    def show_search_panel(self): self.show_panel("search")
-    def show_results_panel(self): self.show_panel("results")
-    def edit_query(self): self.show_panel("search")
-
-    def new_search(self):
-        self.show_panel("search")
-        self.query_text.delete("1.0", "end")
-        self.progress.config(state="normal")
-        self.progress.delete("1.0", "end")
-        self.progress.config(state="disabled")
-        self.results_list.delete(0, "end")
-        self.progress_bar['value'] = 0
-        self.set_state("idle")
-
-    def browse(self):
+            var.set(feat in template["defaults"]["features"])
+        self.on_composer_change()
+        self.update_preview()
+    def on_composer_change(self):
+        values = self.composer.get_values()
+        score, feedback, can_proceed = QueryQualityGate.score_query(values)
+        self.quality_label.config(text=f"{score}/100")
+        self.quality_progress['value'] = score
+        self.quality_feedback.config(text=" | ".join(feedback))
+        self.next_btn.config(state='normal' if can_proceed else 'disabled')
+        self.update_preview()
+    def set_results(self, value):
+        self.results_var.set(value)
+        self.on_results_change()
+    def on_results_change(self):
+        value = int(self.results_var.get())
+        runtime = f"{value * 0.2:.0f}-{value * 0.3:.0f} min"
+        tokens = value * 50
+        self.results_label.config(text=f"{value} results | Est. runtime: {runtime} | ~{tokens} tokens")
+        self.update_preview()
+    def update_preview(self):
+        query = self.composer.build_query()
+        config = {
+            "query": query,
+            "max_results": int(self.results_var.get()),
+            "upload_date": self.upload_date.get(),
+            "sort_by": self.sort_by.get(),
+            "duration": self.duration.get(),
+            "features": [k for k, v in self.feature_vars.items() if v.get()],
+            "ai_optimized": self.ai_panel.is_enabled(),
+            "collection": self.collection_entry.get(),
+            "output_path": self.output_path
+        }
+        self.current_config = config
+        self.live_preview.update_preview(config)
+    def update_review(self):
+        config = self.current_config
+        review = f"RESEARCH CONFIGURATION SUMMARY\n{'='*60}\n\n"
+        review += f"Research Question:\n  {config.get('query', 'N/A')}\n\n"
+        review += f"Search Parameters:\n"
+        review += f"  • Results to fetch: {config.get('max_results', 20)}\n"
+        review += f"  • Upload date filter: {config.get('upload_date', 'Any time')}\n"
+        review += f"  • Sort priority: {config.get('sort_by', 'Relevance')}\n"
+        review += f"  • Duration filter: {config.get('duration', 'Any')}\n"
+        review += f"  • Required features: {', '.join(config.get('features', ['None']))}\n\n"
+        review += f"AI Optimization:\n"
+        review += f"  • Status: {'Enabled (GPT-4)' if config.get('ai_optimized') else 'Disabled'}\n\n"
+        review += f"Output:\n"
+        review += f"  • Collection: {config.get('collection', 'Auto-generated')}\n"
+        review += f"  • Location: {config.get('output_path', 'N/A')}\n\n"
+        review += f"Estimated Runtime: {int(config.get('max_results', 20)) * 0.25:.0f}-{int(config.get('max_results', 20)) * 0.35:.0f} minutes\n"
+        self.review_text.config(state="normal")
+        self.review_text.delete("1.0", "end")
+        self.review_text.insert("1.0", review)
+        self.review_text.config(state="disabled")
+    def start_research(self):
+        self.wizard.set_step(3)
+        query = self.current_config.get("query", "")
+        collection = self.collection_entry.get().strip() or self.generate_collection_name(query)
+        threading.Thread(target=self.run_research, args=(query, collection), daemon=True).start()
+    def run_research(self, query, collection):
+        try:
+            self.log("🎯 Initializing research process...")
+            self.progress_bar['value'] = 0
+            self.status_label.config(text="Starting...")
+            if self.ai_panel.is_enabled() and self.api_key:
+                self.log("🧠 Optimizing query with GPT-4...")
+                self.progress_bar['value'] = 10
+                self.status_label.config(text="AI Optimization in progress...")
+                dur = DURATION_OPTIONS[self.duration.get()]
+                feats = [k.lower().replace('subtitles/', '').replace('-', '').replace('/', '') for k, v in self.feature_vars.items() if v.get()]
+                upload_days = UPLOAD_DATE_OPTIONS[self.upload_date.get()]
+                optimized = optimize_search_query(query, self.api_key, dur, feats, upload_days)
+                self.log(f"✓ Original: {query}")
+                self.log(f"✓ Optimized: {optimized}")
+                query = optimized
+            self.progress_bar['value'] = 20
+            self.status_label.config(text="Searching YouTube...")
+            self.log(f"🔍 Searching YouTube for: {query}")
+            filters = {'upload_date': UPLOAD_DATE_OPTIONS[self.upload_date.get()], 'sort_by': SORT_BY_OPTIONS[self.sort_by.get()]}
+            scraper = TranscriptScraper(output_dir=os.path.join(self.output_path, collection), callback=lambda msg: (self.log(msg), self.update_progress()))
+            self.status_label.config(text="Extracting transcripts...")
+            result = scraper.scrape(query, max_results=int(self.results_var.get()), filters=filters)
+            self.progress_bar['value'] = 100
+            self.status_label.config(text="Complete!")
+            self.log("="*60)
+            if result['saved'] == 0:
+                self.log("😕 No transcripts found. Try adjusting your filters.")
+            else:
+                self.log(f"✅ Success! Extracted {result['saved']} transcripts")
+                self.log(f"📁 Saved to: {os.path.join(self.output_path, collection)}")
+                for i, file_path in enumerate(result['files'], 1):
+                    self.results_list.insert("end", f"{i}. {Path(file_path).name}")
+            self.export_nav_btn.config(state='normal')
+        except Exception as e:
+            import traceback
+            self.status_label.config(text="Error occurred")
+            self.log(f"❌ Error: {str(e)}")
+            self.log(traceback.format_exc())
+    def log(self, msg):
+        self.log_text.config(state="normal")
+        self.log_text.insert("end", f"{msg}\n")
+        self.log_text.see("end")
+        self.log_text.config(state="disabled")
+        self.root.update_idletasks()
+    def update_progress(self):
+        current = self.progress_bar['value']
+        if current < 95:
+            self.progress_bar['value'] = min(current + 2, 95)
+        self.root.update_idletasks()
+    def browse_output(self):
         folder = filedialog.askdirectory(initialdir=self.output_path)
         if folder:
             self.output_path = folder
             self.path_label.config(text=folder)
-            self.add_recent_location(folder)
-
-    def load_recent_locations(self):
-        try:
-            with open(Path.home() / ".youtube_scraper_config.json", 'r') as f:
-                return json.load(f).get('recent_locations', [])
-        except: return []
-    def add_recent_location(self, location):
-        if location not in self.recent_locations:
-            self.recent_locations.insert(0, location)
-            self.recent_locations = self.recent_locations[:5]
-            self.save_recent_locations()
-    def save_recent_locations(self):
-        try:
-            cf = Path.home() / ".youtube_scraper_config.json"
-            data = json.load(open(cf, 'r')) if cf.exists() else {}
-            data['recent_locations'] = self.recent_locations
-            json.dump(data, open(cf, 'w'))
-        except: pass
-
-    def show_recent_locations(self):
-        menu = tk.Menu(self.root, tearoff=0)
-        for loc in self.recent_locations: menu.add_command(label=loc, command=lambda l=loc: (setattr(self, 'output_path', l), self.path_label.config(text=l)))
-        menu.post(self.recent_btn.winfo_rootx(), self.recent_btn.winfo_rooty() + self.recent_btn.winfo_height())
-
-    def save_api_key(self):
-        key = self.api_entry.get().strip()
-        if key:
-            self.api_key = key
-            self.config.save_api_key(key)
-            messagebox.showinfo("Saved", "API key saved securely to local configuration")
-        else: messagebox.showwarning("Warning", "API key field is empty")
-    def set_state(self, state, message=""):
-        states = {"idle": ("⏸️ Idle", "#95A5A6"), "optimizing": ("🧠 Optimizing with AI...", "#4A90E2"), "searching": ("🔍 Searching YouTube...", "#4A90E2"), "extracting": ("📥 Extracting transcripts...", "#4A90E2"), "complete": ("✅ Complete", "#50C878"), "failed": ("❌ Failed", "#E74C3C")}
-        icon, color = states.get(state, ("⏸️ Idle", "#95A5A6"))
-        self.state_label.config(text=message if message else icon.split()[1])
-        self.state_icon.config(text=icon.split()[0])
-
-    def log(self, msg):
-        self.progress.config(state="normal")
-        self.progress.insert("end", f"{msg}\n")
-        self.progress.see("end")
-        self.progress.config(state="disabled")
-        self.root.update_idletasks()
-    def start(self):
-        query = self.query_text.get("1.0", "end").strip()
-        if not query or query == "Example: How to implement BRCGS quality standards in manufacturing":
-            messagebox.showerror("Missing Information", "Please enter a research question")
-            return
-        topic = self.topic_entry.get().strip()
-        if not topic:
-            topic = self.generate_collection_name(query)
-            self.topic_entry.delete(0, "end")
-            self.topic_entry.insert(0, topic)
-        self.current_query = query
-        self.show_results_panel()
-        self.start_btn.config(state="disabled")
-        self.query_echo.config(state="normal")
-        self.query_echo.delete("1.0", "end")
-        self.query_echo.insert("1.0", f"Original: {query}\n")
-        self.query_echo.config(state="disabled")
-        self.progress.config(state="normal")
-        self.progress.delete("1.0", "end")
-        self.progress.config(state="disabled")
-        self.results_list.delete(0, "end")
-        threading.Thread(target=self.run, args=(query, topic), daemon=True).start()
+            self.update_preview()
     def generate_collection_name(self, query):
-        from datetime import datetime
         clean = "".join(c if c.isalnum() or c.isspace() else "" for c in query.lower())
         return "_".join(clean.split()[:5]) + "_" + datetime.now().strftime("%Y%m%d")
-
-    def run(self, query, topic):
-        try:
-            self.progress_bar['value'] = 0
-            self.set_state("idle")
-
-            dur = DURATION_OPTIONS[self.duration.get()]
-            feats = [k.lower().replace('subtitles/', '').replace('-', '').replace('/', '') for k, v in self.feature_vars.items() if v.get()]
-            upload_days = UPLOAD_DATE_OPTIONS[self.upload_date.get()]
-
-            if self.optimize_var.get() and self.api_key:
-                self.progress_bar['value'] = 10
-                self.set_state("optimizing")
-                self.log("🧠 Optimizing query with AI for semantic keyword expansion...")
-                opt = optimize_search_query(query, self.api_key, dur, feats, upload_days)
-                self.log(f"✓ Original: {query}")
-                self.log(f"✓ Optimized: {opt}")
-
-                # Update query echo
-                self.query_echo.config(state="normal")
-                self.query_echo.insert("end", f"AI Enhanced: {opt}\n")
-                self.query_echo.config(state="disabled")
-
-                query = opt
-            elif self.optimize_var.get():
-                self.log("⚠ AI optimization enabled but no API key set - using original query")
-
-            self.progress_bar['value'] = 20
-            filters = {'upload_date': upload_days, 'sort_by': SORT_BY_OPTIONS[self.sort_by.get()]}
-
-            # Show final query
-            final_query = query
-            if dur:
-                final_query += f", {dur}"
-            for feat in feats:
-                final_query += f", {feat}"
-            self.query_echo.config(state="normal")
-            self.query_echo.insert("end", f"YouTube Query: {final_query}")
-            self.query_echo.config(state="disabled")
-
-            self.set_state("searching", f"Searching YouTube for {self.max_results.get()} videos...")
-            self.log(f"🔍 Searching YouTube with filters: {filters}")
-            self.progress_bar['value'] = 30
-
-            scraper = TranscriptScraper(output_dir=os.path.join(self.output_path, topic), callback=lambda msg: (self.log(msg), self.update_progress()))
-
-            self.set_state("extracting", "Extracting transcripts...")
-            result = scraper.scrape(query, max_results=int(self.max_results.get()), filters=filters)
-
-            self.progress_bar['value'] = 100
-            self.log("=" * 60)
-
-            if result['saved'] == 0 and result['skipped'] == 0:
-                self.set_state("failed", "No results found")
-                self.log("😕 No videos matched your criteria. Try:")
-                self.log("  • Simpler keywords")
-                self.log("  • Removing date/duration filters")
-                self.log("  • Different sort priority")
-            else:
-                self.set_state("complete", f"Extracted {result['saved']} transcripts")
-                self.log(f"✅ Success! Extracted {result['saved']} transcripts")
-                self.log(f"⊘ Skipped {result['skipped']} videos (no transcript available)")
-                self.log(f"📁 Saved to: {os.path.join(self.output_path, topic)}")
-
-                # Populate results list
-                for i, file_path in enumerate(result['files'], 1):
-                    filename = Path(file_path).name
-                    self.results_list.insert("end", f"{i}. {filename}")
-
-                self.add_recent_location(os.path.join(self.output_path, topic))
-
-        except Exception as e:
-            import traceback
-            self.progress_bar['value'] = 0
-            self.set_state("failed", "Error occurred")
-            self.log(f"❌ Error: {str(e)}")
-            self.log("Details:")
-            self.log(traceback.format_exc())
-        finally:
-            self.start_btn.config(state="normal")
-
-    def update_progress(self):
-        current = self.progress_bar['value']
-        if current < 95:
-            self.progress_bar['value'] = min(current + 3, 95)
-        self.root.update_idletasks()
-
-    def open_collection_folder(self):
-        topic = self.topic_entry.get().strip() or "transcripts"
-        folder_path = os.path.join(self.output_path, topic)
+    def cancel_research(self):
+        pass
+    def open_results_folder(self):
+        collection = self.collection_entry.get().strip() or "transcripts"
+        folder_path = os.path.join(self.output_path, collection)
         if os.path.exists(folder_path):
             os.startfile(folder_path)
-        else:
-            messagebox.showwarning("Not Found", f"Collection folder does not exist:\n{folder_path}")
-
+    def new_research(self):
+        self.wizard.set_step(0)
+        self.composer.set_values({})
+        self.results_list.delete(0, "end")
+        self.log_text.config(state="normal")
+        self.log_text.delete("1.0", "end")
+        self.log_text.config(state="disabled")
+        self.progress_bar['value'] = 0
     def check_first_run(self):
         try:
             cf = Path.home() / ".youtube_scraper_config.json"
             if cf.exists():
                 data = json.load(open(cf, 'r'))
-                if data.get('first_run', True):
-                    self.run_first_time_setup()
-                    data['first_run'] = False
-                    json.dump(data, open(cf, 'w'))
+                if not data.get('first_run_v3', True):
+                    return
+            self.show_welcome()
+            if cf.exists():
+                data = json.load(open(cf, 'r'))
+                data['first_run_v3'] = False
+                json.dump(data, open(cf, 'w'))
             else:
-                self.run_first_time_setup()
-                json.dump({'first_run': False, 'recent_locations': []}, open(cf, 'w'))
+                json.dump({'first_run_v3': False}, open(cf, 'w'))
         except: pass
-
-    def run_first_time_setup(self):
-        self.query_text.delete("1.0", "end")
-        self.query_text.insert("1.0", "How to improve manufacturing quality control")
-        self.preset_var.set("Quick Overview")
-        self.apply_preset()
+    def show_welcome(self):
         w = tk.Toplevel(self.root)
-        w.title("Welcome!")
-        w.geometry("500x300")
+        w.title("Welcome to Your Research Assistant")
+        w.geometry("700x500")
         w.transient(self.root)
         w.grab_set()
-        f = ttk.Frame(w, padding=20)
+        f = ttk.Frame(w, padding=ProfessionalStyles.SPACING["xl"])
         f.pack(fill="both", expand=True)
-        ttk.Label(f, text="Welcome to Your Research Assistant!", font=('Segoe UI', 14, 'bold')).pack(pady=(0, 15))
-        ttk.Label(f, text="This tool helps you find and extract YouTube video transcripts for research.", wraplength=450, font=('Segoe UI', 11)).pack(pady=(0, 10))
-        ttk.Label(f, text="Quick Start:", font=('Segoe UI', 12, 'bold')).pack(anchor="w", pady=(10, 5))
-        for i, txt in enumerate(["1. Enter your research question (example loaded)", "2. Click 'Next' to refine filters (optional)", "3. Click 'Find & Extract' to start", "4. View results in Step 3 panel"], 1):
-            ttk.Label(f, text=txt, wraplength=450, font=('Segoe UI', 10)).pack(anchor="w", padx=(10, 0), pady=(0, 15 if i == 4 else 0))
-        ttk.Button(f, text="Got it! Let's start", command=w.destroy, style='Accent.TButton').pack(pady=(10, 0))
+        ttk.Label(f, text="🎯 Welcome to YouTube Research Assistant", font=("Segoe UI", 20, "bold")).pack(pady=(0, ProfessionalStyles.SPACING["lg"]))
+        ttk.Label(f, text="A world-class platform for systematic YouTube research", font=ProfessionalStyles.FONTS["heading2"]).pack(pady=(0, ProfessionalStyles.SPACING["xl"]))
+        features = [
+            "✓ Wizard-guided workflow with 5 clear steps",
+            "✓ Research templates for common tasks",
+            "✓ Smart prompt composer with structured inputs",
+            "✓ Live preview of your research configuration",
+            "✓ AI-powered query optimization with full transparency",
+            "✓ Quality gates to ensure good research questions",
+            "✓ Exportable configurations for reproducible research"
+        ]
+        for feat in features:
+            ttk.Label(f, text=feat, font=ProfessionalStyles.FONTS["body"]).pack(anchor="w", pady=ProfessionalStyles.SPACING["xs"])
+        ttk.Label(f, text="\nGetting Started:", font=ProfessionalStyles.FONTS["heading2"]).pack(anchor="w", pady=(ProfessionalStyles.SPACING["lg"], ProfessionalStyles.SPACING["sm"]))
+        steps = [
+            "1. Choose a research template or go custom",
+            "2. Fill in the prompt composer (topic, audience, goals)",
+            "3. Refine filters and configure output",
+            "4. Review and start your research",
+            "5. Export results and configurations"
+        ]
+        for step in steps:
+            ttk.Label(f, text=step, font=ProfessionalStyles.FONTS["body"]).pack(anchor="w", pady=ProfessionalStyles.SPACING["xs"])
+        ttk.Button(f, text="Let's Get Started! 🚀", command=w.destroy, style='Primary.TButton').pack(pady=(ProfessionalStyles.SPACING["xl"], 0))
+    def show_connection_manager(self):
+        ConnectionManager(self.root, self.config)
 
 def main():
     root = tk.Tk()
-    ScraperGUI(root)
+    app = ResearchPlatform(root)
+    menu = tk.Menu(root)
+    root.config(menu=menu)
+    tools_menu = tk.Menu(menu, tearoff=0)
+    menu.add_cascade(label="Tools", menu=tools_menu)
+    tools_menu.add_command(label="API Connection Manager", command=app.show_connection_manager)
     root.mainloop()
 
 if __name__ == "__main__":

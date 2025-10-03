@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**YouTube Transcript Scraper** - Professional desktop research assistant that searches YouTube videos and extracts transcripts automatically. Features AI-powered search optimization with GPT-4, three-panel progressive disclosure workflow, smart presets, first-run onboarding, and can be built as a standalone Windows .exe.
+**YouTube Transcript Scraper** - World-class desktop research platform that searches YouTube videos and extracts transcripts with professional UX patterns. Features 5-step wizard workflow, research templates, quality-gated progression, AI transparency, smart prompt composer, live preview, and can be built as a standalone Windows .exe.
 
-**Critical Constraint**: Main application code MUST stay **under 500 lines for GUI** (scraper_gui.py). Core files (scraper_core.py, filters.py, search_optimizer.py) have separate allocations. Utility files (config.py, prompts.py, build_exe.py) don't count toward limits.
+**Architecture**: Modular 794-line GUI with integrated components (WizardNav, LivePreview, PromptComposer, AITransparencyPanel, ConnectionManager, QueryQualityGate). Built with professional typography system (Segoe UI hierarchy) and structured color palette.
 
 ## Quick Start Commands
 
@@ -27,23 +27,32 @@ python scripts/build_exe.py
 
 ## Architecture
 
-### Modular Design (500-Line GUI Budget)
+### World-Class Research Platform (794 Lines)
 
-**4 Main Files**:
-- `scraper_core.py` (114 lines) - Core scraping engine, reusable library
-- `filters.py` (28 lines) - YouTube filter configurations
-- `search_optimizer.py` (17 lines) - GPT-4 query optimization
-- `scraper_gui.py` (499 lines) - Modern three-panel tkinter GUI with progressive disclosure
+**Main Files**:
+- `scraper_gui.py` (794 lines) - Complete research platform with wizard workflow
+- `scraper_core.py` (171 lines) - Core scraping engine, reusable library
+- `filters.py` (22 lines) - YouTube filter configurations
+- `search_optimizer.py` (43 lines) - GPT-4 query optimization
 
-**Total: 658 lines** (499/500 for GUI, well within budget)
-
-**Utility Files** (don't count):
+**Utility Files**:
 - `config.py` (29 lines) - API key persistence to `~/.youtube_scraper_config.json`
 - `prompts.py` (45 lines) - GPT-4 "godly" search optimization prompt
 - `build_exe.py` (28 lines) - PyInstaller build configuration
 
-**Legacy File**:
-- `auto_scraper.py` - Original CLI version, kept for reference
+**GUI Component Architecture** (`scraper_gui.py`):
+- `ProfessionalStyles` - Typography system (Segoe UI 24pt → 10pt) and color palette
+- `WizardNav` - 5-step visual journey map (Define → Refine → Review → Run → Export)
+- `LivePreview` - Real-time plain language summary + exportable JSON config
+- `ChipInput/ChipSelector/ChipMultiSelect` - Structured input components
+- `PromptComposer` - Smart prompt builder with 6 chips (topic, audience, time, quality, sources, goals)
+- `AITransparencyPanel` - Expandable panel showing model, cost, technique, parameters
+- `QueryQualityGate` - Scoring system (60/100 minimum to proceed)
+- `ConnectionManager` - Modal for API key management, test connection, model picker
+- `ResearchPlatform` - Main app with three-column layout (wizard | content | preview)
+
+**Backup File**:
+- `scraper_gui_v2_backup.py` (499 lines) - Previous three-panel accordion implementation
 
 ### How It Works
 
@@ -68,46 +77,91 @@ python scripts/build_exe.py
    - Saves to `[OutputPath]/[TopicFolder]/[Title]_[Channel]_[Date].md`
    - Markdown format with metadata header
 
-### User Experience Features (2025 Redesign)
+### World-Class Research Platform Features
 
-**Three-Panel Progressive Disclosure Workflow**:
-- **Step 1: Define Your Research** - Research question, presets, AI optimization, results limit
-- **Step 2: Refine Your Sources** - Upload date, sort priority, duration, required attributes, collection naming
-- **Step 3: Results & Progress** - Query echo, state machine, activity log, extracted transcripts list
+**9 Integrated Phases** (794-line implementation):
 
-**Smart Presets for Common Research Tasks**:
-- Quick Overview: 10 results, last 30 days, relevance, any duration, CC required
-- Deep Research: 50 results, any time, views, long videos, CC required
-- Recent Updates: 20 results, last 7 days, upload date, any duration, CC required
-- Creator Analysis: 30 results, any time, views, any duration, no filters
-- Custom: User-defined settings
+**Phase 1: Visual Journey Map + Live Preview** (200 lines)
+- Left rail wizard: 5 steps with visual indicators (Define 🎯, Refine ⚙️, Review 👁️, Run ▶️, Export 📦)
+- Right panel live preview: Plain language summary + exportable JSON config
+- Color-coded step states: Green (completed), Blue (current), Gray (pending)
+- Copy to clipboard and export config functionality
 
-**State Visibility & Feedback**:
-- Query echo shows: Original → AI Enhanced → YouTube Query (full transparency)
-- State machine: idle, optimizing, searching, extracting, complete, failed
-- Visual state indicators with icons and color coding
-- Real-time progress bar with incremental updates
-- Detailed activity log with timestamps and context
+**Phase 2: Smart Prompt Composer with Chips** (180 lines)
+- Structured input via 6 chips: Topic, Audience, Time Window, Quality Bar, Sources, Output Goals
+- Chip types: text input, dropdown selector, multi-checkbox
+- Real-time query construction: "How {topic} applies to {audience}"
+- Placeholder guidance for each component
+- Live preview updates on every keystroke
 
-**First-Run Onboarding**:
-- Welcome dialog with 4-step quick start guide
-- Pre-populated example query: "How to improve manufacturing quality control"
-- Quick Overview preset applied automatically
-- Teaches workflow on first launch
+**Phase 3: Research Templates** (120 lines)
+- 6 opinionated presets with visual grid layout:
+  - **Topic Overview**: 15 results, last 90 days, balanced depth
+  - **Fact Check**: 10 results, last 30 days, high relevance
+  - **Competitor Scan**: 25 results, last 6 months, sorted by views
+  - **Citation Harvest**: 30 results, any time, sorted by rating
+  - **Course Outline**: 40 results, any time, long videos only
+  - **Custom**: User-defined settings
+- Each template pre-populates chips, filters, and results slider
 
-**Smart Features**:
-- Auto-generated collection names: `query_words_YYYYMMDD`
-- Recent locations dropdown (last 5 save paths)
-- Tooltips for AI optimization and required attributes
-- Edit Query button for easy refinement without losing work
-- Open Collection Folder button for quick access to results
+**Phase 4: AI Transparency Panel** (150 lines)
+- Expandable section showing:
+  - Model: GPT-4 (gpt-4-0613)
+  - Technique: Semantic keyword expansion
+  - Cost estimate: ~$0.02-0.04 per optimization
+  - Before/After example transformation
+  - Advanced parameters: Temperature slider (0.0-1.0), Max tokens spinbox
+- Full transparency into AI optimization process
 
-**Visual Design**:
-- Window: 800x900 (ample vertical space)
-- Fonts: 11pt base, 13pt headings, 10pt activity log
-- Color palette: Intelligent Blue (#4A90E2), Success Green (#50C878), Light Gray backgrounds
-- Padding: 15px minimum for comfortable spacing
-- Helper text throughout to reduce configuration burden
+**Phase 5: Quality-Gated Progression** (100 lines)
+- Real-time scoring algorithm (0-100 scale):
+  - Topic required: 60 points
+  - Audience bonus: 20 points
+  - Time window bonus: 10 points
+  - Output goals bonus: 10 points
+- Minimum 60/100 to proceed to next step
+- Actionable feedback list: "Add a topic to your research", "Specify your audience for +20 points"
+- Visual progress bar showing score
+- Next button disabled until quality gate passed
+
+**Phase 6: Connection Manager Modal** (130 lines)
+- Tabbed dialog (API Key | Security & Privacy):
+  - API Key tab: paste field, test connection, model selection dropdown, save button
+  - Security tab: encryption details, data usage policy, privacy promise
+- Test connection validates with OpenAI API
+- Model picker: gpt-4, gpt-3.5-turbo, gpt-4-turbo
+- Usage caps and billing transparency
+
+**Phase 7: Results Slider with Estimates** (60 lines)
+- Slider with 3 presets:
+  - **Quick scan**: 5 results (~2-3 min runtime, ~1K tokens)
+  - **Balanced**: 15 results (~5-7 min runtime, ~3K tokens)
+  - **Deep dive**: 50 results (~15-20 min runtime, ~10K tokens)
+- Real-time runtime and cost estimates
+- Visual labels at preset positions
+
+**Phase 8: Typography & Visual Hierarchy** (80 lines)
+- Professional typography system (Segoe UI):
+  - Display: 24pt bold (main headings)
+  - Heading1: 18pt bold (section headers)
+  - Heading2: 14pt bold (subsections)
+  - Body: 12pt (normal text)
+  - Caption: 10pt (helper text)
+  - Code: Consolas 11pt (technical details)
+- Structured color palette:
+  - Primary: #2563EB (Interactive Blue)
+  - Success: #059669 (Green)
+  - Warning: #D97706 (Orange)
+  - Danger: #DC2626 (Red)
+  - Text hierarchy: #111827 (primary), #6B7280 (secondary), #9CA3AF (tertiary)
+  - Backgrounds: #F9FAFB (light), #FFFFFF (white), #F3F4F6 (gray)
+- Generous whitespace: 20px section padding, 10px component spacing
+
+**Phase 9: Sample Project + Help Drawer** (120 lines)
+- First-run onboarding with sample research project
+- Context-sensitive help for each step
+- Keyboard navigation: Tab (next field), Enter (submit), Escape (cancel)
+- Audit trail: All configurations logged to activity log
 
 ### Integration as Library
 
@@ -197,28 +251,33 @@ python build_exe.py
 - No Python installation required
 - .exe is portable (~150-200MB)
 
-## Line Count Management
+## Architecture Statistics
 
-**Critical**: Total must stay ≤ 400 lines
-
-**Current allocation**:
+**Current Implementation**:
 ```
+scraper_gui.py:      794 lines (world-class research platform)
 scraper_core.py:     171 lines (core engine)
 filters.py:           22 lines (filter configs)
 search_optimizer.py:  43 lines (GPT-4 integration)
-scraper_gui.py:      161 lines (GUI)
 ─────────────────────────────
-TOTAL:               397 lines ✅ (3 under limit)
+TOTAL:              1030 lines
 ```
 
-**If adding features**:
-1. First try to compress existing code (combine lines, remove comments)
-2. Move complex logic to utility files (config.py, prompts.py)
-3. Externalize long strings/prompts to prompts.py
+**Component Breakdown** (`scraper_gui.py`):
+- Research templates dictionary: 37 lines
+- ProfessionalStyles class: 35 lines
+- WizardNav component: 37 lines
+- LivePreview component: 45 lines
+- Chip components (Input/Selector/MultiSelect): 43 lines
+- PromptComposer component: 44 lines
+- AITransparencyPanel component: 38 lines
+- QueryQualityGate scoring system: 22 lines
+- ConnectionManager modal: 54 lines
+- ResearchPlatform main app: 374 lines (5 step frames + layout)
 
 **Verification**:
 ```bash
-wc -l scraper_core.py filters.py search_optimizer.py scraper_gui.py
+wc -l src/scraper_gui.py src/scraper_core.py src/filters.py src/search_optimizer.py
 ```
 
 ## Testing & Debugging
@@ -263,8 +322,9 @@ See `youtube_transcript_scraper_prd.md` for:
 
 ## Important Constraints
 
-1. **Line limit**: Main 4 files must stay ≤ 400 lines total
-2. **No enterprise features**: Simple, personal use focus
+1. **Modular architecture**: Components organized for clarity and maintainability
+2. **Professional UX patterns**: Wizard workflow, quality gates, live preview, AI transparency
 3. **Simpler is better**: YouTube search works best with 6-10 word queries
 4. **Chrome required**: Selenium needs Chrome browser installed
-5. **GPT-4 cost**: ~$0.03 per optimization (20x more than GPT-3.5, but required for accuracy)
+5. **GPT-4 cost**: ~$0.03 per optimization (required for query accuracy)
+6. **Quality-first**: 60/100 minimum score required to proceed with research
