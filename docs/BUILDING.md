@@ -24,19 +24,78 @@ python scripts/build_exe.py
 # dist/YouTubeTranscriptScraper.exe (~150-200MB)
 ```
 
+## Installing on Your PC
+
+### Automated Installation (Recommended)
+
+After building the .exe, run the installer:
+
+```bash
+# Install to system with shortcuts
+scripts/install.bat
+```
+
+This will:
+- ✅ Copy .exe to `C:\Users\[YourName]\AppData\Local\Programs\YouTubeTranscriptScraper\`
+- ✅ Create Desktop shortcut
+- ✅ Create Start Menu entry (Windows Search → "YouTube Transcript Scraper")
+- ✅ Include uninstaller script
+
+**File Locations After Installation:**
+```
+C:\Users\[YourName]\
+├── Desktop\
+│   └── YouTube Transcript Scraper.lnk       ← Desktop shortcut
+│
+├── AppData\Roaming\Microsoft\Windows\Start Menu\Programs\
+│   └── YouTube Transcript Scraper.lnk       ← Start Menu
+│
+└── AppData\Local\Programs\YouTubeTranscriptScraper\
+    ├── YouTubeTranscriptScraper.exe         ← Installed program
+    └── uninstall.bat                        ← Uninstaller
+```
+
+### Manual Installation
+
+1. Copy `dist/YouTubeTranscriptScraper.exe` to desired location
+2. Right-click Desktop → New → Shortcut
+3. Point to .exe location
+4. Name: "YouTube Transcript Scraper"
+
+### Uninstalling
+
+Run: `C:\Users\[YourName]\AppData\Local\Programs\YouTubeTranscriptScraper\uninstall.bat`
+
+Or manually delete:
+- Desktop shortcut
+- Start Menu shortcut (`%APPDATA%\Microsoft\Windows\Start Menu\Programs\YouTube Transcript Scraper.lnk`)
+- Program folder (`%LOCALAPPDATA%\Programs\YouTubeTranscriptScraper\`)
+
 ### Distribution
 
 The built .exe is **portable** and can be distributed to any Windows PC:
 
 1. Copy `dist/YouTubeTranscriptScraper.exe` to USB drive or network share
 2. Copy to target Windows PC
-3. Double-click to run
+3. Double-click to run (or run `install.bat` for shortcuts)
 4. **Requirements for target PC**:
    - Chrome browser installed
    - Internet connection
    - No Python installation needed ✅
 
 ## Development Workflow
+
+**IMPORTANT**: Keep the project directory separate from the installed program.
+
+**Project Directory** (`C:\Users\mike\OHiSee\OHiSee_Youtube_Transcipt_Scraper\`):
+- ✅ Keep for development and future code changes
+- Contains: source code, git repository, build scripts
+- Do NOT run the program from here daily
+
+**Installed Program** (`%LOCALAPPDATA%\Programs\YouTubeTranscriptScraper\`):
+- ✅ Where you launch the program from (via shortcuts)
+- Separate from development files
+- Standard Windows user program location
 
 ### Making Changes to the Code
 

@@ -147,6 +147,39 @@ python scripts/build_exe.py
 # Output: dist/YouTubeTranscriptScraper.exe
 ```
 
+## Installing on Your PC
+
+### Automated Installation (Recommended)
+
+```bash
+# After building the .exe, run:
+scripts/install.bat
+```
+
+This will:
+- ✅ Copy .exe to `%LOCALAPPDATA%\Programs\YouTubeTranscriptScraper\`
+- ✅ Create Desktop shortcut
+- ✅ Create Start Menu entry (search "YouTube Transcript Scraper")
+- ✅ Include uninstaller
+
+**Installed location**: `C:\Users\[YourName]\AppData\Local\Programs\YouTubeTranscriptScraper\`
+
+### Manual Installation
+
+1. Copy `dist/YouTubeTranscriptScraper.exe` to desired location
+2. Right-click Desktop → New → Shortcut
+3. Point to .exe location
+4. Name: "YouTube Transcript Scraper"
+
+### Uninstalling
+
+Run: `%LOCALAPPDATA%\Programs\YouTubeTranscriptScraper\uninstall.bat`
+
+Or manually delete:
+- Desktop shortcut
+- Start Menu shortcut
+- `C:\Users\[YourName]\AppData\Local\Programs\YouTubeTranscriptScraper\`
+
 **Distribution Requirements:**
 - Target PC needs Chrome browser installed
 - No Python installation required
