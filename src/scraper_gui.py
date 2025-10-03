@@ -37,15 +37,15 @@ class ScraperGUI:
         self.max_results.insert(0, "10")
         self.max_results.pack(side="left")
 
-        # Filters (Note: Currently disabled - yt-dlp ytsearch doesn't support filters)
-        f = ttk.LabelFrame(self.root, text="Filters (Disabled)", padding=10)
+        # Filters
+        f = ttk.LabelFrame(self.root, text="Filters", padding=10)
         f.pack(fill="x", padx=10, pady=5)
         ttk.Label(f, text="Upload:").grid(row=0, column=0, padx=5)
-        self.upload_date = ttk.Combobox(f, values=list(UPLOAD_DATE_OPTIONS.keys()), state="disabled", width=12)
+        self.upload_date = ttk.Combobox(f, values=list(UPLOAD_DATE_OPTIONS.keys()), state="readonly", width=15)
         self.upload_date.set("Any time")
         self.upload_date.grid(row=0, column=1, padx=5)
         ttk.Label(f, text="Sort:").grid(row=0, column=2, padx=5)
-        self.sort_by = ttk.Combobox(f, values=list(SORT_BY_OPTIONS.keys()), state="disabled", width=12)
+        self.sort_by = ttk.Combobox(f, values=list(SORT_BY_OPTIONS.keys()), state="readonly", width=12)
         self.sort_by.set("Relevance")
         self.sort_by.grid(row=0, column=3, padx=5)
 
@@ -130,8 +130,10 @@ class ScraperGUI:
             elif self.optimize_var.get():
                 self.log("⚠ No API key - using original query")
 
-            # Filters disabled - yt-dlp ytsearch doesn't support them
-            filters = None
+            filters = {
+                'upload_date': UPLOAD_DATE_OPTIONS[self.upload_date.get()],
+                'sort_by': SORT_BY_OPTIONS[self.sort_by.get()]
+            }
 
             self.log("Starting scraper...")
             scraper = TranscriptScraper(output_dir=os.path.join(self.output_path, topic), callback=self.log)

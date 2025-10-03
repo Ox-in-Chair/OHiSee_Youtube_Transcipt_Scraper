@@ -16,7 +16,7 @@ def sanitize_query(query):
     """Preserve search operators for YouTube (quotes, OR, -)"""
     return query  # yt-dlp handles operators correctly
 
-UPLOAD_DATE_OPTIONS = {'Any time': 'any', 'Last hour': 'hour', 'Today': 'today',
-                        'This week': 'week', 'This month': 'month', 'This year': 'year'}
+UPLOAD_DATE_OPTIONS = {'Any time': 'any', 'Last 7 days': 7, 'Last 30 days': 30,
+                        'Last 90 days': 90, 'Last 6 months': 180, 'Last year': 365}
 SORT_BY_OPTIONS = {'Relevance': 'relevance', 'Upload date': 'date',
                    'View count': 'views', 'Rating': 'rating'}

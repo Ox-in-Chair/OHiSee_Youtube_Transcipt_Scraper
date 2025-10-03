@@ -32,25 +32,27 @@ class TranscriptScraper:
         text = re.sub(r'\s+', '_', text)
         return text[:max_len] or "untitled"
 
-    def search_videos(self, query, max_results=10, search_filter=""):
-        # Note: yt-dlp's ytsearch doesn't support filters in URL
-        # Filters are ignored for now (could implement post-filtering if needed)
-        search_url = f"ytsearch{max_results}:{query}"
+    def search_videos(self, query, max_results=10, filters=None):
+        from datetime import datetime, timedelta
+        search_url = f"ytsearch{max_results*3}:{query}"
         ydl_opts = {'quiet': True, 'no_warnings': True, 'extract_flat': True, 'socket_timeout': 60}
-
+        if filters and filters.get('sort_by') and filters['sort_by'] != 'relevance':
+            ydl_opts['playlistsort'] = filters['sort_by']
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 result = ydl.extract_info(search_url, download=False)
-                videos = []
+                videos, cutoff_date = [], None
+                if filters and filters.get('upload_date') != 'any':
+                    cutoff_date = datetime.now() - timedelta(days=filters['upload_date'])
                 if result and 'entries' in result:
                     for entry in result['entries']:
-                        if entry:
-                            videos.append({
-                                'id': entry.get('id'),
-                                'title': entry.get('title', 'Unknown'),
+                        if entry and len(videos) < max_results:
+                            if cutoff_date and entry.get('upload_date'):
+                                if datetime.strptime(entry['upload_date'], '%Y%m%d') < cutoff_date:
+                                    continue
+                            videos.append({'id': entry.get('id'), 'title': entry.get('title', 'Unknown'),
                                 'channel': entry.get('uploader', 'Unknown'),
-                                'url': entry.get('url') or f"https://www.youtube.com/watch?v={entry.get('id')}"
-                            })
+                                'url': entry.get('url') or f"https://www.youtube.com/watch?v={entry.get('id')}"})
                 return videos
         except Exception as e:
             raise RuntimeError(f"Search failed: {str(e)}")
@@ -135,11 +137,8 @@ class TranscriptScraper:
             self.output_dir = output_dir
             Path(self.output_dir).mkdir(exist_ok=True)
 
-        from filters import build_filter_string
-        filter_str = build_filter_string(filters) if filters else ""
-
         self._log(f"Searching: {query}")
-        videos = self.search_videos(query, max_results, filter_str)
+        videos = self.search_videos(query, max_results, filters)
         self._log(f"Found {len(videos)} videos")
 
         if not videos:
