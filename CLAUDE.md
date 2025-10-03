@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Repository**: https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git
+
 ## Project Overview
 
 **YouTube Transcript Scraper** - Desktop GUI application that searches YouTube videos and extracts transcripts automatically. Features AI-powered search optimization with GPT-4, persistent API key storage, and can be built as a standalone Windows .exe.
@@ -12,13 +14,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Launch GUI application
-python scraper_gui.py
+python src/scraper_gui.py
 
 # Or use batch launcher
-Launch_Scraper.bat
+scripts/Launch_Scraper.bat
 
 # Build standalone .exe (requires PyInstaller)
-python build_exe.py
+python scripts/build_exe.py
 
 # Output: dist/YouTubeTranscriptScraper.exe (~150-200MB)
 ```

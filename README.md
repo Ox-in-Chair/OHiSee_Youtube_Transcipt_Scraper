@@ -73,8 +73,8 @@ print(f"Saved {result['saved']} transcripts")
 
 ```bash
 # Clone repository
-git clone https://github.com/[username]/youtube-transcript-scraper.git
-cd youtube-transcript-scraper
+git clone https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git
+cd OHiSee_Youtube_Transcipt_Scraper
 
 # Install dependencies
 pip install -r requirements.txt
