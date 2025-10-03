@@ -13,23 +13,11 @@ class ScraperGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Your Intelligent YouTube Research Assistant")
-        self.root.geometry("720x680")
+        self.root.geometry("650x600")
         self.config = Config()
         self.api_key = self.config.load_api_key()
         self.output_path = str(Path.home())
-        self.setup_styles()
         self.create_widgets()
-    def setup_styles(self):
-        style = ttk.Style()
-        style.theme_use('clam')
-        style.configure('TLabelframe', background='#F7F9FC', borderwidth=1, relief='solid')
-        style.configure('TLabelframe.Label', background='#F7F9FC', foreground='#2C3E50', font=('Segoe UI', 10, 'bold'))
-        style.configure('TLabel', background='#F7F9FC', foreground='#2C3E50', font=('Segoe UI', 9))
-        style.configure('TButton', background='#4A90E2', foreground='white', font=('Segoe UI', 10, 'bold'), borderwidth=0, relief='flat', padding=10)
-        style.map('TButton', background=[('active', '#3A7BC8'), ('disabled', '#95A5A6')])
-        style.configure('Accent.TButton', background='#50C878', font=('Segoe UI', 11, 'bold'), padding=12)
-        style.map('Accent.TButton', background=[('active', '#40B868'), ('disabled', '#95A5A6')])
-        self.root.configure(background='#F7F9FC')
     def create_widgets(self):
         f = ttk.LabelFrame(self.root, text="💭 Search", padding=10)
         f.pack(fill="x", padx=10, pady=5)
@@ -63,7 +51,7 @@ class ScraperGUI:
         ff.grid(row=1, column=3, sticky="w", padx=5)
         self.feature_vars = {}
         for i, feat in enumerate(FEATURE_OPTIONS):
-            var = tk.BooleanVar(value=(feat == "Subtitles/CC"))
+            var = tk.BooleanVar()
             ttk.Checkbutton(ff, text=feat, variable=var).pack(side="left", padx=2)
             self.feature_vars[feat] = var
         f = ttk.LabelFrame(self.root, text="💾 Save Results", padding=10)
@@ -86,13 +74,11 @@ class ScraperGUI:
         ttk.Button(f, text="Save Key", command=self.save_api_key).pack(side="left")
         bf = ttk.Frame(self.root)
         bf.pack(fill="x", padx=10, pady=10)
-        self.start_btn = ttk.Button(bf, text="🔍 Find & Extract Knowledge", style='Accent.TButton', command=self.start)
-        self.start_btn.pack(fill="x", padx=5)
+        self.start_btn = ttk.Button(bf, text="Find & Extract Knowledge", command=self.start)
+        self.start_btn.pack(side="left", padx=5)
         f = ttk.LabelFrame(self.root, text="⏳ Working on it...", padding=10)
         f.pack(fill="both", expand=True, padx=10, pady=5)
-        self.progress_bar = ttk.Progressbar(f, mode='determinate', length=600)
-        self.progress_bar.pack(fill="x", padx=5, pady=5)
-        self.progress = scrolledtext.ScrolledText(f, height=7, state="disabled", font=('Consolas', 9))
+        self.progress = scrolledtext.ScrolledText(f, height=8, state="disabled")
         self.progress.pack(fill="both", expand=True)
 
     def browse(self):
@@ -127,25 +113,20 @@ class ScraperGUI:
         threading.Thread(target=self.run, args=(query, topic), daemon=True).start()
     def run(self, query, topic):
         try:
-            self.progress_bar['value'] = 0
             dur = DURATION_OPTIONS[self.duration.get()]
             feats = [k.lower().replace('subtitles/', '').replace('-', '').replace('/', '') for k, v in self.feature_vars.items() if v.get()]
             upload_days = UPLOAD_DATE_OPTIONS[self.upload_date.get()]
             if self.optimize_var.get() and self.api_key:
-                self.progress_bar['value'] = 10
                 self.log("🧠 Making search smarter with AI...")
                 opt = optimize_search_query(query, self.api_key, dur, feats, upload_days)
                 self.log(f"Original: {query}\nOptimized: {opt}")
                 query = opt
             elif self.optimize_var.get():
                 self.log("⚠ No API key set - using your query as-is")
-            self.progress_bar['value'] = 20
             filters = {'upload_date': upload_days, 'sort_by': SORT_BY_OPTIONS[self.sort_by.get()]}
             self.log("🔍 Finding perfect videos for you...")
-            self.progress_bar['value'] = 40
-            scraper = TranscriptScraper(output_dir=os.path.join(self.output_path, topic), callback=lambda msg: (self.log(msg), self.update_progress()))
+            scraper = TranscriptScraper(output_dir=os.path.join(self.output_path, topic), callback=self.log)
             result = scraper.scrape(query, max_results=int(self.max_results.get()), filters=filters)
-            self.progress_bar['value'] = 100
             self.log("="*40)
             if result['saved'] == 0 and result['skipped'] == 0:
                 self.log("😕 No matches found. Try simpler keywords or remove filters.")
@@ -153,14 +134,9 @@ class ScraperGUI:
                 self.log(f"🎉 Success! Extracted {result['saved']} transcripts ({result['skipped']} skipped)\nSaved to: {os.path.join(self.output_path, topic)}")
         except Exception as e:
             import traceback
-            self.progress_bar['value'] = 0
             self.log(f"✗ Error: {e}\nDetails: {traceback.format_exc()}")
         finally:
             self.start_btn.config(state="normal")
-    def update_progress(self):
-        current = self.progress_bar['value']
-        if current < 95: self.progress_bar['value'] = min(current + 5, 95)
-        self.root.update_idletasks()
 
 
 def main():
