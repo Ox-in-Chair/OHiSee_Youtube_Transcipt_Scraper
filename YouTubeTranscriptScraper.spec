@@ -13,8 +13,8 @@ datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    ['C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\scraper_gui.py'],
-    pathex=[],
+    ['C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src\\scraper_gui.py'],
+    pathex=['C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src'],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
