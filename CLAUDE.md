@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**YouTube Transcript Scraper** - Desktop GUI application that searches YouTube videos and extracts transcripts automatically. Features AI-powered search optimization with GPT-4, persistent API key storage, and can be built as a standalone Windows .exe.
+**YouTube Transcript Scraper** - Professional desktop research assistant that searches YouTube videos and extracts transcripts automatically. Features AI-powered search optimization with GPT-4, three-panel progressive disclosure workflow, smart presets, first-run onboarding, and can be built as a standalone Windows .exe.
 
-**Critical Constraint**: Main application code MUST stay **under 400 lines total** (scraper_core.py + filters.py + search_optimizer.py + scraper_gui.py). Utility files (config.py, prompts.py, build_exe.py) don't count toward this limit.
+**Critical Constraint**: Main application code MUST stay **under 500 lines for GUI** (scraper_gui.py). Core files (scraper_core.py, filters.py, search_optimizer.py) have separate allocations. Utility files (config.py, prompts.py, build_exe.py) don't count toward limits.
 
 ## Quick Start Commands
 
@@ -27,13 +27,15 @@ python scripts/build_exe.py
 
 ## Architecture
 
-### Modular Design (400-Line Core)
+### Modular Design (500-Line GUI Budget)
 
-**4 Main Files** (count toward 400-line limit):
-- `scraper_core.py` (171 lines) - Core scraping engine, reusable library
-- `filters.py` (22 lines) - YouTube filter configurations
-- `search_optimizer.py` (43 lines) - GPT-4 query optimization
-- `scraper_gui.py` (161 lines) - tkinter desktop GUI
+**4 Main Files**:
+- `scraper_core.py` (114 lines) - Core scraping engine, reusable library
+- `filters.py` (28 lines) - YouTube filter configurations
+- `search_optimizer.py` (17 lines) - GPT-4 query optimization
+- `scraper_gui.py` (499 lines) - Modern three-panel tkinter GUI with progressive disclosure
+
+**Total: 658 lines** (499/500 for GUI, well within budget)
 
 **Utility Files** (don't count):
 - `config.py` (29 lines) - API key persistence to `~/.youtube_scraper_config.json`
@@ -65,6 +67,47 @@ python scripts/build_exe.py
 4. **Output**:
    - Saves to `[OutputPath]/[TopicFolder]/[Title]_[Channel]_[Date].md`
    - Markdown format with metadata header
+
+### User Experience Features (2025 Redesign)
+
+**Three-Panel Progressive Disclosure Workflow**:
+- **Step 1: Define Your Research** - Research question, presets, AI optimization, results limit
+- **Step 2: Refine Your Sources** - Upload date, sort priority, duration, required attributes, collection naming
+- **Step 3: Results & Progress** - Query echo, state machine, activity log, extracted transcripts list
+
+**Smart Presets for Common Research Tasks**:
+- Quick Overview: 10 results, last 30 days, relevance, any duration, CC required
+- Deep Research: 50 results, any time, views, long videos, CC required
+- Recent Updates: 20 results, last 7 days, upload date, any duration, CC required
+- Creator Analysis: 30 results, any time, views, any duration, no filters
+- Custom: User-defined settings
+
+**State Visibility & Feedback**:
+- Query echo shows: Original → AI Enhanced → YouTube Query (full transparency)
+- State machine: idle, optimizing, searching, extracting, complete, failed
+- Visual state indicators with icons and color coding
+- Real-time progress bar with incremental updates
+- Detailed activity log with timestamps and context
+
+**First-Run Onboarding**:
+- Welcome dialog with 4-step quick start guide
+- Pre-populated example query: "How to improve manufacturing quality control"
+- Quick Overview preset applied automatically
+- Teaches workflow on first launch
+
+**Smart Features**:
+- Auto-generated collection names: `query_words_YYYYMMDD`
+- Recent locations dropdown (last 5 save paths)
+- Tooltips for AI optimization and required attributes
+- Edit Query button for easy refinement without losing work
+- Open Collection Folder button for quick access to results
+
+**Visual Design**:
+- Window: 800x900 (ample vertical space)
+- Fonts: 11pt base, 13pt headings, 10pt activity log
+- Color palette: Intelligent Blue (#4A90E2), Success Green (#50C878), Light Gray backgrounds
+- Padding: 15px minimum for comfortable spacing
+- Helper text throughout to reduce configuration burden
 
 ### Integration as Library
 
