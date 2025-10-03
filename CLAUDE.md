@@ -30,10 +30,10 @@ python scripts/build_exe.py
 ### Modular Design (400-Line Core)
 
 **4 Main Files** (count toward 400-line limit):
-- `scraper_core.py` (176 lines) - Core scraping engine, reusable library
+- `scraper_core.py` (171 lines) - Core scraping engine, reusable library
 - `filters.py` (22 lines) - YouTube filter configurations
 - `search_optimizer.py` (43 lines) - GPT-4 query optimization
-- `scraper_gui.py` (159 lines) - tkinter desktop GUI
+- `scraper_gui.py` (161 lines) - tkinter desktop GUI
 
 **Utility Files** (don't count):
 - `config.py` (29 lines) - API key persistence to `~/.youtube_scraper_config.json`
@@ -80,7 +80,7 @@ scraper = TranscriptScraper(output_dir="./MyFolder", callback=my_log_function)
 result = scraper.scrape(
     query=optimized,
     max_results=10,
-    filters={'upload_date': 'week', 'sort_by': 'rating'}
+    filters={'upload_date': 7, 'sort_by': 'rating'}  # 7 days
 )
 # Returns: {"saved": 5, "skipped": 5, "files": [...]}
 ```
@@ -107,10 +107,11 @@ result = scraper.scrape(
 
 ### YouTube Search Filters
 
-**Supported via yt-dlp**:
-- Upload date: `date:hour|today|week|month|year`
-- Sort by: `sortby:date|views|rating`
-- Build filter string in `filters.py`
+**Implemented via post-processing**:
+- Upload date: Days-based filtering (7, 30, 90, 180, 365 days)
+- Sort by: Uses yt-dlp's `playlistsort` option (date, views, rating)
+- Fetch 3x results, filter by upload_date, return max_results
+- Filter options defined in `filters.py`: "Last 7 days", "Last 30 days", "Last 90 days", "Last 6 months", "Last year"
 
 **NOT supported**:
 - Duration filters (YouTube/yt-dlp limitation)
@@ -159,12 +160,12 @@ python build_exe.py
 
 **Current allocation**:
 ```
-scraper_core.py:     176 lines (core engine)
+scraper_core.py:     171 lines (core engine)
 filters.py:           22 lines (filter configs)
 search_optimizer.py:  43 lines (GPT-4 integration)
-scraper_gui.py:      159 lines (GUI)
+scraper_gui.py:      161 lines (GUI)
 ─────────────────────────────
-TOTAL:               400 lines ✅
+TOTAL:               397 lines ✅ (3 under limit)
 ```
 
 **If adding features**:
