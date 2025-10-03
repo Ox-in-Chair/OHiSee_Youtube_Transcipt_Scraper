@@ -1,9 +1,9 @@
 """AI-Powered Search Query Optimizer using OpenAI GPT-4"""
 from openai import OpenAI
-from prompts import GODLY_SEARCH_PROMPT
+from ..utils.prompts import GODLY_SEARCH_PROMPT
 def optimize_search_query(user_input, api_key=None, duration=None, features=None, upload_days=None):
     if not user_input: return user_input
-    from filters import build_query_filters
+    from ..utils.filters import build_query_filters
     filter_suffix = build_query_filters(duration, features, upload_days)
     if not api_key: return user_input + filter_suffix
     try:
