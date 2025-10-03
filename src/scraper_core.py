@@ -33,7 +33,9 @@ class TranscriptScraper:
         return text[:max_len] or "untitled"
 
     def search_videos(self, query, max_results=10, search_filter=""):
-        search_url = f"ytsearch{max_results}{search_filter}:{query}"
+        # Note: yt-dlp's ytsearch doesn't support filters in URL
+        # Filters are ignored for now (could implement post-filtering if needed)
+        search_url = f"ytsearch{max_results}:{query}"
         ydl_opts = {'quiet': True, 'no_warnings': True, 'extract_flat': True, 'socket_timeout': 60}
 
         try:
