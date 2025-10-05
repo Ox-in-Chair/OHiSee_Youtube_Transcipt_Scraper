@@ -162,15 +162,16 @@ class YouTubeResearchPlatform(tk.Tk):
         """Handle state changes."""
         if key == "current_step":
             self.wizard_rail.set_step(value)
-            self.top_bar.update_step(value)  # Update top bar progress tracker
+            if self.top_bar:
+                self.top_bar.update_step(value)
             self._render_step(value)
         elif key == "prompt_config" or key == "filters":
             self._update_preview()
         elif key == "is_running":
             self._update_run_state(value)
-        elif key == "ai_enabled":
+        elif key == "ai_enabled" and self.top_bar:
             self.top_bar.update_status("ai_enabled", value)
-        elif key == "api_connected":
+        elif key == "api_connected" and self.top_bar:
             self.top_bar.update_status("api_connected", value)
 
     def _handle_step_change(self, step: int):
