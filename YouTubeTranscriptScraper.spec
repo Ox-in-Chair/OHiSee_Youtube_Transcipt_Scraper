@@ -1,20 +1,18 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('requirements.txt', '.')]
+datas = [('C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src\\utils\\filters.py', 'utils')]
 binaries = []
-hiddenimports = ['seleniumwire', 'webdriver_manager', 'openai', 'config', 'prompts', 'filters', 'search_optimizer', 'scraper_core']
-tmp_ret = collect_all('selenium')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+hiddenimports = ['seleniumwire', 'seleniumwire.undetected_chromedriver', 'yt_dlp', 'yt_dlp.utils', 'openai']
 tmp_ret = collect_all('seleniumwire')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-tmp_ret = collect_all('webdriver_manager')
+tmp_ret = collect_all('yt_dlp')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    ['C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src\\scraper_gui.py'],
-    pathex=['C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src'],
+    ['C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src\\app_minimal.py'],
+    pathex=[],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,

@@ -3,14 +3,15 @@ REM Quick launcher for minimal YouTube Transcript Scraper
 
 echo.
 echo ========================================
-echo YouTube Transcript Scraper - Minimal
+echo YouTube Transcript Scraper
+echo Modular Architecture (Phase 2)
 echo ========================================
 echo.
 echo Launching application...
 echo.
 
 cd /d "%~dp0"
-python src\app_minimal.py
+python src\app.py
 
 if errorlevel 1 (
     echo.
