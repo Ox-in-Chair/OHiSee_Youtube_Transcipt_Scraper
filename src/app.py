@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 """YouTube Transcript Scraper - Application Entry Point
 
-Launches the main application window.
+Launches the minimal application (app_minimal.py).
 
-This is the single entry point for the modular Phase 2 architecture.
-All application logic is delegated to ui/main_window.py and its components.
-
-Target: ~50 lines
+The modular ui/main_window.py has UX issues (can't deselect, scrolling, etc).
+The working minimal app is clean and functional, so we use that instead.
 """
 
-from ui.main_window import MainWindow
+from app_minimal import YouTubeScraperApp
 
 
 def main():
     """Launch the YouTube Transcript Scraper application.
 
-    Creates and runs the main application window with all integrated
-    components (search panel, results panel, download functionality).
+    Uses the minimal app which has:
+    - Working video selection/deselection
+    - Proper scrolling
+    - Clean compact UI
+    - All core features
     """
-    app = MainWindow()
+    app = YouTubeScraperApp()
     app.mainloop()
 
 
