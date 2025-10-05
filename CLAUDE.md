@@ -40,16 +40,22 @@ python scripts/build_exe.py
 - `prompts.py` (45 lines) - GPT-4 "godly" search optimization prompt
 - `build_exe.py` (28 lines) - PyInstaller build configuration
 
-**GUI Component Architecture** (`scraper_gui.py`):
+**GUI Component Architecture** (`main_app.py`):
 - `ProfessionalStyles` - Typography system (Segoe UI 24pt → 10pt) and color palette
-- `WizardNav` - 5-step visual journey map (Define → Refine → Review → Run → Export)
+- `WizardRail` - 5-step visual journey map (Define → Refine → Review → Run → Export)
 - `LivePreview` - Real-time plain language summary + exportable JSON config
-- `ChipInput/ChipSelector/ChipMultiSelect` - Structured input components
-- `PromptComposer` - Smart prompt builder with 6 chips (topic, audience, time, quality, sources, goals)
+- `PromptComposer` - Smart prompt builder with chips (topic, audience, time, etc.)
 - `AITransparencyPanel` - Expandable panel showing model, cost, technique, parameters
-- `QueryQualityGate` - Scoring system (60/100 minimum to proceed)
+- `BaseSeparator` - Visual divider lines between sections (1-2px horizontal lines)
+- `ModernScrollFrame` - Scrollable containers for all wizard steps (mousewheel, keyboard, custom scrollbars)
 - `ConnectionManager` - Modal for API key management, test connection, model picker
-- `ResearchPlatform` - Main app with three-column layout (wizard | content | preview)
+- `YouTubeResearchPlatform` - Main app with three-column layout (wizard | content | preview)
+
+**Scrolling Support**:
+- All 5 wizard steps wrapped in `ModernScrollFrame` for content overflow handling
+- Features: mousewheel/trackpad scrolling, keyboard navigation (arrows, Page Up/Down, Home/End)
+- Custom styled scrollbars (rose_taupe track, medium_slate_blue thumb, auto-hide when not needed)
+- Ensures Next/Export buttons always reachable even with long content
 
 **Backup File**:
 - `scraper_gui_v2_backup.py` (499 lines) - Previous three-panel accordion implementation
@@ -281,6 +287,53 @@ wc -l src/scraper_gui.py src/scraper_core.py src/filters.py src/search_optimizer
 ```
 
 ## Testing & Debugging
+
+### Automated GUI Testing (PyAutoGUI MCP)
+
+**MCP PyAutoGUI Server**: Verified and integrated (2025-10-05)
+- Desktop GUI automation for Tkinter applications
+- Mouse control, keyboard input, screen capture
+- Works with local apps (not web browsers)
+
+**Quick GUI Smoke Test**:
+```bash
+python tests/quick_gui_test.py
+```
+- Launches app, finds window
+- Tests click interaction
+- Tests keyboard shortcuts (F1)
+- Takes screenshot
+- Auto-cleanup
+
+**Full GUI Automation Suite**:
+```bash
+python tests/gui_automation_test.py
+```
+- Tests all 5 wizard steps (Define → Refine → Review → Run → Export)
+- Wizard rail navigation
+- Keyboard shortcuts (Ctrl+N, Escape, F1)
+- Live preview updates
+- Accessibility features (Tab navigation)
+- Generates test_report.txt
+
+**Scrolling Test**:
+```bash
+python tests/test_scrolling.py
+```
+- Verifies mousewheel scrolling works on all steps
+- Tests Next/Export buttons reachable after scroll
+- Confirms ModernScrollFrame integration
+
+**Safety Features**:
+- `pyautogui.FAILSAFE = True` - Move mouse to corner to abort
+- 0.5-1.0 second pause between commands
+- Automatic cleanup on completion/failure
+
+**Test Output**:
+- `tests/test_report.txt` - Detailed test log
+- `tests/screenshot_test.png` - GUI screenshot
+
+### Manual Testing
 
 **Test query optimization**:
 ```python

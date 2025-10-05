@@ -22,6 +22,8 @@
 ✅ **Advanced Filters** - Upload date, sort by relevance/views/rating, duration, features (CC/HD/4K/Live)
 ✅ **Results Slider with Presets** - Quick scan (5), Balanced (15), Deep dive (50) with runtime estimates
 ✅ **Professional Typography** - Segoe UI hierarchy with generous whitespace and clear visual scale
+✅ **Scrollable Wizard Steps** - ModernScrollFrame ensures all buttons reachable on any screen size
+✅ **Visual Separators** - BaseSeparator component creates clear section boundaries
 ✅ **Keyboard Navigation** - Full accessibility with Tab/Enter/Escape shortcuts
 ✅ **Configuration Export/Import** - Reproducible research with JSON config files
 ✅ **Standalone .exe** - Build Windows executable with PyInstaller
@@ -35,7 +37,7 @@
 pip install -r requirements.txt
 
 # Launch GUI
-python src/scraper_gui.py
+python src/main_app.py
 
 # Or use the batch launcher
 scripts/Launch_Scraper.bat

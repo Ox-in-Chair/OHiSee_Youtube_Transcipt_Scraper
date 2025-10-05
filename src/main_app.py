@@ -3,6 +3,7 @@
 World-class research platform with 25 integrated components.
 Transformation from basic scraper to professional research tool.
 """
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sys
@@ -16,18 +17,39 @@ from state_manager import ApplicationState
 
 # Import all components
 from components import (
+    # Base primitives
+    BaseSeparator,
+    ModernScrollFrame,
     # Phase 1
-    WizardRail, LivePreview, OnboardingWizard, TemplateGrid,
+    WizardRail,
+    LivePreview,
+    OnboardingBanner,
+    TemplateGrid,
     # Phase 2
-    PromptComposer, AITransparencyPanel, QueryTransformationView, CredentialsManager,
+    PromptComposer,
+    AITransparencyPanel,
+    QueryTransformationView,
+    CredentialsManager,
     # Phase 3
-    FacetsBar, ResultsSlider, ReviewSheet, ActivityLog, ResultCardGrid,
+    FacetsBar,
+    ResultsSlider,
+    ReviewSheet,
+    ActivityLog,
+    ResultCardGrid,
     # Phase 4
-    KeyboardNavigationManager, ToastManager, AccessibilityHelper,
-    NoConfigState, LoadingState, NetworkError,
+    KeyboardNavigationManager,
+    ToastManager,
+    AccessibilityHelper,
+    NoConfigState,
+    LoadingState,
+    NetworkError,
     # Phase 5
-    OfflineCache, LearningLoop, SmartSuggestions, CitationGenerator,
-    ExportFormats, ExportPanel
+    OfflineCache,
+    LearningLoop,
+    SmartSuggestions,
+    CitationGenerator,
+    ExportFormats,
+    ExportPanel,
 )
 
 # Import core functionality
@@ -65,11 +87,11 @@ class YouTubeResearchPlatform(tk.Tk):
         self._check_first_run()
 
     def _setup_window(self):
-        """Configure main window."""
+        """Configure main window with modern color scheme."""
         self.title("YouTube Research Platform")
         self.geometry("1400x900")
         self.minsize(1200, 700)
-        self.configure(bg=COLORS['bg'])
+        self.configure(bg=COLORS["surface"])  # alice_blue background
 
         # Center window
         self.update_idletasks()
@@ -78,29 +100,28 @@ class YouTubeResearchPlatform(tk.Tk):
         self.geometry(f"1400x900+{x}+{y}")
 
     def _build_ui(self):
-        """Build main UI layout."""
-        # Main container
-        main_container = tk.Frame(self, bg=COLORS['bg'])
-        main_container.pack(fill='both', expand=True)
+        """Build main UI layout with grid-based proportional scaling."""
+        # Main container with grid geometry
+        main_container = tk.Frame(self, bg=COLORS["surface"])
+        main_container.pack(fill="both", expand=True)
 
-        # Left: Wizard Rail (80px fixed)
-        self.wizard_rail = WizardRail(
-            main_container,
-            on_step_change=self._handle_step_change
-        )
-        self.wizard_rail.pack(side='left', fill='y')
+        # Configure grid weights for proportional scaling
+        main_container.grid_columnconfigure(0, weight=0, minsize=80)  # Wizard rail (fixed)
+        main_container.grid_columnconfigure(1, weight=3)  # Content area (flexible, weight=3)
+        main_container.grid_columnconfigure(2, weight=2, minsize=400)  # Preview (flexible, weight=2)
+        main_container.grid_rowconfigure(0, weight=1)
 
-        # Center: Content Area (flexible)
-        self.content_area = tk.Frame(main_container, bg='white')
-        self.content_area.pack(side='left', fill='both', expand=True)
+        # Left: Wizard Rail (80px fixed width)
+        self.wizard_rail = WizardRail(main_container, on_step_change=self._handle_step_change)
+        self.wizard_rail.grid(row=0, column=0, sticky="nsew")
 
-        # Right: Live Preview (400px fixed)
-        self.live_preview = LivePreview(
-            main_container,
-            on_export=self._export_config,
-            on_copy=self._copy_config
-        )
-        self.live_preview.pack(side='right', fill='y')
+        # Center: Content Area (3x weight, white background)
+        self.content_area = tk.Frame(main_container, bg="white")
+        self.content_area.grid(row=0, column=1, sticky="nsew", padx=SPACING["md"], pady=SPACING["md"])
+
+        # Right: Live Preview (2x weight, 400px minimum)
+        self.live_preview = LivePreview(main_container)
+        self.live_preview.grid(row=0, column=2, sticky="nsew")
 
         # Render initial step
         self._render_step(0)
@@ -114,11 +135,11 @@ class YouTubeResearchPlatform(tk.Tk):
         self.toast_manager = ToastManager(self)
 
         # Global keyboard shortcuts
-        self.bind('<Control-n>', lambda e: self._new_research())
-        self.bind('<Control-s>', lambda e: self._save_config())
-        self.bind('<Control-r>', lambda e: self._run_scraper())
-        self.bind('<F1>', lambda e: self._show_help())
-        self.bind('<Escape>', lambda e: self._cancel_operation())
+        self.bind("<Control-n>", lambda e: self._new_research())
+        self.bind("<Control-s>", lambda e: self._save_config())
+        self.bind("<Control-r>", lambda e: self._run_scraper())
+        self.bind("<F1>", lambda e: self._show_help())
+        self.bind("<Escape>", lambda e: self._cancel_operation())
 
     def _bind_state_observers(self):
         """Bind state change observers."""
@@ -126,17 +147,17 @@ class YouTubeResearchPlatform(tk.Tk):
 
     def _handle_state_change(self, key: str, value):
         """Handle state changes."""
-        if key == 'current_step':
+        if key == "current_step":
             self.wizard_rail.set_step(value)
             self._render_step(value)
-        elif key == 'prompt_config' or key == 'filters':
+        elif key == "prompt_config" or key == "filters":
             self._update_preview()
-        elif key == 'is_running':
+        elif key == "is_running":
             self._update_run_state(value)
 
     def _handle_step_change(self, step: int):
         """Handle wizard step change."""
-        if self.app_state.can_advance() or step < self.app_state.state.get('current_step'):
+        if self.app_state.can_advance() or step < self.app_state.state.get("current_step"):
             self.app_state.go_to_step(step)
         else:
             self.toast_manager.warning("Please complete current step first")
@@ -162,124 +183,172 @@ class YouTubeResearchPlatform(tk.Tk):
 
     def _render_define_step(self):
         """Render Define Research step."""
-        container = tk.Frame(self.content_area, bg='white')
-        container.pack(fill='both', expand=True, padx=SPACING['lg'], pady=SPACING['lg'])
+        # Create scrollable container
+        scroll_container = ModernScrollFrame(self.content_area, bg="white")
+        scroll_container.pack(fill="both", expand=True, padx=SPACING["lg"], pady=SPACING["lg"])
+
+        # Use scrollable_frame for content
+        container = scroll_container.scrollable_frame
 
         # Header
-        tk.Label(container, text="Define Your Research",
-                font=FONTS['h1'], bg='white', fg=COLORS['text']).pack(
-            anchor='w', pady=(0, SPACING['md']))
+        tk.Label(
+            container, text="Define Your Research", font=FONTS["h1"], bg="white", fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0, SPACING["md"]))
+
+        # Separator after header
+        BaseSeparator(container)
 
         # Template Grid
-        template_grid = TemplateGrid(
-            container,
-            on_template_select=self._handle_template_select
-        )
-        template_grid.pack(fill='both', expand=True, pady=SPACING['md'])
+        template_grid = TemplateGrid(container, on_template_preview=self._handle_template_select)
+        template_grid.pack(fill="both", expand=True, pady=SPACING["md"])
+
+        # Separator between sections
+        BaseSeparator(container)
 
         # Prompt Composer
-        self.prompt_composer = PromptComposer(
-            container,
-            on_change=self._handle_prompt_change
-        )
-        self.prompt_composer.pack(fill='x', pady=SPACING['md'])
+        self.prompt_composer = PromptComposer(container, on_update=self._handle_prompt_change)
+        self.prompt_composer.pack(fill="x", pady=SPACING["md"])
 
         # Next button
-        btn_frame = tk.Frame(container, bg='white')
-        btn_frame.pack(anchor='e', pady=SPACING['md'])
+        btn_frame = tk.Frame(container, bg="white")
+        btn_frame.pack(anchor="e", pady=SPACING["md"])
 
-        tk.Button(btn_frame, text="Next: Refine Filters →",
-                 font=FONTS['h3'], bg=COLORS['primary'], fg='white',
-                 padx=SPACING['lg'], pady=SPACING['sm'],
-                 relief='flat', cursor='hand2',
-                 command=lambda: self.app_state.advance_step()).pack()
+        tk.Button(
+            btn_frame,
+            text="Next: Refine Filters →",
+            font=FONTS["h3"],
+            bg=COLORS["primary"],
+            fg="white",
+            padx=SPACING["lg"],
+            pady=SPACING["sm"],
+            relief="flat",
+            cursor="hand2",
+            command=lambda: self.app_state.advance_step(),
+        ).pack()
 
     def _handle_template_select(self, template_name: str, template_config: dict):
         """Handle template selection."""
-        self.app_state.state.set('template', template_name)
-        self.app_state.state.update({
-            'prompt_config': template_config.get('prompt', {}),
-            'filters': template_config.get('filters', {})
-        })
+        self.app_state.state.set("template", template_name)
+        self.app_state.state.update(
+            {
+                "prompt_config": template_config.get("prompt", {}),
+                "filters": template_config.get("filters", {}),
+            }
+        )
         self.toast_manager.success(f"Template '{template_name}' applied")
 
     def _handle_prompt_change(self, prompt_config: dict):
         """Handle prompt composer changes."""
-        self.app_state.state.set('prompt_config', prompt_config)
+        self.app_state.state.set("prompt_config", prompt_config)
 
     # ==================== STEP 2: REFINE ====================
 
     def _render_refine_step(self):
         """Render Refine Filters step."""
-        container = tk.Frame(self.content_area, bg='white')
-        container.pack(fill='both', expand=True, padx=SPACING['lg'], pady=SPACING['lg'])
+        # Create scrollable container
+        scroll_container = ModernScrollFrame(self.content_area, bg="white")
+        scroll_container.pack(fill="both", expand=True, padx=SPACING["lg"], pady=SPACING["lg"])
+
+        # Use scrollable_frame for content
+        container = scroll_container.scrollable_frame
 
         # Header
-        tk.Label(container, text="Refine Your Filters",
-                font=FONTS['h1'], bg='white', fg=COLORS['text']).pack(
-            anchor='w', pady=(0, SPACING['md']))
+        tk.Label(
+            container, text="Refine Your Filters", font=FONTS["h1"], bg="white", fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0, SPACING["md"]))
+
+        # Separator after header
+        BaseSeparator(container)
 
         # Facets Bar (active filters)
         facets_bar = FacetsBar(
             container,
-            active_facets=self.app_state.state.get('filters'),
-            on_change=self._handle_filters_change
+            active_facets=self.app_state.state.get("filters"),
+            on_change=self._handle_filters_change,
         )
-        facets_bar.pack(fill='x', pady=SPACING['md'])
+        facets_bar.pack(fill="x", pady=SPACING["md"])
+
+        # Separator between sections
+        BaseSeparator(container)
 
         # Results Slider
-        results_slider = ResultsSlider(
-            container,
-            on_change=self._handle_results_change
-        )
-        results_slider.pack(fill='x', pady=SPACING['md'])
+        results_slider = ResultsSlider(container, on_change=self._handle_results_change)
+        results_slider.pack(fill="x", pady=SPACING["md"])
+
+        # Separator between sections
+        BaseSeparator(container)
 
         # AI Optimization Toggle
-        ai_frame = tk.Frame(container, bg='white')
-        ai_frame.pack(fill='x', pady=SPACING['md'])
+        ai_frame = tk.Frame(container, bg="white")
+        ai_frame.pack(fill="x", pady=SPACING["md"])
 
-        self.ai_var = tk.BooleanVar(value=self.app_state.state.get('use_ai_optimization'))
-        tk.Checkbutton(ai_frame, text="Use AI Query Optimization (GPT-4)",
-                      variable=self.ai_var, font=FONTS['body'],
-                      bg='white', command=self._toggle_ai).pack(anchor='w')
+        self.ai_var = tk.BooleanVar(value=self.app_state.state.get("use_ai_optimization"))
+        tk.Checkbutton(
+            ai_frame,
+            text="Use AI Query Optimization (GPT-4)",
+            variable=self.ai_var,
+            font=FONTS["body"],
+            bg="white",
+            command=self._toggle_ai,
+        ).pack(anchor="w")
 
         # Credentials Manager Button
-        tk.Button(container, text="⚙️ Manage API Credentials",
-                 font=FONTS['body'], bg=COLORS['surface'], fg=COLORS['text'],
-                 relief='flat', cursor='hand2',
-                 command=self._show_credentials).pack(anchor='w', pady=SPACING['sm'])
+        tk.Button(
+            container,
+            text="⚙️ Manage API Credentials",
+            font=FONTS["body"],
+            bg=COLORS["surface"],
+            fg=COLORS["text"],
+            relief="flat",
+            cursor="hand2",
+            command=self._show_credentials,
+        ).pack(anchor="w", pady=SPACING["sm"])
 
         # Navigation
-        nav_frame = tk.Frame(container, bg='white')
-        nav_frame.pack(anchor='e', pady=SPACING['lg'])
+        nav_frame = tk.Frame(container, bg="white")
+        nav_frame.pack(anchor="e", pady=SPACING["lg"])
 
-        tk.Button(nav_frame, text="← Back",
-                 font=FONTS['body'], bg=COLORS['surface'], fg=COLORS['text'],
-                 padx=SPACING['md'], pady=SPACING['xs'],
-                 relief='flat', cursor='hand2',
-                 command=lambda: self.app_state.go_to_step(0)).pack(side='left', padx=SPACING['xs'])
+        tk.Button(
+            nav_frame,
+            text="← Back",
+            font=FONTS["body"],
+            bg=COLORS["surface"],
+            fg=COLORS["text"],
+            padx=SPACING["md"],
+            pady=SPACING["xs"],
+            relief="flat",
+            cursor="hand2",
+            command=lambda: self.app_state.go_to_step(0),
+        ).pack(side="left", padx=SPACING["xs"])
 
-        tk.Button(nav_frame, text="Next: Review →",
-                 font=FONTS['h3'], bg=COLORS['primary'], fg='white',
-                 padx=SPACING['lg'], pady=SPACING['sm'],
-                 relief='flat', cursor='hand2',
-                 command=lambda: self.app_state.advance_step()).pack(side='left')
+        tk.Button(
+            nav_frame,
+            text="Next: Review →",
+            font=FONTS["h3"],
+            bg=COLORS["primary"],
+            fg="white",
+            padx=SPACING["lg"],
+            pady=SPACING["sm"],
+            relief="flat",
+            cursor="hand2",
+            command=lambda: self.app_state.advance_step(),
+        ).pack(side="left")
 
     def _handle_filters_change(self, filters: dict):
         """Handle filter changes."""
-        current = self.app_state.state.get('filters')
+        current = self.app_state.state.get("filters")
         current.update(filters)
-        self.app_state.state.set('filters', current)
+        self.app_state.state.set("filters", current)
 
     def _handle_results_change(self, max_results: int):
         """Handle results slider change."""
-        filters = self.app_state.state.get('filters')
-        filters['max_results'] = max_results
-        self.app_state.state.set('filters', filters)
+        filters = self.app_state.state.get("filters")
+        filters["max_results"] = max_results
+        self.app_state.state.set("filters", filters)
 
     def _toggle_ai(self):
         """Toggle AI optimization."""
-        self.app_state.state.set('use_ai_optimization', self.ai_var.get())
+        self.app_state.state.set("use_ai_optimization", self.ai_var.get())
 
     def _show_credentials(self):
         """Show credentials manager dialog."""
@@ -287,7 +356,7 @@ class YouTubeResearchPlatform(tk.Tk):
 
     def _save_credentials(self, api_key: str):
         """Save API credentials."""
-        self.app_state.state.set('api_key', api_key)
+        self.app_state.state.set("api_key", api_key)
         Config().save_api_key(api_key)
         self.toast_manager.success("API key saved successfully")
 
@@ -295,140 +364,187 @@ class YouTubeResearchPlatform(tk.Tk):
 
     def _render_review_step(self):
         """Render Review Configuration step."""
-        container = tk.Frame(self.content_area, bg='white')
-        container.pack(fill='both', expand=True, padx=SPACING['lg'], pady=SPACING['lg'])
+        # Create scrollable container
+        scroll_container = ModernScrollFrame(self.content_area, bg="white")
+        scroll_container.pack(fill="both", expand=True, padx=SPACING["lg"], pady=SPACING["lg"])
+
+        # Use scrollable_frame for content
+        container = scroll_container.scrollable_frame
 
         # Header
-        tk.Label(container, text="Review Your Configuration",
-                font=FONTS['h1'], bg='white', fg=COLORS['text']).pack(
-            anchor='w', pady=(0, SPACING['md']))
+        tk.Label(
+            container,
+            text="Review Your Configuration",
+            font=FONTS["h1"],
+            bg="white",
+            fg=COLORS["text"],
+        ).pack(anchor="w", pady=(0, SPACING["md"]))
+
+        # Separator after header
+        BaseSeparator(container)
 
         # Review Sheet
-        review_sheet = ReviewSheet(
-            container,
-            config=self.app_state.export_current_config()
-        )
-        review_sheet.pack(fill='both', expand=True, pady=SPACING['md'])
+        review_sheet = ReviewSheet(container, config=self.app_state.export_current_config())
+        review_sheet.pack(fill="both", expand=True, pady=SPACING["md"])
 
         # Smart Suggestions (temporarily disabled - will integrate later)
         # TODO: Integrate SuggestionPanel properly
         pass
 
         # Navigation
-        nav_frame = tk.Frame(container, bg='white')
-        nav_frame.pack(anchor='e', pady=SPACING['lg'])
+        nav_frame = tk.Frame(container, bg="white")
+        nav_frame.pack(anchor="e", pady=SPACING["lg"])
 
-        tk.Button(nav_frame, text="← Back",
-                 font=FONTS['body'], bg=COLORS['surface'], fg=COLORS['text'],
-                 padx=SPACING['md'], pady=SPACING['xs'],
-                 relief='flat', cursor='hand2',
-                 command=lambda: self.app_state.go_to_step(1)).pack(side='left', padx=SPACING['xs'])
+        tk.Button(
+            nav_frame,
+            text="← Back",
+            font=FONTS["body"],
+            bg=COLORS["surface"],
+            fg=COLORS["text"],
+            padx=SPACING["md"],
+            pady=SPACING["xs"],
+            relief="flat",
+            cursor="hand2",
+            command=lambda: self.app_state.go_to_step(1),
+        ).pack(side="left", padx=SPACING["xs"])
 
-        tk.Button(nav_frame, text="Start Research →",
-                 font=FONTS['h3'], bg=COLORS['success'], fg='white',
-                 padx=SPACING['lg'], pady=SPACING['sm'],
-                 relief='flat', cursor='hand2',
-                 command=lambda: self.app_state.advance_step()).pack(side='left')
+        tk.Button(
+            nav_frame,
+            text="Start Research →",
+            font=FONTS["h3"],
+            bg=COLORS["success"],
+            fg="white",
+            padx=SPACING["lg"],
+            pady=SPACING["sm"],
+            relief="flat",
+            cursor="hand2",
+            command=lambda: self.app_state.advance_step(),
+        ).pack(side="left")
 
     # ==================== STEP 4: RUN ====================
 
     def _render_run_step(self):
         """Render Run Scraping step."""
-        container = tk.Frame(self.content_area, bg='white')
-        container.pack(fill='both', expand=True, padx=SPACING['lg'], pady=SPACING['lg'])
+        # Create scrollable container
+        scroll_container = ModernScrollFrame(self.content_area, bg="white")
+        scroll_container.pack(fill="both", expand=True, padx=SPACING["lg"], pady=SPACING["lg"])
+
+        # Use scrollable_frame for content
+        container = scroll_container.scrollable_frame
 
         # Header
-        tk.Label(container, text="Scraping In Progress",
-                font=FONTS['h1'], bg='white', fg=COLORS['text']).pack(
-            anchor='w', pady=(0, SPACING['md']))
+        tk.Label(
+            container, text="Scraping In Progress", font=FONTS["h1"], bg="white", fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0, SPACING["md"]))
+
+        # Separator after header
+        BaseSeparator(container)
 
         # Activity Log
         self.activity_log = ActivityLog(container)
-        self.activity_log.pack(fill='both', expand=True, pady=SPACING['md'])
+        self.activity_log.pack(fill="both", expand=True, pady=SPACING["md"])
 
         # Start scraping automatically
-        if not self.app_state.state.get('is_running'):
+        if not self.app_state.state.get("is_running"):
             self.after(500, self._run_scraper)
 
     def _run_scraper(self):
         """Execute the scraping operation."""
-        self.app_state.state.set('is_running', True)
-        self.activity_log.log("Starting research...", 'info')
+        self.app_state.state.set("is_running", True)
+        self.activity_log.log("Starting research...", "info")
 
         try:
             # Get configuration
             config = self.app_state.export_current_config()
-            query = config.get('prompt_config', {}).get('topic', '')
-            filters = config.get('filters', {})
+            query = config.get("prompt_config", {}).get("topic", "")
+            filters = config.get("filters", {})
 
             # Optimize query if AI enabled
-            if config.get('use_ai_optimization') and self.app_state.state.get('api_key'):
-                self.activity_log.log("Optimizing query with GPT-4...", 'info')
-                query = optimize_search_query(query, api_key=self.app_state.state.get('api_key'))
-                self.activity_log.log(f"Optimized query: {query}", 'success')
+            if config.get("use_ai_optimization") and self.app_state.state.get("api_key"):
+                self.activity_log.log("Optimizing query with GPT-4...", "info")
+                query = optimize_search_query(query, api_key=self.app_state.state.get("api_key"))
+                self.activity_log.log(f"Optimized query: {query}", "success")
 
             # Initialize scraper
             scraper = TranscriptScraper(
-                output_dir="./transcripts",
-                callback=lambda msg: self.activity_log.log(msg, 'info')
+                output_dir="./transcripts", callback=lambda msg: self.activity_log.log(msg, "info")
             )
 
             # Execute scraping
-            self.activity_log.log(f"Searching YouTube for: {query}", 'info')
+            self.activity_log.log(f"Searching YouTube for: {query}", "info")
             result = scraper.scrape(
-                query=query,
-                max_results=filters.get('max_results', 15),
-                filters=filters
+                query=query, max_results=filters.get("max_results", 15), filters=filters
             )
 
             # Store results
-            self.app_state.state.set('transcripts', result.get('files', []))
+            self.app_state.state.set("transcripts", result.get("files", []))
             self.activity_log.log(
-                f"✅ Complete! Saved {result.get('saved', 0)} transcripts",
-                'success'
+                f"✅ Complete! Saved {result.get('saved', 0)} transcripts", "success"
             )
 
             # Advance to export
-            self.app_state.state.set('is_running', False)
-            self.toast_manager.success(f"Research complete! {result.get('saved', 0)} transcripts saved")
+            self.app_state.state.set("is_running", False)
+            self.toast_manager.success(
+                f"Research complete! {result.get('saved', 0)} transcripts saved"
+            )
             self.app_state.advance_step()
 
         except Exception as e:
-            self.activity_log.log(f"❌ Error: {str(e)}", 'error')
-            self.app_state.state.set('is_running', False)
+            self.activity_log.log(f"❌ Error: {str(e)}", "error")
+            self.app_state.state.set("is_running", False)
             self.toast_manager.error(f"Scraping failed: {str(e)}")
 
     # ==================== STEP 5: EXPORT ====================
 
     def _render_export_step(self):
         """Render Export Results step."""
-        container = tk.Frame(self.content_area, bg='white')
-        container.pack(fill='both', expand=True, padx=SPACING['lg'], pady=SPACING['lg'])
+        # Create scrollable container
+        scroll_container = ModernScrollFrame(self.content_area, bg="white")
+        scroll_container.pack(fill="both", expand=True, padx=SPACING["lg"], pady=SPACING["lg"])
+
+        # Use scrollable_frame for content
+        container = scroll_container.scrollable_frame
 
         # Header
-        tk.Label(container, text="Export Your Results",
-                font=FONTS['h1'], bg='white', fg=COLORS['text']).pack(
-            anchor='w', pady=(0, SPACING['md']))
+        tk.Label(
+            container, text="Export Your Results", font=FONTS["h1"], bg="white", fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0, SPACING["md"]))
+
+        # Separator after header
+        BaseSeparator(container)
 
         # Results summary
-        transcripts = self.app_state.state.get('transcripts', [])
-        tk.Label(container, text=f"{len(transcripts)} transcripts ready for export",
-                font=FONTS['h2'], bg='white', fg=COLORS['text_secondary']).pack(
-            anchor='w', pady=SPACING['sm'])
+        transcripts = self.app_state.state.get("transcripts", [])
+        tk.Label(
+            container,
+            text=f"{len(transcripts)} transcripts ready for export",
+            font=FONTS["h2"],
+            bg="white",
+            fg=COLORS["text_secondary"],
+        ).pack(anchor="w", pady=SPACING["sm"])
+
+        # Separator between sections
+        BaseSeparator(container)
 
         # Export panel
         export_panel = ExportPanel(
-            container,
-            get_transcripts=lambda: self.app_state.state.get('transcripts', [])
+            container, get_transcripts=lambda: self.app_state.state.get("transcripts", [])
         )
-        export_panel.pack(fill='both', expand=True, pady=SPACING['md'])
+        export_panel.pack(fill="both", expand=True, pady=SPACING["md"])
 
         # New Research button
-        tk.Button(container, text="Start New Research",
-                 font=FONTS['h3'], bg=COLORS['primary'], fg='white',
-                 padx=SPACING['lg'], pady=SPACING['sm'],
-                 relief='flat', cursor='hand2',
-                 command=self._new_research).pack(pady=SPACING['lg'])
+        tk.Button(
+            container,
+            text="Start New Research",
+            font=FONTS["h3"],
+            bg=COLORS["primary"],
+            fg="white",
+            padx=SPACING["lg"],
+            pady=SPACING["sm"],
+            relief="flat",
+            cursor="hand2",
+            command=self._new_research,
+        ).pack(pady=SPACING["lg"])
 
     # ==================== HELPER METHODS ====================
 
@@ -440,9 +556,9 @@ class YouTubeResearchPlatform(tk.Tk):
     def _update_run_state(self, is_running: bool):
         """Update UI based on running state."""
         if is_running:
-            self.config(cursor='watch')
+            self.config(cursor="watch")
         else:
-            self.config(cursor='')
+            self.config(cursor="")
 
     def _export_config(self):
         """Export current configuration."""
@@ -453,6 +569,7 @@ class YouTubeResearchPlatform(tk.Tk):
     def _copy_config(self):
         """Copy configuration to clipboard."""
         import json
+
         config = self.app_state.export_current_config()
         self.clipboard_clear()
         self.clipboard_append(json.dumps(config, indent=2))
@@ -465,15 +582,17 @@ class YouTubeResearchPlatform(tk.Tk):
 
     def _new_research(self):
         """Start new research (reset state)."""
-        if messagebox.askyesno("New Research", "Start a new research project? Current progress will be reset."):
+        if messagebox.askyesno(
+            "New Research", "Start a new research project? Current progress will be reset."
+        ):
             self.app_state.state.reset()
             self.app_state.go_to_step(0)
             self.toast_manager.info("New research started")
 
     def _cancel_operation(self):
         """Cancel current operation."""
-        if self.app_state.state.get('is_running'):
-            self.app_state.state.set('is_running', False)
+        if self.app_state.state.get("is_running"):
+            self.app_state.state.set("is_running", False)
             self.toast_manager.warning("Operation cancelled")
 
     def _show_help(self):
@@ -483,13 +602,13 @@ class YouTubeResearchPlatform(tk.Tk):
 
     def _check_first_run(self):
         """Check if this is first run and show onboarding."""
-        config = self.app_state.config_manager.load_config('first_run_complete')
+        config = self.app_state.config_manager.load_config("first_run_complete")
         if not config:
-            OnboardingWizard(self, on_complete=self._complete_onboarding)
+            OnboardingBanner(self, on_try_sample=self._complete_onboarding)
 
     def _complete_onboarding(self):
         """Complete onboarding wizard."""
-        self.app_state.config_manager.save_config({'completed': True}, 'first_run_complete')
+        self.app_state.config_manager.save_config({"completed": True}, "first_run_complete")
         self.toast_manager.success("Welcome to YouTube Research Platform!")
 
 

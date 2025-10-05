@@ -1,9 +1,20 @@
 """UI components for the YouTube Research Platform."""
 
+# Base primitives (standardized styling)
+from .base import (
+    BaseButton,
+    BaseCard,
+    BaseEntry,
+    BaseLabel,
+    BaseCheckbox,
+    BaseSeparator,
+)
+from .modern_scroll import ModernScrollFrame, ModernScrollbar
+
 # Phase 1: Foundation & Design System
 from .wizard_rail import WizardRail
 from .live_preview import LivePreview
-from .onboarding import OnboardingWizard
+from .onboarding import OnboardingBanner
 from .template_card import TemplateCard, TemplateGrid
 
 # Phase 2: Intelligence & Interaction
@@ -25,7 +36,7 @@ from .accessibility import (
     KeyboardNavigationManager,
     SkipNavigation,
     AccessibleButton,
-    AccessibleEntry
+    AccessibleEntry,
 )
 from .empty_states import (
     EmptyState,
@@ -33,7 +44,7 @@ from .empty_states import (
     NoConfigState,
     NoTranscriptsState,
     NoAPIKeyState,
-    LoadingState
+    LoadingState,
 )
 from .error_states import (
     ErrorState,
@@ -42,7 +53,7 @@ from .error_states import (
     SearchError,
     TranscriptError,
     QuotaExceededError,
-    InlineErrorMessage
+    InlineErrorMessage,
 )
 from .toast_notifications import Toast, ToastManager
 
@@ -55,25 +66,66 @@ from .citation_generator import CitationGenerator, CitationPanel
 from .export_formats import ExportFormats, ExportPanel
 
 __all__ = [
+    # Base primitives
+    "BaseButton",
+    "BaseCard",
+    "BaseEntry",
+    "BaseLabel",
+    "BaseCheckbox",
+    "BaseSeparator",
+    "ModernScrollFrame",
+    "ModernScrollbar",
     # Phase 1
-    'WizardRail', 'LivePreview', 'OnboardingWizard', 'TemplateCard', 'TemplateGrid',
+    "WizardRail",
+    "LivePreview",
+    "OnboardingBanner",
+    "TemplateCard",
+    "TemplateGrid",
     # Phase 2
-    'PromptComposer', 'AITransparencyPanel', 'QueryTransformationView', 'CredentialsManager',
+    "PromptComposer",
+    "AITransparencyPanel",
+    "QueryTransformationView",
+    "CredentialsManager",
     # Phase 3
-    'FacetsBar', 'ResultsSlider', 'ReviewSheet', 'ActivityLog', 'ResultCard', 'ResultCardGrid',
+    "FacetsBar",
+    "ResultsSlider",
+    "ReviewSheet",
+    "ActivityLog",
+    "ResultCard",
+    "ResultCardGrid",
     # Phase 4
-    'AccessibilityHelper', 'KeyboardNavigationManager', 'SkipNavigation',
-    'AccessibleButton', 'AccessibleEntry',
-    'EmptyState', 'NoResultsState', 'NoConfigState', 'NoTranscriptsState',
-    'NoAPIKeyState', 'LoadingState',
-    'ErrorState', 'NetworkError', 'APIKeyError', 'SearchError',
-    'TranscriptError', 'QuotaExceededError', 'InlineErrorMessage',
-    'Toast', 'ToastManager',
+    "AccessibilityHelper",
+    "KeyboardNavigationManager",
+    "SkipNavigation",
+    "AccessibleButton",
+    "AccessibleEntry",
+    "EmptyState",
+    "NoResultsState",
+    "NoConfigState",
+    "NoTranscriptsState",
+    "NoAPIKeyState",
+    "LoadingState",
+    "ErrorState",
+    "NetworkError",
+    "APIKeyError",
+    "SearchError",
+    "TranscriptError",
+    "QuotaExceededError",
+    "InlineErrorMessage",
+    "Toast",
+    "ToastManager",
     # Phase 5
-    'OfflineCache', 'OfflineModePanel',
-    'DataPortability', 'DataPortabilityPanel',
-    'LearningLoop', 'LearningInsightsPanel', 'FeedbackWidget',
-    'SmartSuggestions', 'SuggestionPanel',
-    'CitationGenerator', 'CitationPanel',
-    'ExportFormats', 'ExportPanel',
+    "OfflineCache",
+    "OfflineModePanel",
+    "DataPortability",
+    "DataPortabilityPanel",
+    "LearningLoop",
+    "LearningInsightsPanel",
+    "FeedbackWidget",
+    "SmartSuggestions",
+    "SuggestionPanel",
+    "CitationGenerator",
+    "CitationPanel",
+    "ExportFormats",
+    "ExportPanel",
 ]

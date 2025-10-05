@@ -1,33 +1,30 @@
 """Toast notification system for user feedback."""
+
 import tkinter as tk
 from tkinter import ttk
 from typing import Literal
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from design_system import COLORS, FONTS, grid, SPACING
 
-ToastType = Literal['success', 'info', 'warning', 'error']
+ToastType = Literal["success", "info", "warning", "error"]
+
 
 class Toast(tk.Toplevel):
     """Individual toast notification."""
 
-    ICONS = {
-        'success': '✅',
-        'info': 'ℹ️',
-        'warning': '⚠️',
-        'error': '❌'
-    }
+    ICONS = {"success": "✅", "info": "ℹ️", "warning": "⚠️", "error": "❌"}
 
     COLORS_MAP = {
-        'success': COLORS['success'],
-        'info': COLORS['primary'],
-        'warning': COLORS['warning'],
-        'error': COLORS['error']
+        "success": COLORS["success"],
+        "info": COLORS["primary"],
+        "warning": COLORS["warning"],
+        "error": COLORS["error"],
     }
 
-    def __init__(self, parent, message: str, toast_type: ToastType = 'info',
-                 duration: int = 3000):
+    def __init__(self, parent, message: str, toast_type: ToastType = "info", duration: int = 3000):
         super().__init__(parent)
 
         self.message = message
@@ -42,37 +39,49 @@ class Toast(tk.Toplevel):
     def _setup_window(self):
         """Configure toast window."""
         self.overrideredirect(True)  # Remove window decorations
-        self.attributes('-topmost', True)  # Always on top
+        self.attributes("-topmost", True)  # Always on top
         self.configure(bg=self.COLORS_MAP[self.toast_type])
 
     def _build_ui(self):
         """Build toast UI."""
-        container = tk.Frame(self, bg=self.COLORS_MAP[self.toast_type],
-                            padx=SPACING['md'], pady=SPACING['sm'])
+        container = tk.Frame(
+            self, bg=self.COLORS_MAP[self.toast_type], padx=SPACING["md"], pady=SPACING["sm"]
+        )
         container.pack()
 
         # Icon
-        icon_label = tk.Label(container, text=self.ICONS[self.toast_type],
-                             font=('Segoe UI', 20),
-                             bg=self.COLORS_MAP[self.toast_type],
-                             fg='white')
-        icon_label.pack(side='left', padx=(0, SPACING['xs']))
+        icon_label = tk.Label(
+            container,
+            text=self.ICONS[self.toast_type],
+            font=("Segoe UI", 20),
+            bg=self.COLORS_MAP[self.toast_type],
+            fg="white",
+        )
+        icon_label.pack(side="left", padx=(0, SPACING["xs"]))
 
         # Message
-        message_label = tk.Label(container, text=self.message,
-                                font=FONTS['body'],
-                                bg=self.COLORS_MAP[self.toast_type],
-                                fg='white', wraplength=300,
-                                justify='left')
-        message_label.pack(side='left')
+        message_label = tk.Label(
+            container,
+            text=self.message,
+            font=FONTS["body"],
+            bg=self.COLORS_MAP[self.toast_type],
+            fg="white",
+            wraplength=300,
+            justify="left",
+        )
+        message_label.pack(side="left")
 
         # Close button
-        close_btn = tk.Label(container, text='✕',
-                            font=FONTS['body'],
-                            bg=self.COLORS_MAP[self.toast_type],
-                            fg='white', cursor='hand2')
-        close_btn.pack(side='right', padx=(SPACING['sm'], 0))
-        close_btn.bind('<Button-1>', lambda e: self.dismiss())
+        close_btn = tk.Label(
+            container,
+            text="✕",
+            font=FONTS["body"],
+            bg=self.COLORS_MAP[self.toast_type],
+            fg="white",
+            cursor="hand2",
+        )
+        close_btn.pack(side="right", padx=(SPACING["sm"], 0))
+        close_btn.bind("<Button-1>", lambda e: self.dismiss())
 
     def _position_toast(self):
         """Position toast in bottom-right corner."""
@@ -131,8 +140,7 @@ class ToastManager:
         self.active_toasts = []
         self.toast_offset = 0
 
-    def show(self, message: str, toast_type: ToastType = 'info',
-             duration: int = 3000):
+    def show(self, message: str, toast_type: ToastType = "info", duration: int = 3000):
         """Show a toast notification."""
         toast = Toast(self.parent, message, toast_type, duration)
         self.active_toasts.append(toast)
@@ -141,8 +149,7 @@ class ToastManager:
         self._reposition_toasts()
 
         # Remove from active list when dismissed
-        toast.bind('<Destroy>',
-                  lambda e: self._remove_toast(toast))
+        toast.bind("<Destroy>", lambda e: self._remove_toast(toast))
 
     def _reposition_toasts(self):
         """Reposition all active toasts."""
@@ -151,7 +158,7 @@ class ToastManager:
             if toast.winfo_exists():
                 # Get current position
                 current_geo = toast.geometry()
-                x_pos = int(current_geo.split('+')[1])
+                x_pos = int(current_geo.split("+")[1])
 
                 # New Y position with offset
                 screen_height = toast.winfo_screenheight()
@@ -168,19 +175,19 @@ class ToastManager:
 
     def success(self, message: str, duration: int = 3000):
         """Show success toast."""
-        self.show(message, 'success', duration)
+        self.show(message, "success", duration)
 
     def info(self, message: str, duration: int = 3000):
         """Show info toast."""
-        self.show(message, 'info', duration)
+        self.show(message, "info", duration)
 
     def warning(self, message: str, duration: int = 4000):
         """Show warning toast."""
-        self.show(message, 'warning', duration)
+        self.show(message, "warning", duration)
 
     def error(self, message: str, duration: int = 5000):
         """Show error toast."""
-        self.show(message, 'error', duration)
+        self.show(message, "error", duration)
 
     def clear_all(self):
         """Dismiss all active toasts."""
