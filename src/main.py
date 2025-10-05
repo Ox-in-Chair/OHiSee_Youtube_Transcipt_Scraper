@@ -14,7 +14,7 @@ import traceback
 from core.scraper_engine import TranscriptScraper
 from core.search_optimizer import optimize_search_query
 from utils.config import Config
-from utils.filters import UPLOAD_DATE_OPTIONS
+from utils.filters import UPLOAD_DATE_OPTIONS, SORT_BY_OPTIONS
 
 # Constants
 COLORS = {
@@ -49,9 +49,38 @@ class VideoResultItem:
         # Selection variable
         self.selected = tk.BooleanVar(value=True)  # Default: selected
 
-        # Checkbox with title
-        title_text = f"{index}. {video['title'][:60]}{'...' if len(video['title']) > 60 else ''}"
-        self.checkbox = ttk.Checkbutton(self.frame, text=title_text, variable=self.selected, command=self._on_toggle)
+        # Checkbox with title and metadata
+        title_text = f"{index}. {video['title'][:45]}{'...' if len(video['title']) > 45 else ''}"
+
+        # Add metadata inline with loading state handling
+        metadata_parts = []
+
+        # Duration handling
+        duration = video.get("duration", "Unknown")
+        if duration and duration != "Unknown":
+            metadata_parts.append(f"⏱ {duration}")
+
+        # Upload Date handling with loading states
+        upload_date = video.get("upload_date", "Loading...")
+        if upload_date == "Unknown":
+            metadata_parts.append("📅 Date unavailable")
+        elif upload_date == "Loading...":
+            metadata_parts.append("📅 Loading...")
+        elif upload_date and upload_date != "Unknown":
+            metadata_parts.append(f"📅 {upload_date}")
+
+        # Views handling
+        views = video.get("views", 0)
+        if views and views > 0:
+            views_formatted = f"{views:,}" if views < 1000000 else f"{views/1000000:.1f}M"
+            metadata_parts.append(f"👁 {views_formatted}")
+
+        if metadata_parts:
+            title_text += f"\n   {' • '.join(metadata_parts)}"
+
+        self.checkbox = ttk.Checkbutton(
+            self.frame, text=title_text, variable=self.selected, command=self._on_toggle
+        )
         self.checkbox.pack(side="left", fill="x", expand=True)
 
         # Info button
@@ -63,26 +92,69 @@ class VideoResultItem:
         self.callback()
 
     def _show_info(self):
-        """Show video information dialog."""
+        """Show video information dialog with enhanced metadata."""
         info_win = tk.Toplevel()
         info_win.title("Video Information")
-        info_win.geometry("500x200")
+        info_win.geometry("550x400")
         info_win.transient(info_win.master)
 
         # Title
-        ttk.Label(info_win, text="Title:", font=FONTS["heading"]).pack(anchor="w", padx=10, pady=(10, 0))
-        ttk.Label(info_win, text=self.video["title"], wraplength=480).pack(anchor="w", padx=20)
+        ttk.Label(info_win, text="Title:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
+        ttk.Label(info_win, text=self.video["title"], wraplength=530).pack(anchor="w", padx=20)
 
         # Channel
-        ttk.Label(info_win, text="Channel:", font=FONTS["heading"]).pack(anchor="w", padx=10, pady=(10, 0))
+        ttk.Label(info_win, text="Channel:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
         ttk.Label(info_win, text=self.video["channel"]).pack(anchor="w", padx=20)
 
+        # Uploader (if different from channel)
+        if self.video.get("uploader") and self.video.get("uploader") != self.video["channel"]:
+            ttk.Label(info_win, text="Uploader:", font=FONTS["heading"]).pack(
+                anchor="w", padx=10, pady=(10, 0)
+            )
+            ttk.Label(info_win, text=self.video["uploader"]).pack(anchor="w", padx=20)
+
+        # Upload Date
+        ttk.Label(info_win, text="Upload Date:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
+        ttk.Label(info_win, text=self.video.get("upload_date", "Unknown")).pack(anchor="w", padx=20)
+
+        # Duration
+        ttk.Label(info_win, text="Duration:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
+        ttk.Label(info_win, text=self.video.get("duration", "Unknown")).pack(anchor="w", padx=20)
+
+        # Views
+        ttk.Label(info_win, text="Views:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
+        views = self.video.get("views", 0)
+        views_text = f"{views:,}" if views else "Unknown"
+        ttk.Label(info_win, text=views_text).pack(anchor="w", padx=20)
+
         # URL
-        ttk.Label(info_win, text="URL:", font=FONTS["heading"]).pack(anchor="w", padx=10, pady=(10, 0))
+        ttk.Label(info_win, text="URL:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
         url_text = tk.Text(info_win, height=2, wrap="word")
         url_text.insert("1.0", self.video["url"])
         url_text.config(state="disabled")
         url_text.pack(anchor="w", padx=20, fill="x")
+
+        # Description (NEW - from backend enrichment)
+        if self.video.get("description"):
+            ttk.Label(info_win, text="Description:", font=FONTS["heading"]).pack(
+                anchor="w", padx=10, pady=(10, 0)
+            )
+            desc_text = tk.Text(info_win, height=4, wrap="word")
+            desc_text.insert("1.0", self.video["description"][:200])
+            desc_text.config(state="disabled")
+            desc_text.pack(anchor="w", padx=20, fill="x")
 
         # Close button
         ttk.Button(info_win, text="Close", command=info_win.destroy).pack(pady=10)
@@ -210,7 +282,19 @@ class MinimalScraperApp(tk.Tk):
             width=15,
             state="readonly",
         )
-        upload_date_combo.pack(side="left")
+        upload_date_combo.pack(side="left", padx=(0, 20))
+
+        # Sort by dropdown
+        ttk.Label(filters_row, text="Sort by:").pack(side="left", padx=(0, 5))
+        self.sort_by_var = tk.StringVar(value="Relevance")
+        sort_by_combo = ttk.Combobox(
+            filters_row,
+            textvariable=self.sort_by_var,
+            values=list(SORT_BY_OPTIONS.keys()),
+            width=20,
+            state="readonly",
+        )
+        sort_by_combo.pack(side="left")
 
         # AI optimization row
         ai_row = tk.Frame(search_frame, bg=COLORS["bg"])
@@ -223,6 +307,28 @@ class MinimalScraperApp(tk.Tk):
             variable=self.ai_toggle_var,
         )
         self.ai_checkbox.pack(side="left")
+
+        # Optimization log panel
+        opt_log_frame = tk.LabelFrame(
+            search_frame,
+            text="Search Optimization Log",
+            font=FONTS["body"],
+            bg=COLORS["bg"],
+            relief="solid",
+            borderwidth=1,
+        )
+        opt_log_frame.pack(fill="x", pady=5)
+
+        self.opt_log_text = tk.Text(
+            opt_log_frame,
+            height=4,
+            wrap="word",
+            font=FONTS["small"],
+            bg="#F8F9FA",
+            relief="flat",
+            state="disabled",
+        )
+        self.opt_log_text.pack(fill="both", expand=True, padx=5, pady=5)
 
     def _build_results_panel(self):
         """Build scrollable results panel."""
@@ -247,7 +353,9 @@ class MinimalScraperApp(tk.Tk):
         self.results_container = tk.Frame(canvas, bg="white")
 
         # Configure scrolling
-        self.results_container.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        self.results_container.bind(
+            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
 
         canvas.create_window((0, 0), window=self.results_container, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
@@ -269,11 +377,15 @@ class MinimalScraperApp(tk.Tk):
 
         # Progress bar
         self.progress_var = tk.DoubleVar(value=0)
-        self.progress_bar = ttk.Progressbar(progress_frame, variable=self.progress_var, maximum=100, mode="determinate")
+        self.progress_bar = ttk.Progressbar(
+            progress_frame, variable=self.progress_var, maximum=100, mode="determinate"
+        )
         self.progress_bar.pack(fill="x", pady=2)
 
         # Status label
-        self.status_label = ttk.Label(progress_frame, text="Ready", font=FONTS["small"], foreground=COLORS["secondary"])
+        self.status_label = ttk.Label(
+            progress_frame, text="Ready", font=FONTS["small"], foreground=COLORS["secondary"]
+        )
         self.status_label.pack(anchor="w")
 
     def _build_action_buttons(self):
@@ -302,6 +414,59 @@ class MinimalScraperApp(tk.Tk):
         """Load settings from config."""
         # API key is loaded on-demand when needed
 
+    def _update_optimization_log(
+        self,
+        original,
+        optimized,
+        tier_info,
+        result_count,
+        original_count=None,
+        optimized_count=None,
+    ):
+        """
+        Update the optimization log display with A/B comparison.
+
+        Args:
+            original: Original user query
+            optimized: AI-optimized query (may be same as original)
+            tier_info: Multi-tier search status message
+            result_count: Final number of results returned
+            original_count: Optional count from original query search (for A/B comparison)
+            optimized_count: Optional count from optimized query search (for A/B comparison)
+        """
+        self.opt_log_text.config(state="normal")
+        self.opt_log_text.delete(1.0, tk.END)
+
+        log_text = f'Original Query: "{original}"\n'
+
+        if optimized and optimized != original:
+            log_text += f'Optimized Query: "{optimized}"\n'
+
+            # A/B comparison if both counts available
+            if original_count is not None and optimized_count is not None:
+                if optimized_count > original_count * 1.1:  # +10% improvement
+                    improvement = ((optimized_count - original_count) / original_count) * 100
+                    log_text += (
+                        f"✓ Optimization HELPED: +{improvement:.0f}% more results "
+                        f"({original_count} → {optimized_count})\n"
+                    )
+                elif optimized_count < original_count * 0.8:  # -20% degradation
+                    degradation = ((original_count - optimized_count) / original_count) * 100
+                    log_text += (
+                        f"⚠ Optimization REDUCED results: -{degradation:.0f}% fewer "
+                        f"({original_count} → {optimized_count})\n"
+                    )
+                else:
+                    log_text += f"≈ Similar results: {original_count} → {optimized_count}\n"
+        else:
+            log_text += "No optimization applied (query already optimal)\n"
+
+        log_text += f"{tier_info}\n"
+        log_text += f"Results Found: {result_count} videos"
+
+        self.opt_log_text.insert(1.0, log_text)
+        self.opt_log_text.config(state="disabled")
+
     def _open_settings(self):
         """Open settings dialog."""
         dialog = tk.Toplevel(self)
@@ -314,7 +479,9 @@ class MinimalScraperApp(tk.Tk):
         api_frame = tk.LabelFrame(dialog, text="OpenAI API Key", padx=10, pady=10)
         api_frame.pack(fill="x", padx=15, pady=10)
 
-        ttk.Label(api_frame, text="Required for AI-powered query optimization (GPT-4):").pack(anchor="w")
+        ttk.Label(api_frame, text="Required for AI-powered query optimization (GPT-4):").pack(
+            anchor="w"
+        )
 
         api_key_entry = ttk.Entry(api_frame, width=50, show="*")
         current_key = self.config_manager.load_api_key()
@@ -421,19 +588,36 @@ class MinimalScraperApp(tk.Tk):
             # Search via TranscriptScraper
             self.after(0, self._update_status, "Searching videos...")
 
-            self.scraper = TranscriptScraper(callback=lambda msg: self.after(0, self._log_message, msg))
+            self.scraper = TranscriptScraper(
+                callback=lambda msg: self.after(0, self._log_message, msg)
+            )
 
-            # Build filters
+            # Build filters with sort_by from GUI
             upload_date_label = self.upload_date_var.get()
             upload_date_value = UPLOAD_DATE_OPTIONS.get(upload_date_label, "any")
 
-            filters = {"upload_date": upload_date_value, "sort_by": "relevance"}
+            # Map GUI sort label to backend value
+            sort_label = self.sort_by_var.get()
+            sort_by_value = SORT_BY_OPTIONS.get(sort_label, "relevance")
+
+            filters = {"upload_date": upload_date_value, "sort_by": sort_by_value}
 
             max_results = int(self.max_results_var.get())
 
             # Multi-tier search with fallback to original query
             results = self.scraper.search_videos(
                 final_query, max_results=max_results, filters=filters, original_query=original_query
+            )
+
+            # Update optimization log with tier info from backend
+            tier_info = "Search completed with multi-tier fallback strategy"
+            self.after(
+                0,
+                self._update_optimization_log,
+                original_query,
+                final_query,
+                tier_info,
+                len(results),
             )
 
             # Update UI on main thread
@@ -579,7 +763,11 @@ class MinimalScraperApp(tk.Tk):
 
             # Complete
             self.after(0, self._update_progress, 100, "Download complete!")
-            message = f"Saved {saved} transcripts\n" f"Skipped {skipped} videos\n\n" f"Files saved to: {output_dir}"
+            message = (
+                f"Saved {saved} transcripts\n"
+                f"Skipped {skipped} videos\n\n"
+                f"Files saved to: {output_dir}"
+            )
             self.after(0, messagebox.showinfo, "Download Complete", message)
 
         finally:
@@ -606,7 +794,9 @@ class MinimalScraperApp(tk.Tk):
         # Use download logic with all videos
         all_videos = [item.get_video() for item in self.result_items]
 
-        if messagebox.askyesno("Export All", f"This will download {len(all_videos)} transcripts. Continue?"):
+        if messagebox.askyesno(
+            "Export All", f"This will download {len(all_videos)} transcripts. Continue?"
+        ):
             # Select all items
             for item in self.result_items:
                 item.selected.set(True)
@@ -626,8 +816,18 @@ class MinimalScraperApp(tk.Tk):
 
     def _log_message(self, message):
         """Log a message to status (could be expanded to a log window)."""
-        print(f"[LOG] {message}")
-        # For now, just print to console
+        try:
+            print(f"[LOG] {message}")
+        except UnicodeEncodeError:
+            # Windows console (cp1252) can't handle Unicode emoji, use ASCII alternatives
+            ascii_message = (
+                message.replace("✓", "[OK]")
+                .replace("⚠", "[WARN]")
+                .replace("⊘", "[SKIP]")
+                .replace("⊗", "[ERROR]")
+                .replace("→", "->")
+            )
+            print(f"[LOG] {ascii_message}")
 
 
 def main():

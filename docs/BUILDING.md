@@ -13,7 +13,7 @@
 
 ```bash
 # Navigate to project folder
-cd "C:\Users\mike\OHiSee\OHiSee_Youtube_Transcipt Scraper"
+cd "path/to/OHiSee_Youtube_Transcipt_Scraper"
 
 # Run build script
 python scripts/build.py
@@ -87,7 +87,7 @@ The built .exe is **portable** and can be distributed to any Windows PC:
 
 **IMPORTANT**: Keep the project directory separate from the installed program.
 
-**Project Directory** (`C:\Users\mike\OHiSee\OHiSee_Youtube_Transcipt_Scraper\`):
+**Project Directory** (wherever you cloned the repository):
 - ✅ Keep for development and future code changes
 - Contains: source code, git repository, build scripts
 - Do NOT run the program from here daily
@@ -103,14 +103,13 @@ After modifying any source code, follow this workflow:
 
 ```bash
 # 1. Navigate to project directory
-cd "C:\Users\mike\OHiSee\OHiSee_Youtube_Transcipt Scraper"
+cd "path/to/OHiSee_Youtube_Transcipt_Scraper"
 
 # 2. Test changes locally
-python src/scraper_gui.py
+python src/main.py
 
-# 3. Verify line count constraint (must be ≤400)
-wc -l src/scraper_core.py src/scraper_gui.py src/filters.py src/search_optimizer.py
-# Should output: 394 total (or less than 400)
+# 3. Run tests
+python -m pytest tests/ -v
 
 # 4. Stage and commit changes
 git add .

@@ -29,9 +29,76 @@ class TranscriptScraper:
 
     def sanitize_filename(self, text, max_len=80):
         return (
-            re.sub(r"\s+", "_", re.sub(r'[\\/*?:"<>|]', "", re.sub(r"[\r\n]+", " ", text).strip()))[:max_len]
+            re.sub(r"\s+", "_", re.sub(r'[\\/*?:"<>|]', "", re.sub(r"[\r\n]+", " ", text).strip()))[
+                :max_len
+            ]
             or "untitled"
         )
+
+    def _format_date(self, date_str):
+        """Convert YYYYMMDD to YYYY-MM-DD."""
+        if not date_str or not isinstance(date_str, str) or len(date_str) != 8:
+            return "Unknown"
+        try:
+            return f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}"
+        except Exception:
+            return "Unknown"
+
+    def _format_duration(self, seconds):
+        """Convert seconds to HH:MM:SS."""
+        if not seconds:
+            return "Unknown"
+        try:
+            h, remainder = divmod(int(seconds), 3600)
+            m, s = divmod(remainder, 60)
+            if h > 0:
+                return f"{h:02d}:{m:02d}:{s:02d}"
+            else:
+                return f"{m:02d}:{s:02d}"
+        except Exception:
+            return "Unknown"
+
+    def _fetch_full_metadata(self, video_id):
+        """
+        Fetch complete metadata for a single video using yt-dlp with extract_flat=False.
+
+        Args:
+            video_id: YouTube video ID
+
+        Returns:
+            Dict with enriched metadata: upload_date, duration, views, uploader, description
+            Returns dict with "Unknown" values if extraction fails
+        """
+        ydl_opts = {
+            "quiet": True,
+            "no_warnings": True,
+            "extract_flat": False,  # Get full metadata
+            "socket_timeout": 60,
+        }
+
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(
+                    f"https://www.youtube.com/watch?v={video_id}", download=False
+                )
+
+                return {
+                    "upload_date": self._format_date(info.get("upload_date")),
+                    "duration": self._format_duration(info.get("duration")),
+                    "views": info.get("view_count", 0),
+                    "uploader": info.get("uploader", "Unknown"),
+                    "description": info.get("description", "")[:200],  # First 200 chars
+                }
+
+        except Exception as e:
+            self._log(f"⚠ Failed to fetch metadata for video {video_id}: {str(e)}")
+            return {
+                "upload_date": "Unknown",
+                "duration": "Unknown",
+                "views": 0,
+                "uploader": "Unknown",
+                "description": "",
+            }
 
     def _attempt_search(self, query, max_results, filters):
         """
@@ -46,11 +113,29 @@ class TranscriptScraper:
             List of video dicts with keys: id, title, channel, url
         """
         ydl_opts = {"quiet": True, "no_warnings": True, "extract_flat": True, "socket_timeout": 60}
-        if filters and filters.get("sort_by") and filters["sort_by"] != "relevance":
-            ydl_opts["playlistsort"] = filters["sort_by"]
+
+        # Build search prefix with sort option
+        # yt-dlp YouTube search supports: ytsearch, ytsearchdate (newest first)
+        # Map our sort options to yt-dlp search prefixes
+        sort_by = filters.get("sort_by", "relevance") if filters else "relevance"
+
+        # Map sort options to YouTube search parameters
+        search_prefix_map = {
+            "relevance": "ytsearch",  # Default relevance
+            "upload_date": "ytsearchdate",  # Newest first
+            "date": "ytsearchdate",  # Alias for upload_date
+            "view_count": "ytsearch",  # Note: yt-dlp doesn't directly support view count sort
+            "views": "ytsearch",  # Alias for view_count
+            "rating": "ytsearch",  # Note: yt-dlp doesn't directly support rating sort
+        }
+
+        search_prefix = search_prefix_map.get(sort_by, "ytsearch")
+
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                result = ydl.extract_info(f"ytsearch{max_results*3}:{query}", download=False)
+                # Use appropriate search prefix based on sort option
+                search_query = f"{search_prefix}{max_results*3}:{query}"
+                result = ydl.extract_info(search_query, download=False)
                 videos = []
                 cutoff_date = (
                     datetime.now() - timedelta(days=filters["upload_date"])
@@ -73,9 +158,22 @@ class TranscriptScraper:
                                     "id": entry.get("id"),
                                     "title": entry.get("title", "Unknown"),
                                     "channel": entry.get("uploader", "Unknown"),
-                                    "url": entry.get("url") or f"https://www.youtube.com/watch?v={entry.get('id')}",
+                                    "uploader": entry.get("uploader", "Unknown"),
+                                    "upload_date": self._format_date(entry.get("upload_date")),
+                                    "duration": self._format_duration(entry.get("duration")),
+                                    "views": entry.get("view_count", 0),
+                                    "url": entry.get("url")
+                                    or f"https://www.youtube.com/watch?v={entry.get('id')}",
                                 }
                             )
+
+                # For view_count and rating sorting (not natively supported by yt-dlp search),
+                # we sort the results after retrieval
+                if sort_by in ["view_count", "views"] and videos:
+                    # We'll need full metadata for accurate view count sorting
+                    # For now, we sort by what we have (which will be enriched later)
+                    pass  # Sorting will be applied after metadata enrichment
+
                 return videos
         except Exception as e:
             self._log(f"⚠ Search attempt failed: {str(e)}")
@@ -97,15 +195,19 @@ class TranscriptScraper:
             original_query: Original user query before AI optimization (optional)
 
         Returns:
-            List of video dicts, using best tier that meets/exceeds max_results
+            List of video dicts with enriched metadata, using best tier that meets/exceeds max_results
         """
+        # Extract sort_by for post-enrichment sorting
+        sort_by = filters.get("sort_by") if filters else None
+
         # TIER 1: Optimized query with all filters
         self._log(f"[Tier 1] Searching with optimized query: '{query}'")
         results = self._attempt_search(query, max_results, filters)
 
         if len(results) >= max_results:
             self._log(f"✓ Tier 1 successful: {len(results)} results")
-            return results
+            # Enrich with full metadata before returning
+            return self._enrich_results_with_metadata(results, sort_by=sort_by)
 
         # TIER 2: Fallback to original unoptimized query
         if original_query and original_query != query:
@@ -115,7 +217,7 @@ class TranscriptScraper:
 
             if len(results_tier2) > len(results):
                 self._log(f"✓ Tier 2 successful: {len(results_tier2)} results (better than Tier 1)")
-                return results_tier2
+                return self._enrich_results_with_metadata(results_tier2, sort_by=sort_by)
 
         # TIER 3: Relax upload_date filter (if currently restricted)
         if filters and filters.get("upload_date") != "any":
@@ -126,7 +228,7 @@ class TranscriptScraper:
 
             if len(results_tier3) > len(results):
                 self._log(f"✓ Tier 3 successful: {len(results_tier3)} results")
-                return results_tier3
+                return self._enrich_results_with_metadata(results_tier3, sort_by=sort_by)
 
         # TIER 4: GPT-4 synonym expansion (if API key configured)
         broader_query = self._get_synonym_expansion(query)
@@ -137,10 +239,58 @@ class TranscriptScraper:
 
             if len(results_tier4) > len(results):
                 self._log(f"✓ Tier 4 successful: {len(results_tier4)} results")
-                return results_tier4
+                return self._enrich_results_with_metadata(results_tier4, sort_by=sort_by)
 
         # Return best attempt (even if below target or 0 results)
         self._log(f"⚠ All tiers exhausted. Returning {len(results)} results.")
+        return self._enrich_results_with_metadata(results, sort_by=sort_by)
+
+    def _enrich_results_with_metadata(self, results, sort_by=None):
+        """
+        Enrich video results with full metadata (upload_date, duration, views, etc.).
+
+        Uses two-phase extraction:
+        - Phase 1: Fast flat search (already done, returns basic info)
+        - Phase 2: Fetch full metadata for each video (this method)
+
+        Args:
+            results: List of video dicts from flat extraction (contains id, title, url)
+            sort_by: Optional sort option to apply after metadata enrichment
+
+        Returns:
+            List of video dicts enriched with complete metadata, sorted if requested
+        """
+        if not results:
+            return results
+
+        self._log(f"Fetching full metadata for {len(results)} videos...")
+
+        for i, video in enumerate(results, 1):
+            try:
+                self._log(f"  [{i}/{len(results)}] {video.get('title', 'Unknown')[:50]}...")
+                full_metadata = self._fetch_full_metadata(video["id"])
+
+                # Update video dict with enriched metadata
+                video.update(full_metadata)
+
+            except Exception as e:
+                self._log(f"  ⚠ Failed to enrich video {i}: {str(e)}")
+                # Keep existing values from flat extraction (likely "Unknown")
+                continue
+
+        self._log("✓ Metadata enrichment complete")
+
+        # Apply post-enrichment sorting for view_count and rating
+        # (yt-dlp doesn't support these natively in search)
+        if sort_by in ["view_count", "views"]:
+            self._log("Sorting by view count (descending)...")
+            results.sort(key=lambda x: x.get("views", 0), reverse=True)
+        elif sort_by == "rating":
+            # Note: YouTube deprecated public like/dislike ratios
+            # We'll sort by view count as a proxy for popularity/rating
+            self._log("Sorting by rating (using views as proxy)...")
+            results.sort(key=lambda x: x.get("views", 0), reverse=True)
+
         return results
 
     def _get_synonym_expansion(self, query):
@@ -174,7 +324,9 @@ class TranscriptScraper:
         opts.add_argument("--no-sandbox")
         opts.add_argument("--disable-dev-shm-usage")
         opts.add_experimental_option("excludeSwitches", ["enable-automation"])
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
+        self.driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=opts
+        )
         self.driver.scopes = [".*youtube.*"]
 
     def get_transcript(self, video_id):
@@ -224,9 +376,13 @@ class TranscriptScraper:
                 max_scrolls = 20  # Prevent infinite loop
                 scroll_count = 0
                 while scroll_count < max_scrolls:
-                    self.driver.execute_script("arguments[0].scrollTo(0, arguments[0].scrollHeight);", container)
+                    self.driver.execute_script(
+                        "arguments[0].scrollTo(0, arguments[0].scrollHeight);", container
+                    )
                     sleep(0.5)
-                    new_height = self.driver.execute_script("return arguments[0].scrollHeight", container)
+                    new_height = self.driver.execute_script(
+                        "return arguments[0].scrollHeight", container
+                    )
                     if new_height == last_height:
                         break  # No more content to load
                     last_height = new_height
@@ -236,7 +392,9 @@ class TranscriptScraper:
                 pass
 
             # Now grab ALL segments (fully loaded)
-            segs = self.driver.find_elements(By.CSS_SELECTOR, "ytd-transcript-segment-renderer .segment-text")
+            segs = self.driver.find_elements(
+                By.CSS_SELECTOR, "ytd-transcript-segment-renderer .segment-text"
+            )
             if not segs:
                 return None
             return " ".join([s.text.strip() for s in segs if s.text.strip()]).strip()
@@ -258,14 +416,19 @@ class TranscriptScraper:
         if curr:
             paras.append(" ".join(curr))
 
-        # Build markdown content
-        scraped_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+        # Build markdown content with enhanced metadata
+        scraped_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         content = (
             f"# {video['title']}\n\n"
             f"## Video Information\n"
             f"- **Channel**: {video['channel']}\n"
+            f"- **Uploader**: {video.get('uploader', 'Unknown')}\n"
+            f"- **Upload Date**: {video.get('upload_date', 'Unknown')}\n"
+            f"- **Duration**: {video.get('duration', 'Unknown')}\n"
+            f"- **Views**: {video.get('views', 0):,}\n"
             f"- **URL**: {video['url']}\n"
             f"- **Scraped**: {scraped_time}\n\n"
+            f"---\n\n"
             f"## Transcript\n\n"
             f"{chr(10).join(paras)}\n"
         )

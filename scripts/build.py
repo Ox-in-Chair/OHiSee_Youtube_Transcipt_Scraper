@@ -16,7 +16,7 @@ print(f"Entry point: {root / 'src' / 'main.py'}")
 print(f"Output directory: {root / 'dist'}")
 
 # Verify entry point exists
-entry_point = root / 'src' / 'main.py'
+entry_point = root / "src" / "main.py"
 if not entry_point.exists():
     print(f"\n[ERROR] Entry point not found: {entry_point}")
     sys.exit(1)
@@ -26,22 +26,22 @@ print(f"\n[OK] Entry point verified: {entry_point}")
 # PyInstaller configuration
 args = [
     str(entry_point),
-    '--onefile',
-    '--windowed',
-    '--name=YouTubeTranscriptScraper',
+    "--onefile",
+    "--windowed",
+    "--name=YouTubeTranscriptScraper",
     f'--distpath={root / "dist"}',
     f'--workpath={root / "build"}',
-    f'--specpath={root}',
+    f"--specpath={root}",
     f'--add-data={root / "src" / "utils" / "filters.py"};utils',
-    '--hidden-import=seleniumwire',
-    '--hidden-import=seleniumwire.undetected_chromedriver',
-    '--hidden-import=yt_dlp',
-    '--hidden-import=yt_dlp.utils',
-    '--hidden-import=openai',
-    '--collect-all=seleniumwire',
-    '--collect-all=yt_dlp',
-    '--clean',
-    '--noconfirm',
+    "--hidden-import=seleniumwire",
+    "--hidden-import=seleniumwire.undetected_chromedriver",
+    "--hidden-import=yt_dlp",
+    "--hidden-import=yt_dlp.utils",
+    "--hidden-import=openai",
+    "--collect-all=seleniumwire",
+    "--collect-all=yt_dlp",
+    "--clean",
+    "--noconfirm",
 ]
 
 print("\n" + "=" * 70)
@@ -53,7 +53,7 @@ print("\nThis may take 5-10 minutes...\n")
 try:
     PyInstaller.__main__.run(args)
 
-    exe_path = root / 'dist' / 'YouTubeTranscriptScraper.exe'
+    exe_path = root / "dist" / "YouTubeTranscriptScraper.exe"
     if exe_path.exists():
         size_mb = exe_path.stat().st_size / (1024 * 1024)
         print("\n" + "=" * 70)

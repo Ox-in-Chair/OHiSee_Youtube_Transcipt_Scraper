@@ -28,6 +28,6 @@ class Config:
             try:
                 with open(self.config_file, "r") as f:
                     return json.load(f)
-            except:
+            except (json.JSONDecodeError, IOError):
                 return {}
         return {}

@@ -21,11 +21,19 @@ wheels/
 .installed.cfg
 *.egg
 
+# Testing
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
 # PyInstaller build artifacts
 build/
 dist/
 *.manifest
-# NOTE: YouTubeTranscriptScraper.spec is kept (needed for builds)
+*.spec
 
 # Output directories
 transcripts/
@@ -38,6 +46,7 @@ output/
 *.swo
 *~
 .cursor/
+.claude/
 
 # OS
 .DS_Store
@@ -58,6 +67,7 @@ token.pickle
 *.key
 *.pem
 *_secret.json
+~/.youtube_scraper_config.json
 
 # Chrome driver cache
 webdriver_manager/
@@ -66,3 +76,9 @@ webdriver_manager/
 *.tmp
 *.bak
 ~*
+
+# Documentation - Internal only
+docs/project_history/
+docs/architecture/
+*_SUMMARY.md
+*_PLAN*.md

@@ -27,7 +27,7 @@ python scripts/build.py
 
 ## Core Features
 
-### Multi-Tier Search Fallback (NEW)
+### Multi-Tier Search Fallback
 
 Prevents zero-result failures from over-optimized queries:
 
@@ -38,26 +38,58 @@ Prevents zero-result failures from over-optimized queries:
 
 Transparent logging shows which tier succeeded. Fully backward compatible.
 
+### Enhanced Video Metadata (NEW)
+
+**Displayed inline in results**:
+- ⏱ Duration (HH:MM:SS format)
+- 📅 Upload Date (YYYY-MM-DD)
+- 👁 View Count (formatted, e.g., "1.2M")
+
+**Included in MD files**:
+```markdown
+## Video Information
+- **Channel**: [Channel Name]
+- **Uploader**: [Uploader Name]
+- **Upload Date**: YYYY-MM-DD
+- **Duration**: HH:MM:SS
+- **Views**: 123,456
+- **URL**: https://youtube.com/watch?v=[ID]
+- **Scraped**: YYYY-MM-DD HH:MM:SS
+```
+
+### Search Optimization Log (NEW)
+
+**Visible in GUI** - Shows AI optimization comparison:
+```
+Original Query: "workflow automation BRCGS manufacturing"
+Optimized Query: "workflow automation manufacturing BRCGS compliance"
+Search completed with multi-tier fallback strategy
+Results Found: 12 videos
+```
+
+Helps users understand what changes AI made and assess search effectiveness.
+
 ### Three-Panel GUI
 
-- **Search Panel**: Query input, filters (date, sort, max results), GPT-4 toggle
-- **Results Panel**: Video checkboxes (select which to download)
+- **Search Panel**: Query input, filters (date, sort, max results), GPT-4 toggle, optimization log
+- **Results Panel**: Video checkboxes with inline metadata (duration, date, views)
 - **Status Panel**: Progress tracking, download controls
 
 ## Architecture
 
-### Code Structure (1,254 Total Lines)
+### Code Structure (1,343 Total Lines)
 
 ```
 src/app.py:                   27 lines  # Entry point
-src/main.py:                 675 lines  # GUI application
-src/core/scraper_engine.py:  303 lines  # Multi-tier search + extraction
+src/main.py:                 723 lines  # GUI application (enhanced metadata display)
+src/core/scraper_engine.py:  332 lines  # Multi-tier search + enhanced metadata
 src/core/search_optimizer.py: 101 lines  # GPT-4 query optimization
 src/utils/config.py:           33 lines  # API key persistence
 src/utils/filters.py:          69 lines  # Filter configurations
 src/utils/prompts.py:          89 lines  # GPT-4 system prompts
+tests/test_token_efficiency.py: 278 lines # Token efficiency validation
 ────────────────────────────────────────
-TOTAL:                      1,254 lines
+TOTAL:                      1,652 lines (core: 1,374 lines)
 ```
 
 **Design Principle**: Minimalism with reliability - only what works, enhanced for production.
@@ -83,7 +115,7 @@ TOTAL:                      1,254 lines
 
 4. **Markdown Output**:
    - Saves to `[OutputPath]/[Title]_[Channel]_[Date].md`
-   - Includes metadata header (channel, URL, scrape date)
+   - Includes enhanced metadata header (channel, uploader, upload date, duration, views, URL, scrape timestamp)
    - Clean paragraph formatting (groups of 5 sentences)
 
 ## Key Implementation Details

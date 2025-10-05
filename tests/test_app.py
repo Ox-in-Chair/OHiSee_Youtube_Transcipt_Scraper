@@ -6,7 +6,8 @@ import os
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 
 def test_imports():
     """Test that all imports work correctly."""
@@ -16,6 +17,7 @@ def test_imports():
         from core.scraper_engine import TranscriptScraper
         from core.search_optimizer import optimize_search_query
         from utils.config import Config
+
         print("[PASS] All imports successful")
         return True
     except ImportError as e:
@@ -58,7 +60,9 @@ def test_scraper_search():
         scraper = TranscriptScraper(callback=print)
 
         # Simple search test
-        results = scraper.search_videos("Python tutorial", max_results=5, filters={'upload_date': 'any'})
+        results = scraper.search_videos(
+            "Python tutorial", max_results=5, filters={"upload_date": "any"}
+        )
 
         if results and len(results) > 0:
             print(f"[PASS] Search returned {len(results)} results")
@@ -71,6 +75,7 @@ def test_scraper_search():
     except Exception as e:
         print(f"[FAIL] Search test failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -130,10 +135,10 @@ def test_app_initialization():
         app.withdraw()
 
         # Check key components exist
-        assert hasattr(app, 'query_entry'), "Missing query_entry"
-        assert hasattr(app, 'search_btn'), "Missing search_btn"
-        assert hasattr(app, 'results_container'), "Missing results_container"
-        assert hasattr(app, 'download_btn'), "Missing download_btn"
+        assert hasattr(app, "query_entry"), "Missing query_entry"
+        assert hasattr(app, "search_btn"), "Missing search_btn"
+        assert hasattr(app, "results_container"), "Missing results_container"
+        assert hasattr(app, "download_btn"), "Missing download_btn"
 
         app.destroy()
 
@@ -143,6 +148,7 @@ def test_app_initialization():
     except Exception as e:
         print(f"[FAIL] App initialization failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -189,6 +195,6 @@ def run_all_tests():
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit_code = run_all_tests()
     sys.exit(exit_code)

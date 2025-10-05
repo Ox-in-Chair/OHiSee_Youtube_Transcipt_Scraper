@@ -74,8 +74,8 @@ Enter natural language description like:
 Query: "surfing tutorials for beginners"
 Filters: Upload=This month, Sort=Rating
 Folder: Surfing
-Path: C:\Users\mike\Videos\
-→ Saves to: C:\Users\mike\Videos\Surfing\
+Path: C:\Users\YourName\Videos\
+→ Saves to: C:\Users\YourName\Videos\Surfing\
 ```
 
 **Collect Golf Videos:**
@@ -83,8 +83,8 @@ Path: C:\Users\mike\Videos\
 Query: "golf putting stroke improvement"
 Filters: Upload=This week, Sort=View count
 Folder: Golf
-Path: C:\Users\mike\Videos\
-→ Saves to: C:\Users\mike\Videos\Golf\
+Path: C:\Users\YourName\Videos\
+→ Saves to: C:\Users\YourName\Videos\Golf\
 ```
 
 ## Output Format

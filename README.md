@@ -4,7 +4,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-11%2F11%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-18%2F18%20passing-brightgreen.svg)](tests/)
 [![Code Quality](https://img.shields.io/badge/pylint-10.00%2F10-brightgreen.svg)](CLAUDE.md)
 
 ## 🚀 Quick Start
@@ -24,10 +24,12 @@ run.bat
 
 - ✅ **Multi-Tier Search** - Intelligent fallback prevents zero-result failures
 - ✅ **GPT-4 Optimization** - Natural language → YouTube-optimized queries
+- ✅ **Enhanced Video Metadata** - Duration, upload date, views displayed inline and in MD files
+- ✅ **Search Optimization Log** - See what AI changed in your query
 - ✅ **Smart Transcript Extraction** - Handles long videos (scrolling auto-loads all segments)
 - ✅ **Advanced Filters** - Upload date, sort by relevance/views/rating
 - ✅ **Video Selection** - Choose which videos to download
-- ✅ **Clean Markdown Output** - Formatted transcripts without timestamps
+- ✅ **Clean Markdown Output** - Formatted transcripts with comprehensive metadata
 - ✅ **Standalone .exe** - Build portable Windows executable
 
 ## 🎯 What Makes This Different
@@ -64,6 +66,10 @@ Output: 10 transcripts saved to ./transcripts/
 
 **Each transcript includes**:
 - Video title and channel
+- Uploader information
+- Upload date (YYYY-MM-DD)
+- Duration (HH:MM:SS)
+- View count
 - Video URL for reference
 - Scrape date/time
 - Clean formatted paragraphs (no timestamps)

@@ -12,6 +12,7 @@ from pathlib import Path
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.5
 
+
 def test_scrolling():
     """Test scrolling in all wizard steps."""
     print("\n=== Scrolling Test ===\n")
@@ -82,6 +83,7 @@ def test_scrolling():
 
     print("\n[PASS] All scrolling tests completed!\n")
     return True
+
 
 if __name__ == "__main__":
     print("\nMove mouse to corner to abort!")

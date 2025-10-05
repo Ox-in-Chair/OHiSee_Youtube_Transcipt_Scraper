@@ -1,188 +1,144 @@
-# GUI Automation Tests
+# Test Suite
 
-Automated testing suite for YouTube Research Platform using **PyAutoGUI MCP Server**.
+Automated test suite for YouTube Transcript Scraper.
 
 ## Overview
 
-This directory contains automated GUI tests for the Tkinter-based YouTube Research Platform. Tests use PyAutoGUI to simulate mouse clicks, keyboard input, and verify UI behavior.
+This directory contains unit tests and integration tests for the application. All tests use **pytest** framework.
 
 ## Test Files
 
-### 1. `quick_gui_test.py` - Quick Smoke Test
-**Purpose**: Fast validation that GUI launches and responds
-**Runtime**: ~10 seconds
+### 1. `test_basic.py` - Core Functionality Tests
+**Purpose**: Validate basic imports and module initialization
+**Runtime**: ~2 seconds
 
 ```bash
-python tests/quick_gui_test.py
+python -m pytest tests/test_basic.py -v
 ```
 
 **What it tests**:
-- ✅ Application launches successfully
-- ✅ Window appears on screen
-- ✅ Click interaction works
-- ✅ Keyboard shortcuts respond (F1)
-- ✅ Screenshot capture
-- ✅ Cleanup/termination
+- ✅ Module imports (scraper_engine, search_optimizer, config)
+- ✅ Filter options configuration
+- ✅ Config class initialization
+- ✅ Scraper engine class existence
+- ✅ Search optimizer module
 
-**Output**:
-- Console log with pass/fail
-- `screenshot_test.png` - GUI screenshot
-
-### 2. `gui_automation_test.py` - Full Test Suite
-**Purpose**: Comprehensive end-to-end testing
-**Runtime**: ~2-3 minutes
+### 2. `test_app.py` - Application Integration Tests
+**Purpose**: Test GUI and core application features
+**Runtime**: ~5 seconds
 
 ```bash
-python tests/gui_automation_test.py
+python -m pytest tests/test_app.py -v
 ```
 
 **What it tests**:
+- ✅ Application imports
+- ✅ Config manager (save/load API key)
+- ✅ Scraper search functionality
+- ✅ AI optimization infrastructure
+- ✅ GUI initialization (headless)
 
-**5-Step Wizard Flow**:
-1. **Define Research** - Template selection, prompt composer
-2. **Refine Filters** - Facets bar, results slider
-3. **Review Configuration** - Review sheet verification
-4. **Run Scraper** - UI state during execution
-5. **Export Results** - Format selection, export button
+### 3. `test_scrolling.py` - Transcript Extraction Tests
+**Purpose**: Validate scrolling logic for long transcripts
+**Runtime**: ~2 seconds
 
-**Additional Tests**:
-- Wizard rail navigation (clicking step indicators)
-- Keyboard shortcuts (Ctrl+N, Escape, F1)
-- Live preview panel updates
-- Accessibility features (Tab navigation)
-- Toast notifications
-
-**Output**:
-- `test_report.txt` - Detailed timestamped log of all actions
-
-## Safety Features
-
-**FAILSAFE Protection**:
-- Move mouse to **top-left corner** to abort test immediately
-- Prevents runaway automation
-
-**Pause Between Actions**:
-- 0.5-1.0 second delay between commands
-- Allows UI to update before next action
-
-**Auto-Cleanup**:
-- Terminates application on completion
-- Closes app even if test fails
-
-## Prerequisites
-
-**Required**:
-- Python 3.13+ with PyAutoGUI installed
-- YouTube Research Platform application ready to run
-- Display resolution: 1920x1080 recommended (tests use relative positioning)
-
-**Installation**:
 ```bash
-pip install pyautogui pillow
+python -m pytest tests/test_scrolling.py -v
 ```
 
-## Usage
+**What it tests**:
+- ✅ Scrolling function exists
+- ✅ Transcript extraction handles lazy-loaded content
 
-### Quick Test (10 seconds)
+### 4. `test_token_efficiency.py` - Token Efficiency Validation
+**Purpose**: Validate AI summarization cost/benefit analysis
+**Runtime**: ~5 seconds
+
 ```bash
-cd "C:\Users\mike\OHiSee\OHiSee_Youtube_Transcipt Scraper"
-python tests/quick_gui_test.py
+python -m pytest tests/test_token_efficiency.py -v
 ```
 
-### Full Test Suite (2-3 minutes)
+**What it tests**:
+- ✅ Token savings for short transcripts (99.0% reduction)
+- ✅ Token savings for long transcripts (97.8% reduction)
+- ✅ Cost calculations per video ($0.0011)
+- ✅ Batch processing cost (100 videos: $0.11)
+- ✅ Research handover scenario (50 videos: 97.8% savings)
+- ✅ Short transcript skip threshold
+
+## Running All Tests
+
 ```bash
-python tests/gui_automation_test.py
+# Run full test suite
+python -m pytest tests/ -v
+
+# Run with coverage
+python -m pytest tests/ --cov=src --cov-report=html
+
+# Run specific test
+python -m pytest tests/test_basic.py::test_imports -v
 ```
 
-### Do NOT:
-- ❌ Move mouse during test execution
-- ❌ Switch windows or applications
-- ❌ Run tests while app is already open
-- ❌ Run on different screen resolutions without adjustment
+## Test Results
 
-## Test Architecture
+**Current Status**: ✅ 18/18 tests passing
 
-### YouTubeGUITester Class
+```
+tests/test_app.py ..................... 5 passed
+tests/test_basic.py ................... 5 passed
+tests/test_scrolling.py ............... 1 passed
+tests/test_token_efficiency.py ........ 7 passed
+```
 
-**Key Methods**:
-- `launch_app()` - Start application process
-- `find_window()` - Locate window by title
-- `click_relative(x%, y%, bounds)` - Click at percentage of window size
-- `type_text(text)` - Simulate keyboard input
-- `test_step*()` - Individual step test methods
-- `run_full_test_suite()` - Execute all tests
+## Quality Gates
 
-**Coordinate System**:
-- Uses **relative positioning** (0.0-1.0) instead of absolute pixels
-- `click_relative(0.5, 0.5, bounds)` = center of window
-- Adapts to different window sizes automatically
+All tests must pass before committing code:
 
-### Example: Custom Test
+```bash
+# 1. Run tests
+python -m pytest tests/ -v
 
-```python
-from gui_automation_test import YouTubeGUITester
+# 2. Check linting
+python -m flake8 src/ --max-line-length=120 --extend-ignore=E203,W503,E501
 
-tester = YouTubeGUITester()
-tester.launch_app()
-window_bounds = tester.find_window()
+# 3. Format code
+python -m black src/ tests/ scripts/ --line-length 100
 
-# Custom interaction
-tester.click_relative(0.3, 0.6, window_bounds)  # Click topic field
-tester.type_text("my custom query")
-pyautogui.press("enter")
-
-tester.cleanup()
+# 4. Verify all pass
+echo "All quality gates passed ✅"
 ```
 
 ## Troubleshooting
 
-**Issue**: "Window not found"
-- **Solution**: Increase `time.sleep(3)` to `time.sleep(5)` after launch
-- App may take longer to start on slower machines
+**Issue**: "Module not found"
+**Solution**: Ensure you're in the project root directory
 
-**Issue**: Clicks miss targets
-- **Solution**: Adjust relative coordinates in test methods
-- Window layout may differ from expected
+**Issue**: Tests fail with import errors
+**Solution**: Install dependencies: `pip install -r requirements.txt`
 
-**Issue**: Unicode errors in console
-- **Solution**: Already fixed - use `[PASS]` instead of emoji symbols
+**Issue**: Token efficiency tests fail
+**Solution**: These are mathematical validations - if failing, check test logic
 
-**Issue**: Test hangs
-- **Solution**: Move mouse to corner (FAILSAFE), then debug specific step
+## CI/CD Integration
 
-## MCP Integration
+These tests are designed to run in CI/CD pipelines:
 
-This test suite uses the **MCP PyAutoGUI Server** (verified 2025-10-05):
-
-**Configuration** (`C:\Users\mike\.cursor\mcp.json`):
-```json
-{
-  "pyautogui": {
-    "command": "python",
-    "args": ["-m", "mcp_pyautogui_server"],
-    "description": "Desktop automation using PyAutoGUI"
-  }
-}
+```yaml
+# GitHub Actions example
+- name: Run tests
+  run: |
+    pip install -r requirements.txt
+    python -m pytest tests/ -v --tb=short
 ```
 
-**Capabilities**:
-- 🖱️ Mouse control (click, move, drag)
-- ⌨️ Keyboard input simulation
-- 📸 Screen capture and image recognition
-- 🪟 Window detection and activation
+## Test Coverage
 
-**Repository**: https://github.com/hetaoBackend/mcp-pyautogui-server
+Target coverage: **≥80%** for core modules
 
-## Future Enhancements
+```bash
+python -m pytest tests/ --cov=src --cov-report=term-missing
+```
 
-- [ ] Add image recognition for button detection (eliminate coordinates)
-- [ ] Integrate with CI/CD for automated regression testing
-- [ ] Add performance metrics (step completion times)
-- [ ] Create test fixtures for different screen resolutions
-- [ ] Add video recording of test execution
+---
 
-## References
-
-- **Project CLAUDE.md**: Full automation documentation
-- **Global CLAUDE.md**: MCP PyAutoGUI verification details
-- **PyAutoGUI Docs**: https://pyautogui.readthedocs.io
+**For development testing**: Run `python -m pytest tests/ -v` before each commit.

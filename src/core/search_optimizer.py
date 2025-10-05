@@ -1,12 +1,22 @@
 """AI-Powered Search Query Optimizer using OpenAI GPT-4"""
 
 from openai import OpenAI
-from utils.prompts import GODLY_SEARCH_PROMPT
+
+try:
+    from utils.prompts import YOUTUBE_SEARCH_OPTIMIZATION_PROMPT
+except ImportError:
+    from ..utils.prompts import YOUTUBE_SEARCH_OPTIMIZATION_PROMPT
 
 
 def optimize_search_query(user_input, api_key=None, duration=None, features=None, upload_days=None):
     """
     Optimize user search query using GPT-4 for YouTube-friendly keywords.
+
+    Research-backed optimization:
+    - Simplifies to 3-7 words
+    - Removes search operators (they hurt YouTube search)
+    - Preserves domain keywords
+    - Short-circuits if query is already optimal
 
     Args:
         user_input: Natural language search query from user
@@ -20,26 +30,42 @@ def optimize_search_query(user_input, api_key=None, duration=None, features=None
     """
     if not user_input:
         return user_input
-    from utils.filters import build_query_filters
+
+    try:
+        from utils.filters import build_query_filters
+    except ImportError:
+        from ..utils.filters import build_query_filters
 
     filter_suffix = build_query_filters(duration, features, upload_days)
+
+    # Short-circuit: If query is already 3-7 words, skip optimization
+    word_count = len(user_input.split())
+    if word_count <= 7 and not any(op in user_input for op in ['"', "OR", "AND", "-", "(", ")"]):
+        print(f"Query already optimal ({word_count} words), skipping AI optimization")
+        return user_input + filter_suffix
+
     if not api_key:
         return user_input + filter_suffix
+
     try:
         client = OpenAI(api_key=api_key)
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": GODLY_SEARCH_PROMPT},
+                {"role": "system", "content": YOUTUBE_SEARCH_OPTIMIZATION_PROMPT},
                 {"role": "user", "content": user_input},
             ],
-            max_tokens=80,
+            max_tokens=50,  # Reduced from 80 (3-7 words is shorter)
             temperature=0.3,
         )
         optimized = response.choices[0].message.content.strip()
+
+        # Strip quotes if GPT added them (shouldn't happen with new prompt)
         if optimized.startswith('"') and optimized.endswith('"') and optimized.count('"') == 2:
             optimized = optimized[1:-1]
+
         return (optimized + filter_suffix) if optimized else (user_input + filter_suffix)
+
     except Exception as e:
         print(f"Optimization failed: {e}")
         return user_input + filter_suffix
