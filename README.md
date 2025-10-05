@@ -13,9 +13,9 @@
 pip install -r requirements.txt
 
 # Launch app
-python src/app.py
+python src/app_minimal.py
 
-# Or use batch launcher
+# Or use batch launcher (Windows)
 launch_minimal.bat
 ```
 

@@ -14,9 +14,9 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ```bash
 # Launch application
-python src/app.py
+python src/app_minimal.py
 
-# Or use batch launcher
+# Or use batch launcher (Windows)
 launch_minimal.bat
 
 # Build standalone .exe (requires PyInstaller)
