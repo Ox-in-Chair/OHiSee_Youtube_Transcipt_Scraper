@@ -16,7 +16,7 @@ pip install -r requirements.txt
 python src/app_minimal.py
 
 # Or use batch launcher (Windows)
-launch_minimal.bat
+run.bat
 ```
 
 ## Features
@@ -63,7 +63,10 @@ cd OHiSee_Youtube_Transcipt_Scraper
 pip install -r requirements.txt
 
 # Launch app
-python src/app.py
+python src/app_minimal.py
+
+# Or on Windows
+run.bat
 ```
 
 ## Usage

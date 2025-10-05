@@ -17,7 +17,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 python src/app_minimal.py
 
 # Or use batch launcher (Windows)
-launch_minimal.bat
+run.bat
 
 # Build standalone .exe (requires PyInstaller)
 python scripts/build_exe_minimal.py
