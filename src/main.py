@@ -51,9 +51,7 @@ class VideoResultItem:
 
         # Checkbox with title
         title_text = f"{index}. {video['title'][:60]}{'...' if len(video['title']) > 60 else ''}"
-        self.checkbox = ttk.Checkbutton(
-            self.frame, text=title_text, variable=self.selected, command=self._on_toggle
-        )
+        self.checkbox = ttk.Checkbutton(self.frame, text=title_text, variable=self.selected, command=self._on_toggle)
         self.checkbox.pack(side="left", fill="x", expand=True)
 
         # Info button
@@ -72,21 +70,15 @@ class VideoResultItem:
         info_win.transient(info_win.master)
 
         # Title
-        ttk.Label(info_win, text="Title:", font=FONTS["heading"]).pack(
-            anchor="w", padx=10, pady=(10, 0)
-        )
+        ttk.Label(info_win, text="Title:", font=FONTS["heading"]).pack(anchor="w", padx=10, pady=(10, 0))
         ttk.Label(info_win, text=self.video["title"], wraplength=480).pack(anchor="w", padx=20)
 
         # Channel
-        ttk.Label(info_win, text="Channel:", font=FONTS["heading"]).pack(
-            anchor="w", padx=10, pady=(10, 0)
-        )
+        ttk.Label(info_win, text="Channel:", font=FONTS["heading"]).pack(anchor="w", padx=10, pady=(10, 0))
         ttk.Label(info_win, text=self.video["channel"]).pack(anchor="w", padx=20)
 
         # URL
-        ttk.Label(info_win, text="URL:", font=FONTS["heading"]).pack(
-            anchor="w", padx=10, pady=(10, 0)
-        )
+        ttk.Label(info_win, text="URL:", font=FONTS["heading"]).pack(anchor="w", padx=10, pady=(10, 0))
         url_text = tk.Text(info_win, height=2, wrap="word")
         url_text.insert("1.0", self.video["url"])
         url_text.config(state="disabled")
@@ -255,9 +247,7 @@ class MinimalScraperApp(tk.Tk):
         self.results_container = tk.Frame(canvas, bg="white")
 
         # Configure scrolling
-        self.results_container.bind(
-            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-        )
+        self.results_container.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
         canvas.create_window((0, 0), window=self.results_container, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
@@ -279,15 +269,11 @@ class MinimalScraperApp(tk.Tk):
 
         # Progress bar
         self.progress_var = tk.DoubleVar(value=0)
-        self.progress_bar = ttk.Progressbar(
-            progress_frame, variable=self.progress_var, maximum=100, mode="determinate"
-        )
+        self.progress_bar = ttk.Progressbar(progress_frame, variable=self.progress_var, maximum=100, mode="determinate")
         self.progress_bar.pack(fill="x", pady=2)
 
         # Status label
-        self.status_label = ttk.Label(
-            progress_frame, text="Ready", font=FONTS["small"], foreground=COLORS["secondary"]
-        )
+        self.status_label = ttk.Label(progress_frame, text="Ready", font=FONTS["small"], foreground=COLORS["secondary"])
         self.status_label.pack(anchor="w")
 
     def _build_action_buttons(self):
@@ -328,9 +314,7 @@ class MinimalScraperApp(tk.Tk):
         api_frame = tk.LabelFrame(dialog, text="OpenAI API Key", padx=10, pady=10)
         api_frame.pack(fill="x", padx=15, pady=10)
 
-        ttk.Label(api_frame, text="Required for AI-powered query optimization (GPT-4):").pack(
-            anchor="w"
-        )
+        ttk.Label(api_frame, text="Required for AI-powered query optimization (GPT-4):").pack(anchor="w")
 
         api_key_entry = ttk.Entry(api_frame, width=50, show="*")
         current_key = self.config_manager.load_api_key()
@@ -408,8 +392,11 @@ class MinimalScraperApp(tk.Tk):
     def _search_thread(self, query):
         """Background search thread."""
         try:
-            # AI optimization if enabled
+            # Store original query before AI optimization
+            original_query = query
             final_query = query
+
+            # AI optimization if enabled
             if self.ai_toggle_var.get():
                 self.after(0, self._update_status, "Optimizing query with GPT-4...")
                 api_key = self.config_manager.load_api_key()
@@ -434,9 +421,7 @@ class MinimalScraperApp(tk.Tk):
             # Search via TranscriptScraper
             self.after(0, self._update_status, "Searching videos...")
 
-            self.scraper = TranscriptScraper(
-                callback=lambda msg: self.after(0, self._log_message, msg)
-            )
+            self.scraper = TranscriptScraper(callback=lambda msg: self.after(0, self._log_message, msg))
 
             # Build filters
             upload_date_label = self.upload_date_var.get()
@@ -446,8 +431,9 @@ class MinimalScraperApp(tk.Tk):
 
             max_results = int(self.max_results_var.get())
 
+            # Multi-tier search with fallback to original query
             results = self.scraper.search_videos(
-                final_query, max_results=max_results, filters=filters
+                final_query, max_results=max_results, filters=filters, original_query=original_query
             )
 
             # Update UI on main thread
@@ -593,11 +579,7 @@ class MinimalScraperApp(tk.Tk):
 
             # Complete
             self.after(0, self._update_progress, 100, "Download complete!")
-            message = (
-                f"Saved {saved} transcripts\n"
-                f"Skipped {skipped} videos\n\n"
-                f"Files saved to: {output_dir}"
-            )
+            message = f"Saved {saved} transcripts\n" f"Skipped {skipped} videos\n\n" f"Files saved to: {output_dir}"
             self.after(0, messagebox.showinfo, "Download Complete", message)
 
         finally:
@@ -624,9 +606,7 @@ class MinimalScraperApp(tk.Tk):
         # Use download logic with all videos
         all_videos = [item.get_video() for item in self.result_items]
 
-        if messagebox.askyesno(
-            "Export All", f"This will download {len(all_videos)} transcripts. Continue?"
-        ):
+        if messagebox.askyesno("Export All", f"This will download {len(all_videos)} transcripts. Continue?"):
             # Select all items
             for item in self.result_items:
                 item.selected.set(True)
