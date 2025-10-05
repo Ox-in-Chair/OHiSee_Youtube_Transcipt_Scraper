@@ -6,9 +6,9 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-**YouTube Transcript Scraper** - Lean, minimal desktop tool for searching YouTube videos and extracting transcripts with GPT-4 powered query optimization. Single working implementation focused on core functionality.
+**YouTube Transcript Scraper** - Production-ready desktop tool for searching YouTube videos and extracting transcripts with intelligent GPT-4 powered search optimization and multi-tier fallback strategy.
 
-**Architecture**: Minimal 675-line single-file application with clean three-panel layout (search, results, actions). Built for simplicity, speed, and maintainability.
+**Architecture**: Clean 700-line single-file GUI application with modular core engine (scraper + optimizer). Built for reliability, simplicity, and zero-result prevention.
 
 ## Quick Start Commands
 
@@ -19,138 +19,132 @@ python src/main.py
 # Or use batch launcher (Windows)
 run.bat
 
-# Build standalone .exe (requires PyInstaller)
+# Build standalone .exe
 python scripts/build.py
 
 # Output: dist/YouTubeTranscriptScraper.exe (~80MB)
 ```
 
+## Core Features
+
+### Multi-Tier Search Fallback (NEW)
+
+Prevents zero-result failures from over-optimized queries:
+
+**Tier 1**: Optimized query with all filters (GPT-4 enhanced)
+**Tier 2**: Fallback to original unoptimized query
+**Tier 3**: Relax upload_date filter (expand time window)
+**Tier 4**: GPT-4 synonym expansion (if API key configured)
+
+Transparent logging shows which tier succeeded. Fully backward compatible.
+
+### Three-Panel GUI
+
+- **Search Panel**: Query input, filters (date, sort, max results), GPT-4 toggle
+- **Results Panel**: Video checkboxes (select which to download)
+- **Status Panel**: Progress tracking, download controls
+
 ## Architecture
 
-### Minimal Application (1,127 Total Lines)
+### Code Structure (1,254 Total Lines)
 
-**Core Files**:
-- `src/app.py` (27 lines) - Entry point
-- `src/main.py` (675 lines) - Main application
-- `src/core/scraper_engine.py` (~171 lines) - Scraping engine
-- `src/core/search_optimizer.py` (~43 lines) - GPT-4 optimizer
-- `src/utils/config.py` (~33 lines) - API key storage
-- `src/utils/filters.py` (~69 lines) - Filter configurations
-- `src/utils/prompts.py` (~89 lines) - GPT-4 prompts
+```
+src/app.py:                   27 lines  # Entry point
+src/main.py:                 675 lines  # GUI application
+src/core/scraper_engine.py:  303 lines  # Multi-tier search + extraction
+src/core/search_optimizer.py: 101 lines  # GPT-4 query optimization
+src/utils/config.py:           33 lines  # API key persistence
+src/utils/filters.py:          69 lines  # Filter configurations
+src/utils/prompts.py:          89 lines  # GPT-4 system prompts
+────────────────────────────────────────
+TOTAL:                      1,254 lines
+```
 
-**Design Principle**: Minimalism - only what works, nothing more.
+**Design Principle**: Minimalism with reliability - only what works, enhanced for production.
 
 ### How It Works
 
 1. **Query Optimization** (optional):
    - User enters natural language query
-   - GPT-4 optimizes to YouTube-friendly search (6-10 words)
-   - Supports advanced operators: `"exact phrases"`, `OR`, `-excluded`
+   - GPT-4 optimizes to YouTube-friendly keywords (6-10 words)
    - Example: "workflow automation BRCGS manufacturing" → `workflow automation manufacturing BRCGS`
 
-2. **Video Search**:
-   - Uses `yt-dlp` via subprocess with 60-second timeout
+2. **Multi-Tier Video Search**:
+   - Uses `yt-dlp` for YouTube search (no API quotas)
    - Applies filters: upload date, sort by (relevance/views/rating)
-   - Returns video metadata (title, channel, URL)
+   - Fallback strategy if optimized query returns insufficient results
+   - Transparent tier logging for debugging
 
 3. **Transcript Extraction**:
    - Selenium navigates to YouTube video page
-   - Clicks "Show transcript" button
-   - Extracts text from DOM elements
-   - Formats into clean paragraphs without timestamps
+   - Finds and clicks "Show transcript" button
+   - Scrolls transcript panel to load ALL segments (handles long videos)
+   - Extracts text from DOM, removes timestamps
 
-4. **Output**:
+4. **Markdown Output**:
    - Saves to `[OutputPath]/[Title]_[Channel]_[Date].md`
-   - Markdown format with metadata header
-
-### Application Features
-
-**Three-Panel Layout**:
-- **Top Panel**: Query input, filters (date, sort, max results), GPT-4 toggle, search button
-- **Middle Panel**: Video results with checkboxes (select which to download)
-- **Bottom Panel**: Progress display, download button, status updates
-
-**Core Functionality**:
-- YouTube search with advanced filters
-- Video selection with checkboxes
-- GPT-4 query optimization (optional)
-- Transcript extraction from selected videos
-- Markdown output with metadata
-- Progress tracking and status updates
-- API key persistence
-
-**Performance**:
-- Startup: 0.3s
-- Memory: 40MB
-- Search: 3-4s for 10 results
-
-### Integration as Library
-
-```python
-from src.core.scraper_engine import TranscriptScraper
-from src.core.search_optimizer import optimize_search_query
-
-# Optimize query with GPT-4
-optimized = optimize_search_query("complex user query", api_key="sk-...")
-
-# Scrape transcripts
-scraper = TranscriptScraper(output_dir="./transcripts", callback=print)
-result = scraper.scrape(
-    query=optimized,
-    max_results=10,
-    filters={'upload_date': 'month', 'sort_by': 'rating'}
-)
-# Returns: {"saved": 5, "skipped": 5, "files": [...]}
-```
+   - Includes metadata header (channel, URL, scrape date)
+   - Clean paragraph formatting (groups of 5 sentences)
 
 ## Key Implementation Details
 
-### Search Query Optimization (GPT-4)
+### Multi-Tier Search Strategy
+
+**File**: `src/core/scraper_engine.py` - `search_videos()` method
+
+```python
+def search_videos(self, query, max_results=10, filters=None, original_query=None):
+    """
+    Tier 1: Optimized query with all filters
+    Tier 2: Original unoptimized query (if Tier 1 < target)
+    Tier 3: Relax upload_date filter
+    Tier 4: GPT-4 synonym expansion (optional)
+
+    Returns best tier that meets/exceeds max_results.
+    """
+```
+
+**Benefits**:
+- Prevents zero-result failures from over-guardrailing
+- Transparent logging (user sees which tier worked)
+- Graceful degradation (returns best attempt even if all fail)
+- No breaking changes (backward compatible)
+
+### Search Query Optimization
 
 **Model**: GPT-4 (required for accuracy)
-**Cost**: ~$0.02-0.04 per query optimization
-**Prompt**: Defined in `src/utils/prompts.py`
+**Cost**: ~$0.02-0.04 per query
+**Prompt**: `src/utils/prompts.py` - `GODLY_SEARCH_PROMPT`
 
-**Critical Rules**:
-- Keep queries 6-10 words (YouTube works best with simple queries)
-- Use operators sparingly (max 2-3 OR terms, 1-2 exclusions)
-- Preserve critical context (standards like BRCGS, ISO, technical terms)
-- Extract CORE concept from abstract queries
+**Rules**:
+- Keep queries 6-10 words (YouTube algorithm optimized)
+- Preserve critical terms (standards, technical jargon)
+- Remove filler words, extract core concepts
+- Use operators sparingly (max 2-3 OR terms)
 
 ### API Key Persistence
 
-- Saved to: `~/.youtube_scraper_config.json` (JSON format)
-- Auto-loads on application startup
-- Managed by `src/utils/config.py` Config class
+- Location: `~/.youtube_scraper_config.json`
+- Format: JSON `{"openai_api_key": "sk-..."}`
+- Auto-loaded on startup
+- Managed by `src/utils/config.py`
 
-### YouTube Search Filters
+### Transcript Extraction
 
-**Implemented via yt-dlp**:
-- Upload date: Last 7/30/90/180/365 days
-- Sort by: relevance, date, views, rating
-- Filter options defined in `src/utils/filters.py`
+**Method**: DOM-based (reliable, handles lazy loading)
 
-### Transcript Extraction Method
-
-**DOM-based approach**:
 1. Navigate to `youtube.com/watch?v={video_id}`
-2. Find and click transcript button
-3. Wait for transcript panel to load
-4. Extract text from DOM elements
-5. Format into clean paragraphs
+2. Scroll page, expand description
+3. Find transcript button via CSS selectors
+4. Click button, wait for panel load
+5. **Scroll transcript panel** to force-load all segments (prevents cutoff)
+6. Extract text from `.segment-text` elements
+7. Format into paragraphs
 
-**Why DOM extraction**:
-- More reliable than network interception
-- Handles YouTube's dynamic loading
-- Stable across YouTube UI changes
-
-### Error Handling
-
-- 60-second timeout on yt-dlp subprocess
-- Full error tracebacks shown in GUI
-- "No videos found" message when search returns 0 results
-- Handles videos without transcripts gracefully
-- Background threading prevents UI freeze
+**Why DOM vs Network Interception**:
+- More stable across YouTube UI changes
+- Handles dynamic/lazy-loaded content reliably
+- No fragile network request dependencies
 
 ## Building the .exe
 
@@ -159,139 +153,163 @@ python scripts/build.py
 ```
 
 **PyInstaller Configuration**:
-- `--onefile` - Single executable
+- `--onefile` - Single executable (~80MB)
 - `--windowed` - No console window
-- Bundles: Python, all dependencies
+- Bundles: Python runtime + all dependencies
 - **NOT bundled**: Chrome browser (must be installed separately)
 
-**Distribution Requirements**:
-- Target PC needs: Chrome browser + Internet
-- No Python installation required
-- Portable executable (~80MB)
-
-## Architecture Statistics
-
-**Current Implementation**:
-```
-src/app.py:                  27 lines (entry point)
-src/main.py:         675 lines (main application)
-src/core/scraper_engine.py: 171 lines (scraping logic)
-src/core/search_optimizer.py: 43 lines (GPT-4 integration)
-src/utils/config.py:          33 lines (config management)
-src/utils/filters.py:         69 lines (filter definitions)
-src/utils/prompts.py:         89 lines (GPT-4 prompts)
-────────────────────────────────
-TOTAL:                     1,127 lines
-```
-
-**Code Reduction**: 84% (from 7,090 lines to 1,127 lines)
+**Distribution**:
+- Portable executable (no Python required)
+- Requires: Chrome browser + Internet connection
+- Target PC: Windows 7/10/11 (64-bit)
 
 ## Testing
 
 ### Automated Tests
 
 ```bash
-# Run unit tests
-python tests/test_app.py
+# Run test suite
+python -m pytest tests/ -v
+
+# Quality gates
+python -m pytest tests/            # 11/11 tests
+python -m flake8 src/              # 0 errors
+python -m pylint src/core/ --disable=C0301,E0401  # 10.00/10
+python -m black src/ --check       # Formatted
 ```
 
-**Test Results**: 5/5 passing ✅
-
-**Test Coverage**:
-- Imports validation
-- Config manager (save/load)
+**Test Coverage** (11 tests):
+- Module imports validation
+- Config manager (save/load API key)
 - Scraper search functionality
 - AI optimization infrastructure
-- App initialization
+- GUI initialization (headless)
+- Scrolling functionality
 
-### Manual Testing
+### Manual Integration Test
 
-**Test query optimization**:
-```python
-from src.core.search_optimizer import optimize_search_query
-result = optimize_search_query(
-    "Videos on workflow automation for manufacturing with BRCGS standards",
-    api_key="sk-..."
-)
-# Returns: "workflow automation manufacturing BRCGS standards"
-```
-
-**Test scraper without GUI**:
 ```python
 from src.core.scraper_engine import TranscriptScraper
-scraper = TranscriptScraper(output_dir="./test", callback=print)
-scraper.scrape("Python tutorial", max_results=2)
+from src.core.search_optimizer import optimize_search_query
+
+# Test multi-tier search with over-optimized query
+scraper = TranscriptScraper(callback=print)
+
+# Intentionally narrow query (trigger Tier 2 fallback)
+optimized = "BRCGS"  # Too specific, will fall back
+original = "BRCGS manufacturing quality standards"
+
+results = scraper.search_videos(
+    query=optimized,
+    max_results=10,
+    filters={'upload_date': 7, 'sort_by': 'relevance'},
+    original_query=original  # Fallback enabled
+)
+
+# Expected output:
+# [Tier 1] Searching with optimized query: 'BRCGS'
+# ⊘ Tier 1 returned 2 results (below target of 10)
+# [Tier 2] Trying original query: 'BRCGS manufacturing quality standards'
+# ✓ Tier 2 successful: 12 results (better than Tier 1)
 ```
-
-### Common Issues
-
-- **Search times out**: Query too complex. Enable AI optimization or simplify.
-- **"No transcript available"**: Video doesn't have captions (check for CC icon).
-- **Chrome driver errors**: Chrome browser must be installed.
-- **Build fails**: Ensure PyInstaller is installed: `pip install pyinstaller`
 
 ## Project Structure
 
 ```
 youtube-transcript-scraper/
 ├── src/
-│   ├── app.py              # Entry point (27 lines)
-│   ├── main.py      # Main application (675 lines)
-│   ├── core/               # Core engine
-│   │   ├── scraper_engine.py    # Scraping logic (171 lines)
-│   │   └── search_optimizer.py  # GPT-4 optimizer (43 lines)
-│   └── utils/              # Helper functions
-│       ├── config.py       # API key storage (33 lines)
-│       ├── filters.py      # Filter options (69 lines)
-│       └── prompts.py      # GPT-4 prompts (89 lines)
+│   ├── app.py                    # Entry point (27 lines)
+│   ├── main.py                   # GUI application (675 lines)
+│   ├── core/
+│   │   ├── scraper_engine.py     # Multi-tier search + extraction (303 lines)
+│   │   └── search_optimizer.py   # GPT-4 query optimization (101 lines)
+│   └── utils/
+│       ├── config.py             # API key persistence (33 lines)
+│       ├── filters.py            # YouTube filter options (69 lines)
+│       └── prompts.py            # GPT-4 system prompts (89 lines)
 ├── scripts/
-│   └── build.py     # Build automation
-├── tests/                  # Automated tests
-│   ├── test_app.py      # Unit tests (5/5 passing)
-│   ├── gui_automation_test.py   # GUI automation
-│   └── test_scrolling.py        # Scrolling tests
-├── docs/                   # Documentation
-│   ├── architecture/       # Architecture Decision Records
-│   ├── project_history/    # Refactor history
-│   ├── README_MINIMAL.md   # Minimal app guide
-│   └── How to search YouTube.md # Search tips
-├── archive/                # Old versions (reference only)
-├── dist/                   # Build output (.exe)
-├── README.md               # Project README
-├── CLAUDE.md               # This file
-├── requirements.txt        # Python dependencies
-└── launch_minimal.bat      # Windows launcher
+│   └── build.py                  # PyInstaller build automation
+├── tests/
+│   ├── test_app.py               # Unit tests (11/11 passing)
+│   ├── test_basic.py             # Core functionality tests
+│   └── test_scrolling.py         # Scrolling validation
+├── docs/
+│   ├── current_workflow_human_readable.md  # Workflow explanation
+│   ├── How to search YouTube.md            # Search best practices
+│   ├── BUILDING.md                         # Build guide
+│   └── USAGE.md                            # User manual
+├── README.md                     # Public-facing documentation
+├── CLAUDE.md                     # This file (AI development guide)
+├── requirements.txt              # Python dependencies
+└── run.bat                       # Windows quick launcher
 ```
 
 ## Configuration Files
 
 - `requirements.txt` - Python dependencies (yt-dlp, selenium-wire, openai, tkinter)
 - `~/.youtube_scraper_config.json` - Persistent API key storage
-- `.gitignore` - Excludes API keys, tokens, build artifacts
-
-## Important Constraints
-
-1. **Minimal architecture**: Single working implementation, no alternatives
-2. **Simplicity first**: YouTube search works best with 6-10 word queries
-3. **Chrome required**: Selenium needs Chrome browser installed
-4. **GPT-4 cost**: ~$0.02-0.04 per optimization (optional feature)
-5. **No bloat**: Only essential features, nothing extra
+- `.gitignore` - Excludes secrets, build artifacts, cache files
 
 ## Development Guidelines
 
-**When making changes**:
-- Preserve the minimal architecture (don't add complexity)
-- Keep `main.py` as single working implementation
-- Test changes with `python tests/test_app.py`
-- Update this file if core functionality changes
-- Maintain the 80/20 principle (20% of code provides 80% of value)
+### Code Quality Standards
 
-**Code Quality**:
-- Fast startup (target: <0.5s)
-- Low memory (target: <50MB)
-- Clear error messages
-- Background threading for long operations
-- Graceful error handling
+**Quality Gates (Required Before Commit)**:
+- ✅ pytest: All tests passing
+- ✅ flake8: 0 linting errors
+- ✅ pylint: Score ≥9.0/10
+- ✅ black: Code formatted (120 char line length)
+- ✅ No breaking changes to public API
+
+**Performance Targets**:
+- Startup: <0.5s
+- Memory: <50MB idle
+- Search: 3-5s for 10 results
+- Transcript: ~10-15s per video
+
+### When Making Changes
+
+1. **Preserve minimalism** - Don't add complexity without clear value
+2. **Test multi-tier search** - Verify fallback tiers work correctly
+3. **Update line counts** - Keep CLAUDE.md statistics current
+4. **Maintain backward compatibility** - Optional parameters only
+5. **Run quality gates** - All must pass before commit
+
+### Common Modifications
+
+**Adding new search filter**:
+1. Update `src/utils/filters.py` - Add option to dictionaries
+2. Update `src/core/scraper_engine.py` - Handle new filter in `_attempt_search()`
+3. Update `src/main.py` - Add GUI control (dropdown/checkbox)
+4. Test with multi-tier search (ensure fallback still works)
+
+**Modifying GPT-4 prompt**:
+1. Update `src/utils/prompts.py` - Edit `GODLY_SEARCH_PROMPT` or add new function
+2. Update `src/core/search_optimizer.py` - Use new prompt
+3. Test query optimization quality (compare before/after)
+4. Update cost estimates if token usage changes
+
+## Troubleshooting
+
+**Search returns 0 results**:
+- Check tier logs (which tier was last attempted?)
+- Verify GPT-4 optimization didn't over-narrow query
+- Try disabling AI optimization (use original query directly)
+- Check upload_date filter (try "Any time")
+
+**Transcript cutoff (incomplete)**:
+- Fixed in v1.2.0 (scroll loading implemented)
+- Verify `scraper_engine.py` has scrolling logic (lines 215-233)
+
+**Chrome driver errors**:
+- Ensure Chrome browser installed (not just Chromium)
+- Check Chrome version compatibility
+- Webdriver auto-downloads correct version via `webdriver_manager`
+
+**Build fails**:
+- Verify PyInstaller installed: `pip install pyinstaller`
+- Check Python version (3.8+ required)
+- Run from project root directory
 
 ## License
 
@@ -299,4 +317,4 @@ MIT License - See [LICENSE](LICENSE) file
 
 ---
 
-**Lean minimal architecture** • **84% code reduction** • **Production ready** • **1,127 total lines**
+**Production-ready** • **Multi-tier search fallback** • **11/11 tests passing** • **1,254 total lines**

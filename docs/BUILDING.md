@@ -16,7 +16,7 @@
 cd "C:\Users\mike\OHiSee\OHiSee_Youtube_Transcipt Scraper"
 
 # Run build script
-python scripts/build_exe.py
+python scripts/build.py
 
 # Wait ~2-3 minutes for build to complete
 
@@ -127,7 +127,7 @@ git push origin main
 rm -rf build dist
 
 # Rebuild executable
-python scripts/build_exe.py
+python scripts/build.py
 
 # Test the new .exe
 ./dist/YouTubeTranscriptScraper.exe
@@ -154,7 +154,7 @@ src/
 ### Build & Scripts
 ```
 scripts/
-├── build_exe.py                     - PyInstaller build script
+├── build.py                         - PyInstaller build script
 └── Launch_Scraper.bat              - GUI launcher
 ```
 
@@ -191,7 +191,7 @@ git push origin main
 git pull origin main
 
 # Rebuild if source code changed
-python scripts/build_exe.py
+python scripts/build.py
 ```
 
 ### Creating a New Feature Branch
@@ -216,7 +216,7 @@ git pull origin main
 
 ## Build Configuration
 
-The build script (`scripts/build_exe.py`) uses PyInstaller with these settings:
+The build script (`scripts/build.py`) uses PyInstaller with these settings:
 
 - **--onefile**: Single executable file
 - **--windowed**: No console window (GUI only)
@@ -226,7 +226,7 @@ The build script (`scripts/build_exe.py`) uses PyInstaller with these settings:
 
 ### Customizing the Build
 
-Edit `scripts/build_exe.py` to modify:
+Edit `scripts/build.py` to modify:
 
 ```python
 # Add custom icon
@@ -275,7 +275,7 @@ pip uninstall pyinstaller -y
 pip install pyinstaller
 
 # Rebuild
-python scripts/build_exe.py
+python scripts/build.py
 ```
 
 ### .exe Won't Run on Target PC
@@ -284,7 +284,7 @@ python scripts/build_exe.py
 → Ensure Chrome browser is installed on target PC
 
 **Error**: "Module not found"
-→ Rebuild with `--collect-all` for missing module (edit build_exe.py)
+→ Rebuild with `--collect-all` for missing module (edit build.py)
 
 **Error**: "API key not persisting"
 → Check write permissions to `~/.youtube_scraper_config.json`
@@ -330,7 +330,7 @@ scripts/Launch_Scraper.bat
 
 ### Build .exe
 ```bash
-python scripts/build_exe.py
+python scripts/build.py
 ```
 
 ### Verify Line Count
