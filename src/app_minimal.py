@@ -18,20 +18,20 @@ from utils.filters import UPLOAD_DATE_OPTIONS
 
 # Constants
 COLORS = {
-    'bg': '#FFFFFF',
-    'primary': '#1E40AF',
-    'success': '#10B981',
-    'text': '#0F172A',
-    'border': '#E2E8F0',
-    'secondary': '#6B7280',
-    'hover': '#3B82F6'
+    "bg": "#FFFFFF",
+    "primary": "#1E40AF",
+    "success": "#10B981",
+    "text": "#0F172A",
+    "border": "#E2E8F0",
+    "secondary": "#6B7280",
+    "hover": "#3B82F6",
 }
 
 FONTS = {
-    'title': ('Segoe UI', 16, 'bold'),
-    'heading': ('Segoe UI', 12, 'bold'),
-    'body': ('Segoe UI', 10),
-    'small': ('Segoe UI', 9)
+    "title": ("Segoe UI", 16, "bold"),
+    "heading": ("Segoe UI", 12, "bold"),
+    "body": ("Segoe UI", 10),
+    "small": ("Segoe UI", 9),
 }
 
 
@@ -44,7 +44,7 @@ class VideoResultItem:
 
         # Container frame
         self.frame = ttk.Frame(parent)
-        self.frame.pack(fill='x', padx=5, pady=2)
+        self.frame.pack(fill="x", padx=5, pady=2)
 
         # Selection variable
         self.selected = tk.BooleanVar(value=True)  # Default: selected
@@ -52,21 +52,13 @@ class VideoResultItem:
         # Checkbox with title
         title_text = f"{index}. {video['title'][:60]}{'...' if len(video['title']) > 60 else ''}"
         self.checkbox = ttk.Checkbutton(
-            self.frame,
-            text=title_text,
-            variable=self.selected,
-            command=self._on_toggle
+            self.frame, text=title_text, variable=self.selected, command=self._on_toggle
         )
-        self.checkbox.pack(side='left', fill='x', expand=True)
+        self.checkbox.pack(side="left", fill="x", expand=True)
 
         # Info button
-        self.info_btn = ttk.Button(
-            self.frame,
-            text='Info',
-            width=8,
-            command=self._show_info
-        )
-        self.info_btn.pack(side='right', padx=2)
+        self.info_btn = ttk.Button(self.frame, text="Info", width=8, command=self._show_info)
+        self.info_btn.pack(side="right", padx=2)
 
     def _on_toggle(self):
         """Notify parent when selection changes."""
@@ -80,22 +72,28 @@ class VideoResultItem:
         info_win.transient(info_win.master)
 
         # Title
-        ttk.Label(info_win, text="Title:", font=FONTS['heading']).pack(anchor='w', padx=10, pady=(10, 0))
-        ttk.Label(info_win, text=self.video['title'], wraplength=480).pack(anchor='w', padx=20)
+        ttk.Label(info_win, text="Title:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
+        ttk.Label(info_win, text=self.video["title"], wraplength=480).pack(anchor="w", padx=20)
 
         # Channel
-        ttk.Label(info_win, text="Channel:", font=FONTS['heading']).pack(anchor='w', padx=10, pady=(10, 0))
-        ttk.Label(info_win, text=self.video['channel']).pack(anchor='w', padx=20)
+        ttk.Label(info_win, text="Channel:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
+        ttk.Label(info_win, text=self.video["channel"]).pack(anchor="w", padx=20)
 
         # URL
-        ttk.Label(info_win, text="URL:", font=FONTS['heading']).pack(anchor='w', padx=10, pady=(10, 0))
-        url_text = tk.Text(info_win, height=2, wrap='word')
-        url_text.insert('1.0', self.video['url'])
-        url_text.config(state='disabled')
-        url_text.pack(anchor='w', padx=20, fill='x')
+        ttk.Label(info_win, text="URL:", font=FONTS["heading"]).pack(
+            anchor="w", padx=10, pady=(10, 0)
+        )
+        url_text = tk.Text(info_win, height=2, wrap="word")
+        url_text.insert("1.0", self.video["url"])
+        url_text.config(state="disabled")
+        url_text.pack(anchor="w", padx=20, fill="x")
 
         # Close button
-        ttk.Button(info_win, text='Close', command=info_win.destroy).pack(pady=10)
+        ttk.Button(info_win, text="Close", command=info_win.destroy).pack(pady=10)
 
     def is_selected(self):
         """Check if this video is selected."""
@@ -129,15 +127,15 @@ class MinimalScraperApp(tk.Tk):
         """Configure main window."""
         self.title("YouTube Transcript Scraper")
         self.geometry("800x700")
-        self.configure(bg=COLORS['bg'])
+        self.configure(bg=COLORS["bg"])
         self.resizable(True, True)
 
         # Configure ttk style
         style = ttk.Style()
-        style.theme_use('clam')
-        style.configure('TButton', padding=6)
-        style.configure('TCheckbutton', font=FONTS['body'])
-        style.configure('TLabel', font=FONTS['body'])
+        style.theme_use("clam")
+        style.configure("TButton", padding=6)
+        style.configure("TCheckbutton", font=FONTS["body"])
+        style.configure("TLabel", font=FONTS["body"])
 
     def _build_ui(self):
         """Build complete UI layout."""
@@ -158,129 +156,115 @@ class MinimalScraperApp(tk.Tk):
 
     def _build_top_bar(self):
         """Build top bar with title and settings button."""
-        top_frame = tk.Frame(self, bg=COLORS['primary'], height=50)
-        top_frame.pack(fill='x')
+        top_frame = tk.Frame(self, bg=COLORS["primary"], height=50)
+        top_frame.pack(fill="x")
         top_frame.pack_propagate(False)
 
         # Title
         title_label = tk.Label(
             top_frame,
             text="YouTube Transcript Scraper",
-            font=FONTS['title'],
-            bg=COLORS['primary'],
-            fg='white'
+            font=FONTS["title"],
+            bg=COLORS["primary"],
+            fg="white",
         )
-        title_label.pack(side='left', padx=15, pady=10)
+        title_label.pack(side="left", padx=15, pady=10)
 
         # Settings button
-        self.settings_btn = ttk.Button(
-            top_frame,
-            text="⚙ Settings",
-            command=self._open_settings
-        )
-        self.settings_btn.pack(side='right', padx=15, pady=10)
+        self.settings_btn = ttk.Button(top_frame, text="⚙ Settings", command=self._open_settings)
+        self.settings_btn.pack(side="right", padx=15, pady=10)
 
     def _build_search_panel(self):
         """Build search controls panel."""
-        search_frame = tk.Frame(self, bg=COLORS['bg'])
-        search_frame.pack(fill='x', padx=15, pady=10)
+        search_frame = tk.Frame(self, bg=COLORS["bg"])
+        search_frame.pack(fill="x", padx=15, pady=10)
 
         # Query row
-        query_row = tk.Frame(search_frame, bg=COLORS['bg'])
-        query_row.pack(fill='x', pady=5)
+        query_row = tk.Frame(search_frame, bg=COLORS["bg"])
+        query_row.pack(fill="x", pady=5)
 
-        ttk.Label(query_row, text="Search Query:").pack(side='left', padx=(0, 10))
+        ttk.Label(query_row, text="Search Query:").pack(side="left", padx=(0, 10))
 
-        self.query_entry = ttk.Entry(query_row, font=FONTS['body'])
-        self.query_entry.pack(side='left', fill='x', expand=True, padx=(0, 10))
-        self.query_entry.bind('<Return>', lambda e: self._on_search())
+        self.query_entry = ttk.Entry(query_row, font=FONTS["body"])
+        self.query_entry.pack(side="left", fill="x", expand=True, padx=(0, 10))
+        self.query_entry.bind("<Return>", lambda e: self._on_search())
 
-        self.search_btn = ttk.Button(
-            query_row,
-            text="Search",
-            command=self._on_search,
-            width=12
-        )
-        self.search_btn.pack(side='right')
+        self.search_btn = ttk.Button(query_row, text="Search", command=self._on_search, width=12)
+        self.search_btn.pack(side="right")
 
         # Filters row
-        filters_row = tk.Frame(search_frame, bg=COLORS['bg'])
-        filters_row.pack(fill='x', pady=5)
+        filters_row = tk.Frame(search_frame, bg=COLORS["bg"])
+        filters_row.pack(fill="x", pady=5)
 
         # Max results
-        ttk.Label(filters_row, text="Max Results:").pack(side='left', padx=(0, 5))
-        self.max_results_var = tk.StringVar(value='15')
+        ttk.Label(filters_row, text="Max Results:").pack(side="left", padx=(0, 5))
+        self.max_results_var = tk.StringVar(value="15")
         max_results_combo = ttk.Combobox(
             filters_row,
             textvariable=self.max_results_var,
-            values=['5', '10', '15', '25', '50'],
+            values=["5", "10", "15", "25", "50"],
             width=8,
-            state='readonly'
+            state="readonly",
         )
-        max_results_combo.pack(side='left', padx=(0, 20))
+        max_results_combo.pack(side="left", padx=(0, 20))
 
         # Upload date
-        ttk.Label(filters_row, text="Upload Date:").pack(side='left', padx=(0, 5))
-        self.upload_date_var = tk.StringVar(value='Any time')
+        ttk.Label(filters_row, text="Upload Date:").pack(side="left", padx=(0, 5))
+        self.upload_date_var = tk.StringVar(value="Any time")
         upload_date_combo = ttk.Combobox(
             filters_row,
             textvariable=self.upload_date_var,
             values=list(UPLOAD_DATE_OPTIONS.keys()),
             width=15,
-            state='readonly'
+            state="readonly",
         )
-        upload_date_combo.pack(side='left')
+        upload_date_combo.pack(side="left")
 
         # AI optimization row
-        ai_row = tk.Frame(search_frame, bg=COLORS['bg'])
-        ai_row.pack(fill='x', pady=5)
+        ai_row = tk.Frame(search_frame, bg=COLORS["bg"])
+        ai_row.pack(fill="x", pady=5)
 
         self.ai_toggle_var = tk.BooleanVar(value=False)
         self.ai_checkbox = ttk.Checkbutton(
             ai_row,
             text="Use AI Optimization (GPT-4) - Requires API key",
-            variable=self.ai_toggle_var
+            variable=self.ai_toggle_var,
         )
-        self.ai_checkbox.pack(side='left')
+        self.ai_checkbox.pack(side="left")
 
     def _build_results_panel(self):
         """Build scrollable results panel."""
         results_frame = tk.LabelFrame(
             self,
             text="Search Results",
-            font=FONTS['heading'],
-            bg=COLORS['bg'],
-            relief='solid',
-            borderwidth=1
+            font=FONTS["heading"],
+            bg=COLORS["bg"],
+            relief="solid",
+            borderwidth=1,
         )
-        results_frame.pack(fill='both', expand=True, padx=15, pady=10)
+        results_frame.pack(fill="both", expand=True, padx=15, pady=10)
 
         # Results count label
-        self.results_count_label = ttk.Label(
-            results_frame,
-            text="Results (0):",
-            font=FONTS['body']
-        )
-        self.results_count_label.pack(anchor='w', padx=10, pady=5)
+        self.results_count_label = ttk.Label(results_frame, text="Results (0):", font=FONTS["body"])
+        self.results_count_label.pack(anchor="w", padx=10, pady=5)
 
         # Scrollable frame for results
-        canvas = tk.Canvas(results_frame, bg='white', highlightthickness=0)
-        scrollbar = ttk.Scrollbar(results_frame, orient='vertical', command=canvas.yview)
+        canvas = tk.Canvas(results_frame, bg="white", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(results_frame, orient="vertical", command=canvas.yview)
 
-        self.results_container = tk.Frame(canvas, bg='white')
+        self.results_container = tk.Frame(canvas, bg="white")
 
         # Configure scrolling
         self.results_container.bind(
-            '<Configure>',
-            lambda e: canvas.configure(scrollregion=canvas.bbox('all'))
+            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
 
-        canvas.create_window((0, 0), window=self.results_container, anchor='nw')
+        canvas.create_window((0, 0), window=self.results_container, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
 
         # Pack scrollbar and canvas
-        scrollbar.pack(side='right', fill='y')
-        canvas.pack(side='left', fill='both', expand=True)
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
 
         # Mousewheel scrolling
         def on_mousewheel(event):
@@ -290,56 +274,43 @@ class MinimalScraperApp(tk.Tk):
 
     def _build_progress_panel(self):
         """Build progress tracking panel."""
-        progress_frame = tk.Frame(self, bg=COLORS['bg'])
-        progress_frame.pack(fill='x', padx=15, pady=5)
+        progress_frame = tk.Frame(self, bg=COLORS["bg"])
+        progress_frame.pack(fill="x", padx=15, pady=5)
 
         # Progress bar
         self.progress_var = tk.DoubleVar(value=0)
         self.progress_bar = ttk.Progressbar(
-            progress_frame,
-            variable=self.progress_var,
-            maximum=100,
-            mode='determinate'
+            progress_frame, variable=self.progress_var, maximum=100, mode="determinate"
         )
-        self.progress_bar.pack(fill='x', pady=2)
+        self.progress_bar.pack(fill="x", pady=2)
 
         # Status label
         self.status_label = ttk.Label(
-            progress_frame,
-            text="Ready",
-            font=FONTS['small'],
-            foreground=COLORS['secondary']
+            progress_frame, text="Ready", font=FONTS["small"], foreground=COLORS["secondary"]
         )
-        self.status_label.pack(anchor='w')
+        self.status_label.pack(anchor="w")
 
     def _build_action_buttons(self):
         """Build action buttons panel."""
-        button_frame = tk.Frame(self, bg=COLORS['bg'])
-        button_frame.pack(fill='x', padx=15, pady=10)
+        button_frame = tk.Frame(self, bg=COLORS["bg"])
+        button_frame.pack(fill="x", padx=15, pady=10)
 
         self.download_btn = ttk.Button(
             button_frame,
             text="Download Selected",
             command=self._on_download_selected,
-            state='disabled'
+            state="disabled",
         )
-        self.download_btn.pack(side='left', padx=5)
+        self.download_btn.pack(side="left", padx=5)
 
         self.export_btn = ttk.Button(
-            button_frame,
-            text="Export All (.md)",
-            command=self._on_export_all,
-            state='disabled'
+            button_frame, text="Export All (.md)", command=self._on_export_all, state="disabled"
         )
-        self.export_btn.pack(side='left', padx=5)
+        self.export_btn.pack(side="left", padx=5)
 
         # Selection count label
-        self.selection_label = ttk.Label(
-            button_frame,
-            text="0 selected",
-            font=FONTS['small']
-        )
-        self.selection_label.pack(side='left', padx=20)
+        self.selection_label = ttk.Label(button_frame, text="0 selected", font=FONTS["small"])
+        self.selection_label.pack(side="left", padx=20)
 
     def _load_settings(self):
         """Load settings from config."""
@@ -355,37 +326,39 @@ class MinimalScraperApp(tk.Tk):
 
         # API Key section
         api_frame = tk.LabelFrame(dialog, text="OpenAI API Key", padx=10, pady=10)
-        api_frame.pack(fill='x', padx=15, pady=10)
+        api_frame.pack(fill="x", padx=15, pady=10)
 
-        ttk.Label(api_frame, text="Required for AI-powered query optimization (GPT-4):").pack(anchor='w')
+        ttk.Label(api_frame, text="Required for AI-powered query optimization (GPT-4):").pack(
+            anchor="w"
+        )
 
-        api_key_entry = ttk.Entry(api_frame, width=50, show='*')
+        api_key_entry = ttk.Entry(api_frame, width=50, show="*")
         current_key = self.config_manager.load_api_key()
         if current_key:
             api_key_entry.insert(0, current_key)
-        api_key_entry.pack(pady=5, fill='x')
+        api_key_entry.pack(pady=5, fill="x")
 
         # Output directory section
         output_frame = tk.LabelFrame(dialog, text="Output Directory", padx=10, pady=10)
-        output_frame.pack(fill='x', padx=15, pady=10)
+        output_frame.pack(fill="x", padx=15, pady=10)
 
-        ttk.Label(output_frame, text="Transcripts will be saved to:").pack(anchor='w')
+        ttk.Label(output_frame, text="Transcripts will be saved to:").pack(anchor="w")
 
         output_row = tk.Frame(output_frame)
-        output_row.pack(fill='x', pady=5)
+        output_row.pack(fill="x", pady=5)
 
         output_entry = ttk.Entry(output_row)
         current_config = self.config_manager.load_config()
-        output_entry.insert(0, current_config.get('output_dir', 'transcripts'))
-        output_entry.pack(side='left', fill='x', expand=True, padx=(0, 5))
+        output_entry.insert(0, current_config.get("output_dir", "transcripts"))
+        output_entry.pack(side="left", fill="x", expand=True, padx=(0, 5))
 
         def browse_dir():
             dir_path = filedialog.askdirectory()
             if dir_path:
-                output_entry.delete(0, 'end')
+                output_entry.delete(0, "end")
                 output_entry.insert(0, dir_path)
 
-        ttk.Button(output_row, text="Browse", command=browse_dir).pack(side='right')
+        ttk.Button(output_row, text="Browse", command=browse_dir).pack(side="right")
 
         # Save button
         def save_settings():
@@ -396,10 +369,11 @@ class MinimalScraperApp(tk.Tk):
             config = self.config_manager.load_config()
             if api_key:
                 self.config_manager.save_api_key(api_key)
-            config['output_dir'] = output_dir
+            config["output_dir"] = output_dir
 
             from pathlib import Path
             import json
+
             with open(Path.home() / ".youtube_scraper_config.json", "w", encoding="utf-8") as f:
                 json.dump(config, f, indent=2)
 
@@ -424,8 +398,8 @@ class MinimalScraperApp(tk.Tk):
 
         # Disable UI
         self.is_searching = True
-        self.search_btn.config(state='disabled', text='Searching...')
-        self.query_entry.config(state='disabled')
+        self.search_btn.config(state="disabled", text="Searching...")
+        self.query_entry.config(state="disabled")
         self._update_status("Searching YouTube...")
 
         # Run in background thread
@@ -441,8 +415,12 @@ class MinimalScraperApp(tk.Tk):
                 api_key = self.config_manager.load_api_key()
 
                 if not api_key:
-                    self.after(0, messagebox.showwarning, "API Key Required",
-                              "Please set your OpenAI API key in Settings to use AI optimization.")
+                    self.after(
+                        0,
+                        messagebox.showwarning,
+                        "API Key Required",
+                        "Please set your OpenAI API key in Settings to use AI optimization.",
+                    )
                     self.after(0, self._update_status, "Ready")
                     return
 
@@ -456,23 +434,20 @@ class MinimalScraperApp(tk.Tk):
             # Search via TranscriptScraper
             self.after(0, self._update_status, "Searching videos...")
 
-            self.scraper = TranscriptScraper(callback=lambda msg: self.after(0, self._log_message, msg))
+            self.scraper = TranscriptScraper(
+                callback=lambda msg: self.after(0, self._log_message, msg)
+            )
 
             # Build filters
             upload_date_label = self.upload_date_var.get()
-            upload_date_value = UPLOAD_DATE_OPTIONS.get(upload_date_label, 'any')
+            upload_date_value = UPLOAD_DATE_OPTIONS.get(upload_date_label, "any")
 
-            filters = {
-                'upload_date': upload_date_value,
-                'sort_by': 'relevance'
-            }
+            filters = {"upload_date": upload_date_value, "sort_by": "relevance"}
 
             max_results = int(self.max_results_var.get())
 
             results = self.scraper.search_videos(
-                final_query,
-                max_results=max_results,
-                filters=filters
+                final_query, max_results=max_results, filters=filters
             )
 
             # Update UI on main thread
@@ -488,8 +463,8 @@ class MinimalScraperApp(tk.Tk):
     def _restore_search_ui(self):
         """Restore search UI after search completes."""
         self.is_searching = False
-        self.search_btn.config(state='normal', text='Search')
-        self.query_entry.config(state='normal')
+        self.search_btn.config(state="normal", text="Search")
+        self.query_entry.config(state="normal")
 
     def _display_results(self, results):
         """Display search results with checkboxes."""
@@ -500,7 +475,7 @@ class MinimalScraperApp(tk.Tk):
             ttk.Label(
                 self.results_container,
                 text="No videos found for this query. Try a different search.",
-                foreground=COLORS['secondary']
+                foreground=COLORS["secondary"],
             ).pack(pady=20)
             return
 
@@ -509,12 +484,7 @@ class MinimalScraperApp(tk.Tk):
 
         # Create result items
         for idx, video in enumerate(results, 1):
-            item = VideoResultItem(
-                self.results_container,
-                video,
-                idx,
-                self._update_selection_count
-            )
+            item = VideoResultItem(self.results_container, video, idx, self._update_selection_count)
             self.result_items.append(item)
 
         # Update counts
@@ -522,8 +492,8 @@ class MinimalScraperApp(tk.Tk):
         self._update_selection_count()
 
         # Enable download button
-        self.download_btn.config(state='normal')
-        self.export_btn.config(state='normal')
+        self.download_btn.config(state="normal")
+        self.export_btn.config(state="normal")
 
         self._update_status(f"Found {len(results)} videos")
 
@@ -536,8 +506,8 @@ class MinimalScraperApp(tk.Tk):
         self.result_items = []
         self.results_count_label.config(text="Results (0):")
         self.selection_label.config(text="0 selected")
-        self.download_btn.config(state='disabled')
-        self.export_btn.config(state='disabled')
+        self.download_btn.config(state="disabled")
+        self.export_btn.config(state="disabled")
 
     def _update_selection_count(self):
         """Update selection count label."""
@@ -557,9 +527,9 @@ class MinimalScraperApp(tk.Tk):
 
         # Disable buttons
         self.is_downloading = True
-        self.download_btn.config(state='disabled')
-        self.export_btn.config(state='disabled')
-        self.search_btn.config(state='disabled')
+        self.download_btn.config(state="disabled")
+        self.export_btn.config(state="disabled")
+        self.search_btn.config(state="disabled")
 
         # Run download in background
         threading.Thread(target=self._download_thread, args=(selected_videos,), daemon=True).start()
@@ -572,15 +542,19 @@ class MinimalScraperApp(tk.Tk):
 
         # Get output directory
         config = self.config_manager.load_config()
-        output_dir = config.get('output_dir', 'transcripts')
+        output_dir = config.get("output_dir", "transcripts")
 
         # Setup browser
         self.after(0, self._update_status, "Setting up browser...")
         try:
             self.scraper.setup_browser()
         except Exception as e:
-            self.after(0, messagebox.showerror, "Browser Error",
-                      f"Failed to setup browser: {e}\n\nMake sure Chrome is installed.")
+            self.after(
+                0,
+                messagebox.showerror,
+                "Browser Error",
+                f"Failed to setup browser: {e}\n\nMake sure Chrome is installed.",
+            )
             self.after(0, self._restore_download_ui)
             return
 
@@ -588,12 +562,16 @@ class MinimalScraperApp(tk.Tk):
             for idx, video in enumerate(videos):
                 # Update progress
                 progress = (idx / total) * 100
-                self.after(0, self._update_progress, progress,
-                          f"Downloading {idx+1}/{total}: {video['title'][:40]}...")
+                self.after(
+                    0,
+                    self._update_progress,
+                    progress,
+                    f"Downloading {idx+1}/{total}: {video['title'][:40]}...",
+                )
 
                 try:
                     # Extract transcript
-                    transcript = self.scraper.get_transcript(video['id'])
+                    transcript = self.scraper.get_transcript(video["id"])
 
                     if transcript:
                         # Save to file
@@ -602,7 +580,11 @@ class MinimalScraperApp(tk.Tk):
                         self.after(0, self._log_message, f"✓ Saved: {filename}")
                         saved += 1
                     else:
-                        self.after(0, self._log_message, f"⊘ Skipped: {video['title'][:40]} (no transcript)")
+                        self.after(
+                            0,
+                            self._log_message,
+                            f"⊘ Skipped: {video['title'][:40]} (no transcript)",
+                        )
                         skipped += 1
 
                 except Exception as e:
@@ -611,8 +593,12 @@ class MinimalScraperApp(tk.Tk):
 
             # Complete
             self.after(0, self._update_progress, 100, "Download complete!")
-            self.after(0, messagebox.showinfo, "Download Complete",
-                      f"Saved {saved} transcripts\nSkipped {skipped} videos\n\nFiles saved to: {output_dir}")
+            message = (
+                f"Saved {saved} transcripts\n"
+                f"Skipped {skipped} videos\n\n"
+                f"Files saved to: {output_dir}"
+            )
+            self.after(0, messagebox.showinfo, "Download Complete", message)
 
         finally:
             # Cleanup browser
@@ -624,9 +610,9 @@ class MinimalScraperApp(tk.Tk):
     def _restore_download_ui(self):
         """Restore UI after download completes."""
         self.is_downloading = False
-        self.download_btn.config(state='normal')
-        self.export_btn.config(state='normal')
-        self.search_btn.config(state='normal')
+        self.download_btn.config(state="normal")
+        self.export_btn.config(state="normal")
+        self.search_btn.config(state="normal")
         self._update_progress(0, "Ready")
 
     def _on_export_all(self):
@@ -638,8 +624,9 @@ class MinimalScraperApp(tk.Tk):
         # Use download logic with all videos
         all_videos = [item.get_video() for item in self.result_items]
 
-        if messagebox.askyesno("Export All",
-                               f"This will download {len(all_videos)} transcripts. Continue?"):
+        if messagebox.askyesno(
+            "Export All", f"This will download {len(all_videos)} transcripts. Continue?"
+        ):
             # Select all items
             for item in self.result_items:
                 item.selected.set(True)
@@ -669,5 +656,5 @@ def main():
     app.mainloop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
