@@ -1,7 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
+import os
 
-datas = [('C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src\\utils\\filters.py', 'utils')]
+# Use relative paths (works for any user)
+spec_root = os.path.abspath(SPECPATH)
+datas = [(os.path.join(spec_root, 'src', 'utils', 'filters.py'), 'utils')]
 binaries = []
 hiddenimports = ['seleniumwire', 'seleniumwire.undetected_chromedriver', 'yt_dlp', 'yt_dlp.utils', 'openai']
 tmp_ret = collect_all('seleniumwire')
@@ -11,7 +14,7 @@ datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    ['C:\\Users\\mike\\OHiSee\\OHiSee_Youtube_Transcipt Scraper\\src\\app_minimal.py'],
+    [os.path.join(spec_root, 'src', 'app_minimal.py')],
     pathex=[],
     binaries=binaries,
     datas=datas,
