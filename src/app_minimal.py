@@ -5,10 +5,9 @@ Target: 600-800 lines total.
 """
 
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox, scrolledtext
-from pathlib import Path
+from tkinter import ttk, filedialog, messagebox
 import threading
-from typing import List, Dict
+from typing import Dict
 import traceback
 
 # Import existing core functionality
@@ -345,7 +344,6 @@ class MinimalScraperApp(tk.Tk):
     def _load_settings(self):
         """Load settings from config."""
         # API key is loaded on-demand when needed
-        pass
 
     def _open_settings(self):
         """Open settings dialog."""
@@ -402,7 +400,7 @@ class MinimalScraperApp(tk.Tk):
 
             from pathlib import Path
             import json
-            with open(Path.home() / ".youtube_scraper_config.json", "w") as f:
+            with open(Path.home() / ".youtube_scraper_config.json", "w", encoding="utf-8") as f:
                 json.dump(config, f, indent=2)
 
             dialog.destroy()
