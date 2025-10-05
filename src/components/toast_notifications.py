@@ -24,7 +24,7 @@ class Toast(tk.Toplevel):
         "error": COLORS["error"],
     }
 
-    def __init__(self, parent, message: str, toast_type: ToastType = "info", duration: int = 3000):
+    def __init__(self, parent, message: str, toast_type: ToastType = "info", duration: int = 4000):
         super().__init__(parent)
 
         self.message = message
@@ -140,7 +140,7 @@ class ToastManager:
         self.active_toasts = []
         self.toast_offset = 0
 
-    def show(self, message: str, toast_type: ToastType = "info", duration: int = 3000):
+    def show(self, message: str, toast_type: ToastType = "info", duration: int = 4000):
         """Show a toast notification."""
         toast = Toast(self.parent, message, toast_type, duration)
         self.active_toasts.append(toast)
@@ -173,11 +173,11 @@ class ToastManager:
             self.active_toasts.remove(toast)
             self._reposition_toasts()
 
-    def success(self, message: str, duration: int = 3000):
+    def success(self, message: str, duration: int = 4000):
         """Show success toast."""
         self.show(message, "success", duration)
 
-    def info(self, message: str, duration: int = 3000):
+    def info(self, message: str, duration: int = 4000):
         """Show info toast."""
         self.show(message, "info", duration)
 
@@ -186,7 +186,7 @@ class ToastManager:
         self.show(message, "warning", duration)
 
     def error(self, message: str, duration: int = 5000):
-        """Show error toast."""
+        """Show error toast (5s for critical messages)."""
         self.show(message, "error", duration)
 
     def clear_all(self):

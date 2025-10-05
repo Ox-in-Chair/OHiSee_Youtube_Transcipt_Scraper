@@ -77,6 +77,10 @@ class WizardRail(ttk.Frame):
         self.completed_steps.add(step)
         self._update_dots()
 
+    def set_step(self, step: int):
+        """Set the current step (alias for go_to_step for observer compatibility)."""
+        self.go_to_step(step)
+
     def _update_dots(self):
         """Refresh all dot states."""
         for i in range(len(self.STEPS)):

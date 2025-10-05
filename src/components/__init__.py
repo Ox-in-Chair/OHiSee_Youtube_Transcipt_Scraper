@@ -12,6 +12,7 @@ from .base import (
 from .modern_scroll import ModernScrollFrame, ModernScrollbar
 
 # Phase 1: Foundation & Design System
+from .top_bar import TopBar
 from .wizard_rail import WizardRail
 from .live_preview import LivePreview
 from .onboarding import OnboardingBanner
@@ -76,6 +77,7 @@ __all__ = [
     "ModernScrollFrame",
     "ModernScrollbar",
     # Phase 1
+    "TopBar",
     "WizardRail",
     "LivePreview",
     "OnboardingBanner",

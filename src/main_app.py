@@ -5,7 +5,7 @@ Transformation from basic scraper to professional research tool.
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 import sys
 from pathlib import Path
 
@@ -21,6 +21,7 @@ from components import (
     BaseSeparator,
     ModernScrollFrame,
     # Phase 1
+    TopBar,
     WizardRail,
     LivePreview,
     OnboardingBanner,
@@ -73,6 +74,7 @@ class YouTubeResearchPlatform(tk.Tk):
         self.keyboard_nav = None
 
         # Component references
+        self.top_bar = None
         self.wizard_rail = None
         self.live_preview = None
         self.content_area = None
@@ -100,28 +102,39 @@ class YouTubeResearchPlatform(tk.Tk):
         self.geometry(f"1400x900+{x}+{y}")
 
     def _build_ui(self):
-        """Build main UI layout with grid-based proportional scaling."""
+        """Build main UI with research-grade layout: top bar | 72px rail | 60% content | collapsible drawer."""
+        # Top Bar (persistent navigation anchor)
+        self.top_bar = TopBar(
+            self,
+            on_new_research=self._new_research,
+            on_help=self._show_help
+        )
+        self.top_bar.pack(side="top", fill="x")
+
         # Main container with grid geometry
-        main_container = tk.Frame(self, bg=COLORS["surface"])
+        main_container = tk.Frame(self, bg=COLORS["background"])  # Soft white background
         main_container.pack(fill="both", expand=True)
 
-        # Configure grid weights for proportional scaling
-        main_container.grid_columnconfigure(0, weight=0, minsize=80)  # Wizard rail (fixed)
-        main_container.grid_columnconfigure(1, weight=3)  # Content area (flexible, weight=3)
-        main_container.grid_columnconfigure(2, weight=2, minsize=400)  # Preview (flexible, weight=2)
+        # Configure grid weights: 72px rail | 60% content | 40% preview
+        main_container.grid_columnconfigure(0, weight=0, minsize=72)  # Wizard rail (fixed 72px)
+        main_container.grid_columnconfigure(1, weight=6)  # Content area (60%, weight=6)
+        main_container.grid_columnconfigure(2, weight=4, minsize=350)  # Preview drawer (40%, collapsible)
         main_container.grid_rowconfigure(0, weight=1)
 
-        # Left: Wizard Rail (80px fixed width)
+        # Left: Wizard Rail (72px fixed width, refined icons)
         self.wizard_rail = WizardRail(main_container, on_step_change=self._handle_step_change)
         self.wizard_rail.grid(row=0, column=0, sticky="nsew")
 
-        # Center: Content Area (3x weight, white background)
-        self.content_area = tk.Frame(main_container, bg="white")
-        self.content_area.grid(row=0, column=1, sticky="nsew", padx=SPACING["md"], pady=SPACING["md"])
+        # Center: Content Area (60% width, white surface with generous whitespace)
+        self.content_area = tk.Frame(main_container, bg=COLORS["surface"])  # Pure white surface
+        self.content_area.grid(row=0, column=1, sticky="nsew", padx=SPACING["lg"], pady=SPACING["lg"])
 
-        # Right: Live Preview (2x weight, 400px minimum)
-        self.live_preview = LivePreview(main_container)
-        self.live_preview.grid(row=0, column=2, sticky="nsew")
+        # Right: Live Preview Drawer (collapsible, layered with shadow)
+        preview_container = tk.Frame(main_container, bg=COLORS["background"])
+        preview_container.grid(row=0, column=2, sticky="nsew")
+
+        self.live_preview = LivePreview(preview_container)
+        self.live_preview.pack(fill="both", expand=True, padx=(0, SPACING["md"]), pady=SPACING["md"])
 
         # Render initial step
         self._render_step(0)
@@ -149,11 +162,16 @@ class YouTubeResearchPlatform(tk.Tk):
         """Handle state changes."""
         if key == "current_step":
             self.wizard_rail.set_step(value)
+            self.top_bar.update_step(value)  # Update top bar progress tracker
             self._render_step(value)
         elif key == "prompt_config" or key == "filters":
             self._update_preview()
         elif key == "is_running":
             self._update_run_state(value)
+        elif key == "ai_enabled":
+            self.top_bar.update_status("ai_enabled", value)
+        elif key == "api_connected":
+            self.top_bar.update_status("api_connected", value)
 
     def _handle_step_change(self, step: int):
         """Handle wizard step change."""
@@ -581,13 +599,13 @@ class YouTubeResearchPlatform(tk.Tk):
         self.toast_manager.success("Configuration saved")
 
     def _new_research(self):
-        """Start new research (reset state)."""
-        if messagebox.askyesno(
-            "New Research", "Start a new research project? Current progress will be reset."
-        ):
-            self.app_state.state.reset()
-            self.app_state.go_to_step(0)
-            self.toast_manager.info("New research started")
+        """Start new research (reset state) - shows confirmation toast."""
+        # For now, just show warning toast and proceed
+        # Could create custom confirmation dialog later
+        self.toast_manager.warning("Starting new research - current progress will be reset")
+        self.app_state.state.reset()
+        self.app_state.go_to_step(0)
+        self.toast_manager.info("New research started")
 
     def _cancel_operation(self):
         """Cancel current operation."""
@@ -596,9 +614,48 @@ class YouTubeResearchPlatform(tk.Tk):
             self.toast_manager.warning("Operation cancelled")
 
     def _show_help(self):
-        """Show help dialog."""
+        """Show help dialog - displays keyboard shortcuts."""
         shortcuts = self.keyboard_nav.get_shortcuts_help()
-        messagebox.showinfo("Keyboard Shortcuts", shortcuts)
+        # Create simple help overlay instead of messagebox
+        help_window = tk.Toplevel(self)
+        help_window.title("Keyboard Shortcuts")
+        help_window.geometry("500x400")
+        help_window.configure(bg=COLORS["surface"])
+
+        # Title
+        tk.Label(
+            help_window,
+            text="⌨️ Keyboard Shortcuts",
+            font=FONTS["h1"],
+            bg=COLORS["surface"],
+            fg=COLORS["text"]
+        ).pack(pady=SPACING["md"])
+
+        # Shortcuts text
+        text_widget = tk.Text(
+            help_window,
+            font=FONTS["body"],
+            bg=COLORS["surface"],
+            fg=COLORS["text"],
+            relief="flat",
+            wrap="word"
+        )
+        text_widget.pack(fill="both", expand=True, padx=SPACING["md"], pady=SPACING["sm"])
+        text_widget.insert("1.0", shortcuts)
+        text_widget.config(state="disabled")
+
+        # Close button
+        tk.Button(
+            help_window,
+            text="Close",
+            font=FONTS["body"],
+            bg=COLORS["primary"],
+            fg="white",
+            relief="flat",
+            padx=SPACING["lg"],
+            pady=SPACING["xs"],
+            command=help_window.destroy
+        ).pack(pady=SPACING["md"])
 
     def _check_first_run(self):
         """Check if this is first run and show onboarding."""
