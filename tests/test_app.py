@@ -12,7 +12,7 @@ def test_imports():
     """Test that all imports work correctly."""
     print("Testing imports...")
     try:
-        from app_minimal import MinimalScraperApp, VideoResultItem
+        from main import MinimalScraperApp, VideoResultItem
         from core.scraper_engine import TranscriptScraper
         from core.search_optimizer import optimize_search_query
         from utils.config import Config
@@ -123,7 +123,7 @@ def test_app_initialization():
             return True
 
         # Import app
-        from app_minimal import MinimalScraperApp
+        from main import MinimalScraperApp
 
         # Try to create instance (don't show)
         app = MinimalScraperApp()

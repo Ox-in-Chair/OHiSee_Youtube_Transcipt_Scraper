@@ -14,13 +14,13 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ```bash
 # Launch application
-python src/app_minimal.py
+python src/main.py
 
 # Or use batch launcher (Windows)
 run.bat
 
 # Build standalone .exe (requires PyInstaller)
-python scripts/build_exe_minimal.py
+python scripts/build.py
 
 # Output: dist/YouTubeTranscriptScraper.exe (~80MB)
 ```
@@ -31,7 +31,7 @@ python scripts/build_exe_minimal.py
 
 **Core Files**:
 - `src/app.py` (27 lines) - Entry point
-- `src/app_minimal.py` (675 lines) - Main application
+- `src/main.py` (675 lines) - Main application
 - `src/core/scraper_engine.py` (~171 lines) - Scraping engine
 - `src/core/search_optimizer.py` (~43 lines) - GPT-4 optimizer
 - `src/utils/config.py` (~33 lines) - API key storage
@@ -155,7 +155,7 @@ result = scraper.scrape(
 ## Building the .exe
 
 ```bash
-python scripts/build_exe_minimal.py
+python scripts/build.py
 ```
 
 **PyInstaller Configuration**:
@@ -174,7 +174,7 @@ python scripts/build_exe_minimal.py
 **Current Implementation**:
 ```
 src/app.py:                  27 lines (entry point)
-src/app_minimal.py:         675 lines (main application)
+src/main.py:         675 lines (main application)
 src/core/scraper_engine.py: 171 lines (scraping logic)
 src/core/search_optimizer.py: 43 lines (GPT-4 integration)
 src/utils/config.py:          33 lines (config management)
@@ -192,7 +192,7 @@ TOTAL:                     1,127 lines
 
 ```bash
 # Run unit tests
-python tests/test_minimal_app.py
+python tests/test_app.py
 ```
 
 **Test Results**: 5/5 passing ✅
@@ -236,7 +236,7 @@ scraper.scrape("Python tutorial", max_results=2)
 youtube-transcript-scraper/
 ├── src/
 │   ├── app.py              # Entry point (27 lines)
-│   ├── app_minimal.py      # Main application (675 lines)
+│   ├── main.py      # Main application (675 lines)
 │   ├── core/               # Core engine
 │   │   ├── scraper_engine.py    # Scraping logic (171 lines)
 │   │   └── search_optimizer.py  # GPT-4 optimizer (43 lines)
@@ -245,9 +245,9 @@ youtube-transcript-scraper/
 │       ├── filters.py      # Filter options (69 lines)
 │       └── prompts.py      # GPT-4 prompts (89 lines)
 ├── scripts/
-│   └── build_exe_minimal.py     # Build automation
+│   └── build.py     # Build automation
 ├── tests/                  # Automated tests
-│   ├── test_minimal_app.py      # Unit tests (5/5 passing)
+│   ├── test_app.py      # Unit tests (5/5 passing)
 │   ├── gui_automation_test.py   # GUI automation
 │   └── test_scrolling.py        # Scrolling tests
 ├── docs/                   # Documentation
@@ -281,8 +281,8 @@ youtube-transcript-scraper/
 
 **When making changes**:
 - Preserve the minimal architecture (don't add complexity)
-- Keep `app_minimal.py` as single working implementation
-- Test changes with `python tests/test_minimal_app.py`
+- Keep `main.py` as single working implementation
+- Test changes with `python tests/test_app.py`
 - Update this file if core functionality changes
 - Maintain the 80/20 principle (20% of code provides 80% of value)
 

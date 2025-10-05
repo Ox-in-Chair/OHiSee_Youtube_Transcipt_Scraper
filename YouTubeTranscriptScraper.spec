@@ -14,7 +14,7 @@ datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    [os.path.join(spec_root, 'src', 'app_minimal.py')],
+    [os.path.join(spec_root, 'src', 'main.py')],
     pathex=[],
     binaries=binaries,
     datas=datas,

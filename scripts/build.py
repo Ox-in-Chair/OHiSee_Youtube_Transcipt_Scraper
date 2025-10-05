@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build standalone .exe for YouTube Transcript Scraper - Minimal Edition"""
+"""Build standalone .exe for YouTube Transcript Scraper"""
 import PyInstaller.__main__
 from pathlib import Path
 import sys
@@ -8,15 +8,15 @@ import sys
 root = Path(__file__).parent.parent
 
 print("=" * 70)
-print(" YOUTUBE TRANSCRIPT SCRAPER - MINIMAL EDITION")
+print(" YOUTUBE TRANSCRIPT SCRAPER")
 print(" PyInstaller Build Script")
 print("=" * 70)
 print(f"\nProject root: {root}")
-print(f"Entry point: {root / 'src' / 'app_minimal.py'}")
+print(f"Entry point: {root / 'src' / 'main.py'}")
 print(f"Output directory: {root / 'dist'}")
 
 # Verify entry point exists
-entry_point = root / 'src' / 'app_minimal.py'
+entry_point = root / 'src' / 'main.py'
 if not entry_point.exists():
     print(f"\n[ERROR] Entry point not found: {entry_point}")
     sys.exit(1)

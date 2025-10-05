@@ -114,6 +114,34 @@ class TranscriptScraper:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-transcript-segment-renderer"))
             )
+
+            # Find transcript container and scroll to load all segments
+            try:
+                container = self.driver.find_element(
+                    By.CSS_SELECTOR, "ytd-engagement-panel-section-list-renderer[target-id='engagement-panel-searchable-transcript']"
+                )
+                # Scroll to bottom of transcript panel to force-load all segments
+                last_height = 0
+                max_scrolls = 20  # Prevent infinite loop
+                scroll_count = 0
+                while scroll_count < max_scrolls:
+                    self.driver.execute_script(
+                        "arguments[0].scrollTo(0, arguments[0].scrollHeight);",
+                        container
+                    )
+                    sleep(0.5)
+                    new_height = self.driver.execute_script(
+                        "return arguments[0].scrollHeight", container
+                    )
+                    if new_height == last_height:
+                        break  # No more content to load
+                    last_height = new_height
+                    scroll_count += 1
+            except:
+                # Fallback if container not found - use old method
+                pass
+
+            # Now grab ALL segments (fully loaded)
             segs = self.driver.find_elements(
                 By.CSS_SELECTOR, "ytd-transcript-segment-renderer .segment-text"
             )

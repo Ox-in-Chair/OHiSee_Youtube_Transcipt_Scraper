@@ -13,7 +13,7 @@
 pip install -r requirements.txt
 
 # Launch app
-python src/app_minimal.py
+python src/main.py
 
 # Or use batch launcher (Windows)
 run.bat
@@ -63,7 +63,7 @@ cd OHiSee_Youtube_Transcipt_Scraper
 pip install -r requirements.txt
 
 # Launch app
-python src/app_minimal.py
+python src/main.py
 
 # Or on Windows
 run.bat
@@ -112,7 +112,7 @@ print(f"Saved {result['saved']} transcripts")
 
 ```bash
 # Build Windows executable
-python scripts/build_exe_minimal.py
+python scripts/build.py
 
 # Output: dist/YouTubeTranscriptScraper.exe (~80MB)
 ```
@@ -128,7 +128,7 @@ python scripts/build_exe_minimal.py
 youtube-transcript-scraper/
 ├── src/
 │   ├── app.py              # Entry point (27 lines)
-│   ├── app_minimal.py      # Main application (675 lines)
+│   ├── main.py      # Main application (675 lines)
 │   ├── core/               # Core engine
 │   │   ├── scraper_engine.py    # Scraping logic
 │   │   └── search_optimizer.py  # GPT-4 optimizer
@@ -137,7 +137,7 @@ youtube-transcript-scraper/
 │       ├── filters.py      # YouTube filter options
 │       └── prompts.py      # GPT-4 prompts
 ├── scripts/
-│   └── build_exe_minimal.py     # Build automation
+│   └── build.py     # Build automation
 ├── tests/                  # Automated tests
 ├── docs/                   # Documentation
 ├── archive/                # Old versions (reference)
@@ -155,7 +155,7 @@ youtube-transcript-scraper/
 
 **Files**:
 - `app.py` (27 lines) - Entry point
-- `app_minimal.py` (675 lines) - Complete working application
+- `main.py` (675 lines) - Complete working application
 - `core/scraper_engine.py` (~171 lines) - YouTube scraping
 - `core/search_optimizer.py` (~43 lines) - GPT-4 optimization
 - `utils/` (~211 lines) - Config, filters, prompts
