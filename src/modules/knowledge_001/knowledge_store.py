@@ -18,7 +18,7 @@ Version: 1.0.0
 import sqlite3
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Dict, List, Optional, Any
 import shutil
 
@@ -249,7 +249,7 @@ class KnowledgeStore:
         try:
             # Generate unique ID
             insight_id = str(uuid.uuid4())
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(UTC).isoformat()
 
             # Serialize tags and metadata
             tags_str = json.dumps(tags or [])
@@ -311,7 +311,7 @@ class KnowledgeStore:
         """
         try:
             source_id = str(uuid.uuid4())
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(UTC).isoformat()
             metadata_str = json.dumps(metadata or {})
 
             cursor = self.conn.cursor()
@@ -386,7 +386,7 @@ class KnowledgeStore:
         """
         try:
             entry_id = str(uuid.uuid4())
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(UTC).isoformat()
 
             cursor = self.conn.cursor()
             cursor.execute(
@@ -438,7 +438,7 @@ class KnowledgeStore:
         """
         try:
             relationship_id = str(uuid.uuid4())
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(UTC).isoformat()
 
             cursor = self.conn.cursor()
             cursor.execute(

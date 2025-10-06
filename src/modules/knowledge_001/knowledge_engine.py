@@ -18,7 +18,7 @@ Version: 1.0.0
 """
 
 from typing import Dict, List, Optional, Any
-from datetime import datetime
+from datetime import datetime, UTC
 import json
 
 from .knowledge_store import KnowledgeStore
@@ -112,7 +112,7 @@ class KnowledgeEngine:
                         """,
                             (
                                 new_confidence,
-                                datetime.utcnow().isoformat(),
+                                datetime.now(UTC).isoformat(),
                                 existing_id,
                             ),
                         )
@@ -308,7 +308,7 @@ class KnowledgeEngine:
         """Export as JSON"""
         export = {
             "metadata": {
-                "exported_at": datetime.utcnow().isoformat(),
+                "exported_at": datetime.now(UTC).isoformat(),
                 "total_insights": len(insights),
                 "statistics": stats,
             },
@@ -320,7 +320,7 @@ class KnowledgeEngine:
         """Export as Markdown"""
         lines = [
             "# Knowledge Base Export",
-            f"**Exported**: {datetime.utcnow().isoformat()}",
+            f"**Exported**: {datetime.now(UTC).isoformat()}",
             f"**Total Insights**: {len(insights)}",
             "",
             "## Statistics",
