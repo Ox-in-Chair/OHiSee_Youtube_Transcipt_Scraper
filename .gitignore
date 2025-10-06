@@ -77,8 +77,10 @@ webdriver_manager/
 *.bak
 ~*
 
-# Documentation - Internal only
-docs/project_history/
-docs/architecture/
-*_SUMMARY.md
-*_PLAN*.md
+# Documentation - Development artifacts (keep in repo for reference)
+# V2_COMPLETION_SUMMARY.md - Project handoff document (KEEP)
+# IMPLEMENTATION_PLAN_v2.md - v2.0 specifications (KEEP)
+# Individual module completion docs are in docs/ (KEEP)
+
+# Temporary test output
+test_output/
