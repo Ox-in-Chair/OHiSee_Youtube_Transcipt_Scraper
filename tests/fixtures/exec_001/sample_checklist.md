@@ -9,18 +9,22 @@
 ## Prerequisites
 
 - [ ] Node.js and npm package manager
+
   ```bash
   npm install
   ```
+
 - [ ] Terminal or command-line access
 
 ## Implementation
 
 - [ ] Install Node.js from nodejs.org
 - [ ] Run: npm install -g claude-code
+
   ```bash
   npm install -g claude-code
   ```
+
   - *Expected*: Package installed successfully
 - [ ] Create agent file in .claude/agents/
 - [ ] Configure API key in settings

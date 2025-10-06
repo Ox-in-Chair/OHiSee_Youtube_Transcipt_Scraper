@@ -11,11 +11,13 @@
 **Source**: Setup Claude Code Agent (@ 12:34)
 
 #### Template
+
 ```
 You are a helpful coding assistant. Your task is to help with {task}.
 ```
 
 #### Variables
+
 - `{task}`: Task - Example: example_task
 
 **Generated**: 2025-10-06T12:00:00
@@ -33,12 +35,14 @@ You are a helpful coding assistant. Your task is to help with {task}.
 **Source**: Setup Claude Code Agent (@ 12:34)
 
 #### Template
+
 ```
 Act as a technical expert.
 Analyze the {input} and provide {format} output.
 ```
 
 #### Variables
+
 - `{input}`: Input data or text
   - Type: string
   - Example: example_input
@@ -61,6 +65,7 @@ Analyze the {input} and provide {format} output.
 **Source**: Setup Claude Code Agent (@ 12:34)
 
 #### Template
+
 ```
 Example 1: Input: code, Output: review
      Example 2: Input: docs, Output: summary

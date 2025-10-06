@@ -8,9 +8,11 @@
 **Platform**: Cross-platform
 
 #### Prerequisites
+
 - Node.js and npm package manager
 
 #### Command
+
 ```bash
 npm install -g claude-code
 ```
@@ -18,9 +20,11 @@ npm install -g claude-code
 **Description**: Install Node.js package: claude-code
 
 #### Flags Explained
+
 - `-g`: Global installation
 
 #### Expected Output
+
 ```
 added 142 packages, and audited 143 packages in 8s
 found 0 vulnerabilities
@@ -44,9 +48,11 @@ found 0 vulnerabilities
 **Platform**: Cross-platform
 
 #### Prerequisites
+
 - Python and pip package manager
 
 #### Command
+
 ```bash
 pip install openai
 ```
@@ -54,6 +60,7 @@ pip install openai
 **Description**: Install Python package: openai
 
 #### Expected Output
+
 ```
 Successfully installed package-name-1.0.0
 ```
@@ -76,16 +83,19 @@ Successfully installed package-name-1.0.0
 **Platform**: Cross-platform
 
 #### Prerequisites
+
 - Git version control system
 
 #### Command
+
 ```bash
 git clone https://github.com/user/repo.git
 ```
 
-**Description**: Clone repository: https://github.com/user/repo.git
+**Description**: Clone repository: <https://github.com/user/repo.git>
 
 #### Expected Output
+
 ```
 Cloning into 'repository'...
 remote: Enumerating objects: 100, done.
@@ -109,9 +119,11 @@ remote: Enumerating objects: 100, done.
 **Platform**: Cross-platform
 
 #### Prerequisites
+
 - Docker engine
 
 #### Command
+
 ```bash
 docker build -t myapp --no-cache .
 ```
@@ -119,10 +131,12 @@ docker build -t myapp --no-cache .
 **Description**: Build Docker image
 
 #### Flags Explained
+
 - `-t`: Output to: myapp
 - `--no-cache`: Disable caching
 
 #### Expected Output
+
 ```
 Command executed successfully
 ```
@@ -144,11 +158,13 @@ Command executed successfully
 ### Platform-Specific Notes
 
 **Windows Users**:
+
 - Use PowerShell or Command Prompt
 - Some commands may require administrator privileges
 - Path separators use backslash `\`
 
 **Linux/Mac Users**:
+
 - Use terminal or shell
 - May need `sudo` for system-wide installations
 - Path separators use forward slash `/`

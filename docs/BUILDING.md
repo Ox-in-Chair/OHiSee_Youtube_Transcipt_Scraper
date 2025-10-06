@@ -1,6 +1,6 @@
 # YouTube Transcript Scraper v2.0 - Build Guide
 
-**Repository**: https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git
+**Repository**: <https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git>
 **Version**: 2.0.0 (AI Research Intelligence System)
 
 ## Quick Start
@@ -23,6 +23,7 @@ run.bat
 ## Building Standalone .exe
 
 ### Prerequisites
+
 - Python 3.8+ installed
 - All dependencies from `requirements.txt`
 - PyInstaller (included in requirements)
@@ -47,6 +48,7 @@ python scripts/build.py
 The build uses PyInstaller with optimized settings:
 
 **Key Settings** (`scripts/build.py`):
+
 - `--onefile`: Single executable (~80-100MB)
 - `--windowed`: No console window (GUI mode)
 - `--paths src/`: Include source modules
@@ -54,6 +56,7 @@ The build uses PyInstaller with optimized settings:
 - `--collect-all selenium`: Include browser automation
 
 **Bundled Components**:
+
 - ✅ Python 3.8+ runtime
 - ✅ All v1.0 core dependencies
 - ✅ All v2.0 intelligence modules
@@ -62,6 +65,7 @@ The build uses PyInstaller with optimized settings:
 - ✅ OpenAI API client
 
 **NOT Bundled** (must be installed separately on target PC):
+
 - ❌ Chrome browser (required for transcript extraction)
 - ❌ OpenAI API key (user provides)
 
@@ -72,12 +76,14 @@ The build uses PyInstaller with optimized settings:
 The .exe is **portable** and can be distributed to any Windows PC:
 
 **Requirements for Target PC**:
+
 - Windows 7/10/11 (64-bit)
 - Chrome browser installed
 - Internet connection
 - **No Python installation needed** ✅
 
 **Setup**:
+
 1. Copy `dist/YouTubeTranscriptScraper.exe` to target PC
 2. Double-click to launch
 3. Configure OpenAI API key on first run
@@ -86,16 +92,19 @@ The .exe is **portable** and can be distributed to any Windows PC:
 ### Installation Options
 
 **Option 1: Portable Mode** (Recommended for testing)
+
 - Copy .exe anywhere
 - Run directly
 - Config saved to `~/.youtube_scraper_config.json`
 
 **Option 2: System Installation** (Recommended for production)
+
 - Copy to `C:\Program Files\YouTubeTranscriptScraper\`
 - Create desktop shortcut
 - Add to Start Menu
 
 **Option 3: USB Distribution**
+
 - Copy .exe to USB drive
 - Portable across multiple PCs
 - Config is PC-specific
@@ -103,6 +112,7 @@ The .exe is **portable** and can be distributed to any Windows PC:
 ## Project Structure
 
 ### v1.0 Core (1,652 lines - Production Ready)
+
 ```
 src/
 ├── app.py                      # Entry point (27 lines)
@@ -117,6 +127,7 @@ src/
 ```
 
 ### v2.0 Intelligence Modules (12,187 lines - Production Ready)
+
 ```
 src/modules/
 ├── core_001/                   # Enhanced summary engine (2,100 lines)
@@ -169,6 +180,7 @@ src/modules/
 ```
 
 ### Tests (4,230 lines - 213 tests passing)
+
 ```
 tests/
 ├── test_app.py                 # v1.0 core (11 tests)
@@ -233,6 +245,7 @@ python -m black src/ --check       # All files formatted
 ```
 
 **Current Quality Metrics**:
+
 - Tests: 213/213 passing (100%)
 - Pylint: 9.60/10 average
 - Flake8: Zero errors
@@ -272,6 +285,7 @@ python -m pytest tests/ --cov=src --cov-report=html
 Before distributing .exe, verify:
 
 **v1.0 Core Features**:
+
 - ✅ GUI launches successfully
 - ✅ Search with multi-tier fallback works
 - ✅ GPT-4 query optimization functions
@@ -280,6 +294,7 @@ Before distributing .exe, verify:
 - ✅ API key persistence works
 
 **v2.0 Intelligence Features**:
+
 - ✅ Enhanced summary generates 50+ insights
 - ✅ Diagrams render in Mermaid format
 - ✅ Playbooks include step-by-step guides
@@ -301,6 +316,7 @@ For production validation:
 ### Build Issues
 
 **Error: "ModuleNotFoundError"**
+
 ```bash
 # Reinstall dependencies
 pip install -r requirements.txt --force-reinstall
@@ -311,11 +327,13 @@ python scripts/build.py
 ```
 
 **Error: "PyInstaller not found"**
+
 ```bash
 pip install pyinstaller
 ```
 
 **Build succeeds but .exe is huge (>200MB)**
+
 - Normal for v2.0 with all modules
 - Expected size: 80-100MB
 - If >200MB, check for duplicate dependencies
@@ -323,25 +341,30 @@ pip install pyinstaller
 ### Runtime Issues
 
 **Error: "Chrome driver not found"**
+
 - Install Chrome browser on target PC
 - Webdriver auto-downloads on first run
 
 **Error: "OpenAI API key invalid"**
+
 - Check key starts with `sk-`
 - Verify key has GPT-4 access
-- Test with: https://platform.openai.com/playground
+- Test with: <https://platform.openai.com/playground>
 
 **Error: "Module 'tkinter' not found"**
+
 - Rebuild with `--collect-all tkinter`
 - Ensure Python includes tk/tcl libraries
 
 ### Performance Issues
 
 **Slow startup (>10 seconds)**
+
 - Normal on first run (webdriver download)
 - Subsequent runs should be <2 seconds
 
 **High memory usage (>500MB)**
+
 - Close Chrome instances
 - Restart application
 - Check for memory leaks in long sessions
@@ -406,6 +429,7 @@ Before public release:
 ## Quick Reference
 
 ### Build & Run
+
 ```bash
 python scripts/build.py                    # Build .exe
 python src/main.py                         # Run from source
@@ -413,6 +437,7 @@ run.bat                                    # Windows quick launcher
 ```
 
 ### Testing
+
 ```bash
 python -m pytest tests/ -v                 # All tests
 python -m pytest tests/test_visual_001/ -v # Specific module
@@ -421,6 +446,7 @@ python -m black src/ --check               # Formatting
 ```
 
 ### Git Workflow
+
 ```bash
 git status                                 # Check changes
 git add .                                  # Stage all
@@ -430,7 +456,7 @@ git push origin main                       # Push
 
 ---
 
-**Repository**: https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git
+**Repository**: <https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git>
 **Version**: 2.0.0
 **Status**: Production Ready
 **Tests**: 213/213 passing (100%)

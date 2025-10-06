@@ -1,4 +1,5 @@
 # UI-001 Integration Guide
+
 ## Integrating Enhanced Intelligence Dashboard with Main Application
 
 **Module**: UI-001

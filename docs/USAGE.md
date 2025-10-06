@@ -41,28 +41,34 @@ result = scraper.scrape(
 ## Using the GUI
 
 ### 1. Describe Your Videos
+
 Enter natural language description like:
+
 - "I want instructional videos on golf to help with my putting stroke"
 - "Python tutorials for beginners"
 - "Surfing technique videos"
 
 ### 2. Set Filters (Optional)
+
 - **Upload date**: Any time, Last hour, Today, This week, This month, This year
 - **Sort by**: Relevance, Upload date, View count, Rating
 - **Max results**: 1-50 videos
 
 ### 3. Choose Output Folder
+
 - Enter a **Folder name** (e.g., "Golf", "Python", "Surfing")
 - **Browse** to select save location
 - Transcripts will be saved to: `[Path]/[FolderName]/`
 
 ### 4. Enable AI Optimization (Recommended)
+
 - Enter your **OpenAI API key** and click "Set & Save"
 - Check "Optimize (AI)" to convert your description into better search terms
 - Example: "golf putting help" → `golf putting stroke improvement tutorial`
 - **Cost**: ~$0.03 per query (GPT-4)
 
 ### 5. Start Scraping
+
 - Click **Start** button
 - Watch progress in real-time
 - Transcripts save automatically
@@ -70,6 +76,7 @@ Enter natural language description like:
 ## Example Workflows
 
 **Collect Surfing Videos:**
+
 ```
 Query: "surfing tutorials for beginners"
 Filters: Upload=This month, Sort=Rating
@@ -79,6 +86,7 @@ Path: C:\Users\YourName\Videos\
 ```
 
 **Collect Golf Videos:**
+
 ```
 Query: "golf putting stroke improvement"
 Filters: Upload=This week, Sort=View count
@@ -90,11 +98,13 @@ Path: C:\Users\YourName\Videos\
 ## Output Format
 
 Each transcript is saved as:
+
 ```
 [VideoTitle]_[Channel]_[Date].md
 ```
 
 Example file contents:
+
 ```markdown
 # How to Improve Your Golf Putting Stroke
 
@@ -183,6 +193,7 @@ term1 term2 term3           - All terms must appear
 ```
 
 Examples:
+
 ```
 "Python tutorial" -music           # Python tutorials, no music
 Python OR JavaScript tutorial      # Tutorials for either language
@@ -201,6 +212,7 @@ Total: 394 lines
 ```
 
 Utility files:
+
 ```
 config.py            (29 lines)  - API key persistence
 prompts.py           (45 lines)  - GPT-4 prompts

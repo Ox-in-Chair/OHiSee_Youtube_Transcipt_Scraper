@@ -1,4 +1,5 @@
 # UI-001 API Specification
+
 ## Enhanced Intelligence Dashboard
 
 **Version**: 1.0.0
@@ -74,10 +75,12 @@ IntelligenceDashboard(parent, callback=None)
 ```
 
 **Parameters:**
+
 - `parent` (tk.Widget, required): Parent tkinter widget
 - `callback` (callable, optional): Logging callback function
 
 **Example:**
+
 ```python
 import tkinter as tk
 from modules.ui_001 import IntelligenceDashboard
@@ -110,6 +113,7 @@ update_data(data: Dict) -> None
 | `data` | Dict | Yes | Intelligence data dictionary |
 
 **Data Structure:**
+
 ```python
 {
     "roi_scores": List[Dict],        # ROI scored items
@@ -120,6 +124,7 @@ update_data(data: Dict) -> None
 ```
 
 **ROI Score Item:**
+
 ```python
 {
     "title": str,           # Item title
@@ -131,6 +136,7 @@ update_data(data: Dict) -> None
 ```
 
 **Example:**
+
 ```python
 data = {
     "roi_scores": [
@@ -173,6 +179,7 @@ VisualizationPanel(parent, callback=None)
 ```
 
 **Parameters:**
+
 - `parent` (tk.Widget, required): Parent tkinter widget
 - `callback` (callable, optional): Logging callback function
 
@@ -193,6 +200,7 @@ load_diagrams(diagrams: Dict) -> None
 | `diagrams` | Dict | Yes | Diagram dictionary from VISUAL-001 |
 
 **Diagram Structure:**
+
 ```python
 {
     "timeline": {
@@ -209,6 +217,7 @@ load_diagrams(diagrams: Dict) -> None
 ```
 
 **Example:**
+
 ```python
 diagrams = {
     "timeline": {
@@ -252,6 +261,7 @@ load_playbooks(playbooks: List[Dict]) -> None
 | `playbooks` | List[Dict] | Yes | List of playbook dictionaries |
 
 **Playbook Structure:**
+
 ```python
 {
     "title": str,              # Playbook title
@@ -270,6 +280,7 @@ load_playbooks(playbooks: List[Dict]) -> None
 ```
 
 **Example:**
+
 ```python
 playbooks = [
     {
@@ -318,6 +329,7 @@ get_settings() -> Dict
 ```
 
 **Returns:**
+
 ```python
 {
     "core": {
@@ -365,24 +377,28 @@ get_settings() -> Dict
 ### IntelligenceDashboard Tabs
 
 #### 1. ROI Scoring Tab
+
 - Filter by ROI level (high/medium/low)
 - Sort by score, time, or readiness
 - View detailed item information
 - Export ROI report
 
 #### 2. Learning Paths Tab
+
 - Select learning goal (comprehensive/quick/deep)
 - View sequential steps
 - Generate custom paths
 - Export path as markdown
 
 #### 3. Knowledge Base Tab
+
 - Search across all content
 - Filter by type (commands/prompts/tools/insights)
 - View results with context
 - Track knowledge statistics
 
 #### 4. Progress Tracker Tab
+
 - Overall progress visualization
 - Item-by-item status
 - Mark items complete
@@ -391,12 +407,14 @@ get_settings() -> Dict
 ### VisualizationPanel Features
 
 #### Diagram Display
+
 - Combo box selector for diagram types
 - Mermaid code preview
 - Complexity indicator
 - Refresh functionality
 
 #### Export Options
+
 - Open in browser (HTML with Mermaid.js)
 - Export as standalone HTML
 - Export as Markdown
@@ -405,12 +423,14 @@ get_settings() -> Dict
 ### PlaybookViewer Navigation
 
 #### Step Controls
+
 - Previous/Next navigation buttons
 - Jump to specific step
 - Progress bar visualization
 - Step completion tracking
 
 #### Step Content
+
 - Title and description
 - Numbered instructions
 - Code snippets with copy button
@@ -420,6 +440,7 @@ get_settings() -> Dict
 ### SettingsPanel Configuration
 
 #### Module Settings
+
 - CORE-001: Analysis mode, depth, synthesis
 - INTEL-001: ROI weights, learning goals
 - VISUAL-001: Diagram types, complexity
@@ -427,6 +448,7 @@ get_settings() -> Dict
 - KNOWLEDGE-001: Deduplication, autosave, journal
 
 #### Actions
+
 - Save settings
 - Reset to defaults
 - Export settings to JSON
@@ -737,4 +759,4 @@ A: Call _save_settings() before closing application. Consider adding auto-save.
 **Last Updated**: 2025-10-06
 **API Version**: 1.0.0
 **Status**: ✅ Production Ready
-**Total Lines**: 2,172 (intelligence_dashboard: 623, visualization_panel: 378, playbook_viewer: 509, settings_panel: 637, __init__: 25)
+**Total Lines**: 2,172 (intelligence_dashboard: 623, visualization_panel: 378, playbook_viewer: 509, settings_panel: 637, **init**: 25)

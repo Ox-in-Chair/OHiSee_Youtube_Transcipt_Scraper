@@ -1,4 +1,5 @@
 # EXEC-001 API Specification
+
 ## Playbook & Execution Engine
 
 **Version**: 1.0.0
@@ -67,9 +68,11 @@ ExecutionEngine(callback=None)
 ```
 
 **Parameters:**
+
 - `callback` (callable, optional): Logging callback function
 
 **Example:**
+
 ```python
 engine = ExecutionEngine()
 
@@ -101,6 +104,7 @@ generate_all(
 | `context` | Dict | No | User context (skill level, tools, objectives) |
 
 **Context Dictionary Structure:**
+
 ```python
 {
     "user_skill_level": str,      # "beginner"|"intermediate"|"advanced"
@@ -112,6 +116,7 @@ generate_all(
 ```
 
 **Returns:**
+
 ```python
 {
     "playbooks": dict,           # {playbook_id: playbook_dict}
@@ -123,6 +128,7 @@ generate_all(
 ```
 
 **Example:**
+
 ```python
 from src.modules.core_001 import CoreEngine
 from src.modules.exec_001 import ExecutionEngine
@@ -177,6 +183,7 @@ generate_playbook(
 **Returns:** Playbook dictionary (see Playbook Structure below)
 
 **Example:**
+
 ```python
 insight = summary["notable_items"][0]
 playbook = exec_engine.generate_playbook(insight, style="comprehensive")
@@ -196,12 +203,14 @@ extract_prompts(
 ```
 
 **Parameters:**
+
 - `content`: Text content to scan for prompts
 - `categorize`: Automatically categorize prompts by type
 
 **Returns:** List of prompt dictionaries
 
 **Example:**
+
 ```python
 content = 'Use this prompt: "You are a {role}. Help with {task}."'
 prompts = exec_engine.extract_prompts(content)
@@ -225,12 +234,14 @@ parse_commands(
 ```
 
 **Parameters:**
+
 - `text`: Content to scan for commands
 - `platform`: Filter by platform ("auto", "windows", "linux", "mac", "cross-platform")
 
 **Returns:** List of command dictionaries
 
 **Example:**
+
 ```python
 text = "Run: npm install -g package"
 commands = exec_engine.parse_commands(text)
@@ -255,12 +266,14 @@ create_checklist(
 ```
 
 **Parameters:**
+
 - `steps`: List of step dictionaries
 - `format`: "markdown", "json", or "html"
 
 **Returns:** Checklist dictionary with formatted output
 
 **Example:**
+
 ```python
 steps = [
     {"action": "Install Node.js", "time": "10min"},
@@ -425,8 +438,10 @@ Use this prompt: "You are a coding expert. Analyze {code} and suggest {improveme
 
 Another prompt:
 ```
+
 Act as a technical writer.
 Create documentation for {topic} in {format} style.
+
 ```
 """
 
@@ -451,18 +466,22 @@ npm install -g package
 pip install requests
 docker build -t myapp .
 ```
+
 """
 
 # Get Windows commands only
+
 windows_cmds = exec_engine.parse_commands(content, platform="windows")
 
 # Get all commands
+
 all_cmds = exec_engine.parse_commands(content, platform="auto")
 
 for cmd in all_cmds:
     print(f"{cmd['platform']}: {cmd['command']}")
     if cmd['flags']:
         print(f"  Flags: {cmd['flags']}")
+
 ```
 
 ---
@@ -658,6 +677,7 @@ A: Adjust `style` parameter: "quick" for advanced users, "comprehensive" for beg
 ## Example Output Files
 
 See `tests/fixtures/exec_001/` for complete examples:
+
 - `sample_playbook.md`: Full playbook example
 - `sample_prompts.md`: Prompt library example
 - `sample_commands.md`: CLI reference example

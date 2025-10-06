@@ -3,6 +3,7 @@
 ## What the Scraper Actually Does (Step-by-Step)
 
 ### **Phase 1: Search for Videos**
+
 1. **User enters query** in the GUI (e.g., "golf swing long irons")
 2. **Optional AI optimization**: GPT-4 converts natural language → YouTube-friendly keywords
    - Example: "How do I improve my golf swing for long irons?" → "golf swing long irons technique"
@@ -13,6 +14,7 @@
 4. **Display results** in GUI table for user selection
 
 ### **Phase 2: Extract Transcript for Each Selected Video**
+
 For each video the user selects:
 
 1. **Launch headless Chrome browser** (Selenium Wire + undetected_chromedriver)
@@ -35,10 +37,12 @@ For each video the user selects:
 11. **Close browser**
 
 ### **Phase 3: Save Transcript as Markdown**
+
 1. **Format text into paragraphs** (groups of 5 sentences)
 2. **Generate filename**: `[Title]_[Channel]_[Date].md`
    - Sanitizes special characters
 3. **Create markdown file** with metadata header:
+
    ```markdown
    # [Video Title]
    **Channel**: [Channel Name]
@@ -47,16 +51,19 @@ For each video the user selects:
 
    [Transcript paragraphs...]
    ```
+
 4. **Save to output folder** (user-selected directory)
 
 ## **Current Limitations**
 
 ### **Search Limitations**
+
 - ❌ **Title-only matching**: YouTube search only matches video TITLES, not descriptions
 - ❌ **No semantic understanding**: "golf swing long irons" won't find video titled "Driver vs Iron Techniques" even if description mentions long irons
 - ❌ **Fixed filters**: Can't use advanced operators like `allintitle:`, `after:YYYY-MM-DD`, or description search
 
 ### **Speed Limitations**
+
 - ⏱️ **~10-15 seconds per video** for transcript extraction:
   - 3s page load
   - 1s find/click transcript button
@@ -67,6 +74,7 @@ For each video the user selects:
 - **Bottleneck**: Browser automation (waiting for YouTube's DOM)
 
 ### **Accuracy Limitations**
+
 - ❌ **Videos without transcripts**: Returns None, skipped
 - ❌ **Transcript cutoff bug**: FIXED (now scrolls to load all segments)
 - ❌ **No description search**: Can't find videos by description content
@@ -74,11 +82,13 @@ For each video the user selects:
 ## **What Could Be Enhanced (Future)**
 
 ### **1. Description Search**
+
 - Use Puppeteer to extract video descriptions during search
 - Match query terms against descriptions, not just titles
 - Requires: More scraping (slower but more accurate)
 
 ### **2. AI-Powered Permutation Search**
+
 - If strict search returns 0 results, automatically relax constraints:
   - Try 1: Exact query with all filters
   - Try 2: Remove upload date filter
@@ -88,27 +98,32 @@ For each video the user selects:
 - GPT-4 decides which permutation to try next
 
 ### **3. Parallel Processing**
+
 - Open multiple browser instances to download transcripts simultaneously
 - Could reduce 10 videos from 3 minutes → 1 minute
 - Risk: YouTube rate limiting, higher memory usage
 
 ### **4. Advanced Operators**
+
 - Support `allintitle:`, `after:`, `intitle:`, `description:` operators
 - Requires: Custom YouTube search implementation (not yt-dlp)
 
 ## **Why It's Slow (Technical)**
 
 YouTube is a **dynamic web app** (not static HTML):
+
 - Video titles load via JavaScript
 - Transcript panel loads on-demand (AJAX request)
 - Segments lazy-load as you scroll (infinite scroll pattern)
 - **No direct API access** to transcripts (YouTube API doesn't provide them)
 
 **Our approach**: Automate what a human does manually
+
 - Human: Open video → Click "Show transcript" → Scroll → Copy
 - Scraper: Same steps, but automated with browser
 
 **Faster alternatives don't exist** because:
+
 - YouTube doesn't provide transcript API
 - Must use browser automation (Selenium/Puppeteer)
 - Rate limiting prevents parallel requests
@@ -116,6 +131,7 @@ YouTube is a **dynamic web app** (not static HTML):
 ## **Summary: Is Your Understanding Correct?**
 
 ✅ **YES** - Your 5-step understanding is accurate:
+
 1. Open YouTube, search query
 2. Open video
 3. Find "Show transcript" button

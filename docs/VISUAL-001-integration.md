@@ -484,6 +484,7 @@ def test_visual_integration():
 ### Requirements File
 
 Add to `requirements.txt` (no additional dependencies needed):
+
 ```
 # VISUAL-001 has no external dependencies
 # Pure Python implementation

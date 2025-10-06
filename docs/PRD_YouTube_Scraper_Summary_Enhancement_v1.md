@@ -11,35 +11,43 @@
 ## 1. Executive Summary
 
 ### 1.1 Purpose
+
 Enhance existing YouTube Transcript Scraper to automatically generate individual summaries and comprehensive synthesis documents using GPT-4 capabilities, transforming raw transcripts into actionable insights without manual post-processing.
 
 ### 1.2 Problem Statement
+
 Currently, after scraping YouTube transcripts **for AI development research**:
+
 - User must manually extract implementation patterns, protocols, and CLI workflows
 - No structured extraction of actionable guidance (15-20 notable items per video)
 - No aggregated synthesis revealing best practices across multiple sources
 - Time-intensive post-scrape analysis delays actual development work
 
 **Primary Use Cases**:
+
 - Building AI applications with Claude Code, Cursor, other AI CLIs
 - Extracting implementation protocols from tutorials
 - Synthesizing recommended workflows across multiple sources
 - Identifying common patterns, anti-patterns, and optimization strategies
 
 ### 1.3 Solution Overview
+
 Add two optional features to scraper GUI:
+
 1. **"Generate Summaries"** checkbox → Extracts actionable protocols, implementation patterns, technical specifications (15-20 items per video)
 2. **"Generate Synthesis"** checkbox → Aggregates into strategic implementation guide with cross-source best practices
 
 Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrape directory.
 
 **Output Optimized For**:
+
 - Copy-paste implementation instructions
 - Claude Code prompt templates
 - Technical decision-making (tool selection, architecture patterns)
 - Workflow recommendations with concrete examples
 
 ### 1.4 Success Metrics
+
 - **Time Savings**: 90% reduction in post-scrape analysis time (manual → automated)
 - **Quality**: 15-20 notable items per summary (human-validated relevance)
 - **Adoption**: 80%+ of scrapes use summary feature within 30 days
@@ -50,6 +58,7 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 ## 2. Background & Context
 
 ### 2.1 Current Workflow
+
 1. User opens YouTube Transcript Scraper GUI
 2. User inputs YouTube URLs or playlist
 3. User selects output directory (e.g., `C:\Research\Project_Name\00_Transcripts\`)
@@ -57,12 +66,14 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 5. **MANUAL STEP**: User reads transcripts, extracts insights, writes notes
 
 ### 2.2 Existing Capabilities
+
 - **GPT-4 integration**: Already available in scraper
 - **Metadata extraction**: Video title, channel, views, duration, upload date
 - **Markdown formatting**: Structured transcript output
 - **Batch processing**: Multiple videos in single scrape session
 
 ### 2.3 Gap Analysis
+
 - ✅ Raw data collection (working)
 - ✅ LLM capability (GPT-4 available)
 - ❌ **Structured insight extraction** (missing)
@@ -74,11 +85,13 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 ## 3. User Stories
 
 ### 3.1 Primary User Story
+
 **As a** AI developer/researcher using the YouTube Transcript Scraper
 **I want** to automatically extract implementation protocols, workflows, and technical patterns from video tutorials
 **So that** I can immediately start building with Claude Code/AI CLIs using proven approaches without manual note-taking
 
 **Acceptance Criteria**:
+
 - [ ] GUI has "Generate Summaries" checkbox (default: unchecked)
 - [ ] GUI has "Generate Synthesis" checkbox (default: unchecked)
 - [ ] Both options trigger automatically after successful scrape
@@ -94,6 +107,7 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 **So that** I can control processing time and output based on immediate needs
 
 **Acceptance Criteria**:
+
 - [ ] Summaries checkbox independent of Synthesis checkbox
 - [ ] Synthesis can run even if Summaries unchecked (uses raw transcripts)
 - [ ] Summaries can run without Synthesis
@@ -105,6 +119,7 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 **So that** I don't need to manually organize files after scraping
 
 **Acceptance Criteria**:
+
 - [ ] `01_SUMMARY/` created if doesn't exist
 - [ ] If already exists, files appended/updated (no overwrite without warning)
 - [ ] Naming convention: `{NN}_{Video_Title}_SUMMARY.md` (01, 02, 03...)
@@ -115,6 +130,7 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 **So that** I can troubleshoot or retry without losing scrape data
 
 **Acceptance Criteria**:
+
 - [ ] Scrape completes even if summary generation fails
 - [ ] Error logged with specific transcript that failed
 - [ ] User can retry summary generation without re-scraping
@@ -126,9 +142,11 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 ### 4.1 GUI Enhancements
 
 #### 4.1.1 New UI Elements
+
 **Location**: Main scraper window, below output directory selection
 
 **Elements**:
+
 ```
 [Checkbox] Generate Summaries (15-20 items per video)
 [Checkbox] Generate Synthesis (comprehensive aggregation)
@@ -137,15 +155,18 @@ Both outputs auto-saved to `01_SUMMARY/` subdirectory within user-selected scrap
 ```
 
 **Behavior**:
+
 - Both checkboxes default to **unchecked** (opt-in feature)
 - Hover tooltip on Info icon shows estimated cost/time
 - If both unchecked, scraper behaves as current version (no changes)
 
 #### 4.1.2 Directory Display
+
 **Enhancement**: Show full output path including subdirectory
 
 **Current**: `Output: C:\Research\Project\00_Transcripts\`
 **New**:
+
 ```
 Transcripts: C:\Research\Project\00_Transcripts\
 Summaries:   C:\Research\Project\00_Transcripts\01_SUMMARY\ (if enabled)
@@ -154,9 +175,11 @@ Summaries:   C:\Research\Project\00_Transcripts\01_SUMMARY\ (if enabled)
 ### 4.2 Summary Generation Logic
 
 #### 4.2.1 Individual Summary Extraction
+
 **Trigger**: After each transcript successfully saved, if "Generate Summaries" checked
 
 **Process**:
+
 1. Read transcript `.md` file
 2. Send to GPT-4 with summary prompt (see Section 5.1)
 3. Parse response into structured markdown
@@ -164,6 +187,7 @@ Summaries:   C:\Research\Project\00_Transcripts\01_SUMMARY\ (if enabled)
 5. Increment counter, proceed to next transcript
 
 **Output Format** (per summary):
+
 ```markdown
 # Summary: {Video Title}
 
@@ -191,9 +215,11 @@ Summaries:   C:\Research\Project\00_Transcripts\01_SUMMARY\ (if enabled)
 ```
 
 #### 4.2.2 Comprehensive Synthesis Generation
+
 **Trigger**: After all summaries completed (or all transcripts if summaries disabled), if "Generate Synthesis" checked
 
 **Process**:
+
 1. If summaries exist: Read all `*_SUMMARY.md` files
 2. If summaries don't exist: Read all transcript `.md` files (direct synthesis)
 3. Send aggregated content to GPT-4 with synthesis prompt (see Section 5.2)
@@ -201,6 +227,7 @@ Summaries:   C:\Research\Project\00_Transcripts\01_SUMMARY\ (if enabled)
 5. Save to `01_SUMMARY/00_COMPREHENSIVE_SYNTHESIS.md`
 
 **Output Format** (synthesis):
+
 ```markdown
 # Comprehensive Synthesis: {Project/Topic Name}
 ## Analysis of {N} Video Transcripts ({Date Range})
@@ -241,11 +268,13 @@ Summaries:   C:\Research\Project\00_Transcripts\01_SUMMARY\ (if enabled)
 ### 4.3 File Naming Convention
 
 **Transcript Files** (existing):
+
 ```
 {Video_Title}_{Channel}_{YYYY-MM-DD}.md
 ```
 
 **Summary Files** (new):
+
 ```
 {NN}_{Video_Title}_{Channel}_SUMMARY.md
 
@@ -255,11 +284,13 @@ Examples:
 ```
 
 **Synthesis File** (new):
+
 ```
 00_COMPREHENSIVE_SYNTHESIS.md
 ```
 
 **Rationale**:
+
 - `00_` prefix ensures synthesis appears first in alphabetical sort
 - `{NN}_` prefix for summaries enables ordering by scrape sequence
 - `_SUMMARY` suffix clearly distinguishes from transcript files
@@ -269,17 +300,20 @@ Examples:
 **During Scraping** (existing): Already shows progress bar
 
 **During Summary Generation** (new):
+
 ```
 Progress Bar: [████████░░] 8/10 transcripts scraped
 Status: Generating summaries... (3/8 complete)
 ```
 
 **During Synthesis** (new):
+
 ```
 Status: Generating comprehensive synthesis...
 ```
 
 **Completion Notification** (new):
+
 ```
 ✓ Scrape Complete
   - 10 transcripts saved to: 00_Transcripts\
@@ -296,6 +330,7 @@ Status: Generating comprehensive synthesis...
 ### 5.1 Summary Generation Prompt Template
 
 **GPT-4 Prompt** (sent per transcript):
+
 ```
 You are a technical research analyst specializing in extracting actionable implementation guidance from AI development tutorials and technical videos.
 
@@ -354,6 +389,7 @@ FORMAT OUTPUT AS MARKDOWN following this structure:
 ### 5.2 Synthesis Generation Prompt Template
 
 **GPT-4 Prompt** (sent after all summaries):
+
 ```
 You are a senior technical architect synthesizing AI development implementation guidance from multiple tutorial sources.
 
@@ -408,6 +444,7 @@ CRITICAL: This is NOT a literature review—it's an IMPLEMENTATION GUIDE. Optimi
 ### 5.3 Error Handling
 
 **Scenario 1: GPT-4 API Failure**
+
 ```python
 try:
     summary = generate_summary(transcript)
@@ -422,6 +459,7 @@ except OpenAIError as e:
 ```
 
 **Scenario 2: Synthesis Failure**
+
 ```python
 try:
     synthesis = generate_synthesis(all_summaries)
@@ -436,6 +474,7 @@ except OpenAIError as e:
 ```
 
 **Scenario 3: Insufficient Context (Transcript Too Long)**
+
 ```python
 if len(transcript) > MAX_TOKENS:
     # Chunk transcript intelligently (by sections if available)
@@ -448,12 +487,14 @@ if len(transcript) > MAX_TOKENS:
 ### 5.4 Cost Estimation Logic
 
 **Display Before Execution**:
+
 ```
 Estimated Cost: $0.15 - $0.40 (10 videos × ~$0.015-0.040 each)
 Estimated Time: 2-4 minutes
 ```
 
 **Calculation**:
+
 ```python
 def estimate_cost(transcript_count, avg_transcript_length):
     # GPT-4 pricing (as of 2025-10-06)
@@ -542,6 +583,7 @@ def estimate_cost(transcript_count, avg_transcript_length):
 ### 7.1 Development Phases
 
 #### Phase 1: Core Summary Generation (Week 1)
+
 - [ ] Add GUI checkboxes for summary/synthesis options
 - [ ] Implement GPT-4 summary prompt
 - [ ] Create `01_SUMMARY/` subdirectory logic
@@ -551,6 +593,7 @@ def estimate_cost(transcript_count, avg_transcript_length):
 **Testing Criteria**: Successfully generate summaries for 5 videos with 15-20 items each
 
 #### Phase 2: Synthesis Generation (Week 2)
+
 - [ ] Implement GPT-4 synthesis prompt
 - [ ] Aggregate all summaries
 - [ ] Generate `00_COMPREHENSIVE_SYNTHESIS.md`
@@ -559,6 +602,7 @@ def estimate_cost(transcript_count, avg_transcript_length):
 **Testing Criteria**: Synthesis document shows cross-video insights, not just concatenation
 
 #### Phase 3: Error Handling & Polish (Week 3)
+
 - [ ] Add error logging for API failures
 - [ ] Implement retry logic
 - [ ] Add cost estimation display
@@ -568,6 +612,7 @@ def estimate_cost(transcript_count, avg_transcript_length):
 **Testing Criteria**: Graceful degradation when API fails, user can retry without re-scraping
 
 #### Phase 4: User Testing & Refinement (Week 4)
+
 - [ ] Beta test with real research projects
 - [ ] Gather feedback on summary quality
 - [ ] Tune prompts based on output quality
@@ -579,11 +624,13 @@ def estimate_cost(transcript_count, avg_transcript_length):
 ### 7.2 Technical Dependencies
 
 **Required**:
+
 - OpenAI Python SDK (already in project)
 - GPT-4 API access (already configured)
 - Existing scraper codebase
 
 **New Libraries** (if needed):
+
 - None (use existing dependencies)
 
 ### 7.3 File Structure After Implementation
@@ -608,6 +655,7 @@ C:\Research\Project\
 ### 8.1 Summary Quality Validation
 
 **Automated Checks**:
+
 - [ ] Item count between 15-20 (fail if <15 or >20)
 - [ ] Each item has title + description
 - [ ] Markdown formatting valid
@@ -615,6 +663,7 @@ C:\Research\Project\
 - [ ] Key Insights section present
 
 **Manual Review**:
+
 - [ ] Items capture actual video insights (not hallucinations)
 - [ ] Prioritization logical (important items first)
 - [ ] Actionable takeaways included
@@ -623,12 +672,14 @@ C:\Research\Project\
 ### 8.2 Synthesis Quality Validation
 
 **Automated Checks**:
+
 - [ ] All required sections present (Executive Summary, Timeline, etc.)
 - [ ] References list matches number of source videos
 - [ ] Markdown formatting valid
 - [ ] Minimum word count (5000+ words for 10 videos)
 
 **Manual Review**:
+
 - [ ] Cross-video patterns identified (not just individual summaries)
 - [ ] Contradictions noted where applicable
 - [ ] Strategic recommendations actionable
@@ -637,30 +688,35 @@ C:\Research\Project\
 ### 8.3 Test Cases
 
 **Test Case 1: Single Video**
+
 - Input: 1 YouTube URL
 - Summaries enabled: YES
 - Synthesis enabled: YES
 - Expected: 1 summary file, 1 synthesis file (synthesizing 1 video)
 
 **Test Case 2: 10 Videos**
+
 - Input: 10 YouTube URLs
 - Summaries enabled: YES
 - Synthesis enabled: YES
 - Expected: 10 summary files, 1 synthesis file
 
 **Test Case 3: Summaries Only**
+
 - Input: 5 YouTube URLs
 - Summaries enabled: YES
 - Synthesis enabled: NO
 - Expected: 5 summary files, NO synthesis file
 
 **Test Case 4: Synthesis Only (No Summaries)**
+
 - Input: 5 YouTube URLs
 - Summaries enabled: NO
 - Synthesis enabled: YES
 - Expected: NO summary files, 1 synthesis file (uses raw transcripts)
 
 **Test Case 5: API Failure Resilience**
+
 - Input: 3 YouTube URLs
 - Inject: API failure on 2nd video summary
 - Expected: Summary 1 succeeds, ERROR file for 2, Summary 3 succeeds, synthesis runs with partial data
@@ -682,6 +738,7 @@ C:\Research\Project\
 ### 9.2 Mitigation Details
 
 **Cost Control**:
+
 ```python
 # Add to GUI settings
 MAX_COST_PER_SESSION = 5.00  # User-configurable
@@ -692,6 +749,7 @@ if estimated_cost > MAX_COST_PER_SESSION:
 ```
 
 **Quality Validation**:
+
 ```python
 # After summary generation
 if summary_item_count < 15:
@@ -705,6 +763,7 @@ if summary_item_count < 15:
 ## 10. Success Criteria
 
 ### 10.1 Launch Criteria (Must-Have)
+
 - [ ] GUI checkboxes functional
 - [ ] Summaries generate with 15-20 items
 - [ ] Synthesis aggregates summaries correctly
@@ -715,19 +774,23 @@ if summary_item_count < 15:
 ### 10.2 Post-Launch Metrics (30 days)
 
 **Adoption**:
+
 - Target: 80% of scrapes use summary feature
 - Measurement: Track checkbox selection rate
 
 **Quality**:
+
 - Target: 90% of summaries have 15-20 items
 - Target: 95% of syntheses have all required sections
 - Measurement: Automated validation on generated files
 
 **Reliability**:
+
 - Target: <5% summary generation failure rate
 - Measurement: Error log analysis
 
 **User Satisfaction**:
+
 - Target: 4/5 average rating on summary usefulness
 - Measurement: Optional in-app feedback survey
 
@@ -736,6 +799,7 @@ if summary_item_count < 15:
 ## 11. Future Enhancements (Out of Scope for v1.0)
 
 ### 11.1 Phase 2 Features (3-6 months)
+
 - **Custom prompt templates**: User-defined summary structure
 - **Multi-language support**: Detect transcript language, summarize in user's preferred language
 - **Export formats**: PDF, DOCX, HTML (not just Markdown)
@@ -743,6 +807,7 @@ if summary_item_count < 15:
 - **Tag/category extraction**: Auto-detect topics for organization
 
 ### 11.2 Phase 3 Features (6-12 months)
+
 - **Interactive synthesis**: Click items to jump to source transcript timestamp
 - **Knowledge graph generation**: Visual map of concepts across videos
 - **Automated follow-up questions**: AI suggests what to research next based on synthesis gaps
@@ -825,9 +890,11 @@ Key finding: Community outpaced official capabilities—DIY MCPs offering full G
 **Date**: [To be filled]
 
 **Changes from Draft**:
+
 - [List any modifications after review]
 
 **Next Steps**:
+
 1. Technical review by developer
 2. Implementation Phase 1 (Week 1)
 3. Internal testing
@@ -836,4 +903,5 @@ Key finding: Community outpaced official capabilities—DIY MCPs offering full G
 ---
 
 **Document Version History**:
+
 - v1.0 (2025-10-06): Initial draft based on manual synthesis task

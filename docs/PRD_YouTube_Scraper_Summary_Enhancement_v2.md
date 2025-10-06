@@ -1,4 +1,5 @@
 # Product Requirements Document: YouTube Scraper Summary & Synthesis Enhancement
+
 ## Enhanced Edition v2.0 - Personal AI Research Intelligence System
 
 **Version**: 2.0 (Enhanced)
@@ -23,6 +24,7 @@ This PRD is organized into **independent modules** that can be developed in para
 - **INTEGRATE-001**: Module integration (Final Assembly)
 
 Each module has:
+
 - Clear input/output contracts
 - Standalone test criteria
 - Dependency declarations
@@ -35,7 +37,9 @@ Each module has:
 ## 1. Executive Summary
 
 ### 1.1 Vision Statement
+
 Transform YouTube Transcript Scraper from passive data collector into **intelligent AI research assistant** that:
+
 - Extracts actionable protocols (not just summaries)
 - Builds persistent knowledge base (learns from your history)
 - Generates executable implementation guides (not passive notes)
@@ -44,9 +48,11 @@ Transform YouTube Transcript Scraper from passive data collector into **intellig
 - Measures ROI (time saved vs. implementation cost)
 
 ### 1.2 Problem Statement
+
 Current workflow after scraping YouTube transcripts **for AI development research**:
 
 **PAIN POINTS**:
+
 1. ❌ Manual extraction of implementation patterns (2-4 hours per video set)
 2. ❌ No memory of previous learnings (repeat research)
 3. ❌ Overwhelming information (10 videos = where to start?)
@@ -56,6 +62,7 @@ Current workflow after scraping YouTube transcripts **for AI development researc
 7. ❌ No cost-benefit analysis (implementing low-ROI techniques)
 
 **PRIMARY USE CASES**:
+
 - Building AI applications with Claude Code, Cursor, AI CLIs
 - Extracting implementation protocols from tutorials
 - Synthesizing recommended workflows across sources
@@ -104,6 +111,7 @@ Current workflow after scraping YouTube transcripts **for AI development researc
 ### 1.4 Success Metrics
 
 **Quantitative**:
+
 - **Time Savings**: 95% reduction in post-scrape analysis (manual → automated)
 - **Knowledge Retention**: 80% reduction in duplicate research
 - **Implementation Speed**: 3x faster from "learning" → "building"
@@ -111,6 +119,7 @@ Current workflow after scraping YouTube transcripts **for AI development researc
 - **Adoption**: 90%+ of scrapes use enhanced features within 30 days
 
 **Qualitative**:
+
 - "I know exactly what to implement next"
 - "I never re-research the same topic"
 - "Summaries include working code I can copy-paste"
@@ -123,6 +132,7 @@ Current workflow after scraping YouTube transcripts **for AI development researc
 ### 2.1 Current State Analysis
 
 **EXISTING CAPABILITIES** ✅:
+
 - GPT-4 integration available
 - Metadata extraction (title, channel, views, duration)
 - Markdown formatting
@@ -130,6 +140,7 @@ Current workflow after scraping YouTube transcripts **for AI development researc
 - Basic file organization
 
 **CURRENT GAPS** ❌:
+
 - No structured insight extraction
 - No cross-video synthesis
 - No memory between scrape sessions
@@ -144,6 +155,7 @@ Current workflow after scraping YouTube transcripts **for AI development researc
 **TO**: AI Research Intelligence System
 
 **KEY PRINCIPLES**:
+
 1. **Actionable over Informational**: Every output should answer "what do I DO?"
 2. **Memory over Isolation**: System remembers past learnings
 3. **Prioritization over Overwhelm**: System tells you what matters most
@@ -177,6 +189,7 @@ graph TD
 ```
 
 **DEVELOPMENT STRATEGY**:
+
 - **Parallel Track A**: CORE-001 (foundation) must complete first
 - **Parallel Track B**: INTEL-001, VISUAL-001, KNOWLEDGE-001, EXEC-001 (independent, can run simultaneously after CORE)
 - **Parallel Track C**: UI-001 (can develop mock interface during Track B)
@@ -189,6 +202,7 @@ graph TD
 ---
 
 ## MODULE: CORE-001
+
 ## Base Scraping & Summary Generation System
 
 **STATUS**: Foundation Module - Must Complete First
@@ -199,6 +213,7 @@ graph TD
 ### CORE-001.1 Functional Requirements
 
 #### Input Contract
+
 ```python
 class ScrapeRequest:
     urls: List[str]                    # YouTube URLs
@@ -209,6 +224,7 @@ class ScrapeRequest:
 ```
 
 #### Output Contract
+
 ```python
 class ScrapeResult:
     transcripts: List[TranscriptFile]
@@ -221,6 +237,7 @@ class ScrapeResult:
 #### Core Functions
 
 **Function 1: Enhanced Transcript Extraction**
+
 ```python
 def scrape_transcript(url: str) -> TranscriptData:
     """
@@ -244,6 +261,7 @@ def scrape_transcript(url: str) -> TranscriptData:
 ```
 
 **Function 2: Individual Summary Generation**
+
 ```python
 def generate_summary(
     transcript: TranscriptData,
@@ -272,6 +290,7 @@ def generate_summary(
 ```
 
 **Function 3: Comprehensive Synthesis**
+
 ```python
 def generate_synthesis(
     summaries: List[SummaryData],
@@ -298,6 +317,7 @@ def generate_synthesis(
 ### CORE-001.2 Enhanced Prompt Templates
 
 #### Summary Generation Prompt v2.0
+
 ```
 SYSTEM ROLE:
 You are a technical research analyst specializing in extracting ACTIONABLE implementation guidance from AI development tutorials. Your summaries are used to build AI applications with Claude Code, Cursor, and AI CLIs.
@@ -367,9 +387,11 @@ OUTPUT STRUCTURE:
 [For any prompts mentioned in video:]
 
 ### Prompt: {Purpose}
+
 ```
 {Exact prompt text from video}
 ```
+
 **Variables to Customize**: [{var1}, {var2}]
 **Context**: {When to use this}
 
@@ -380,11 +402,14 @@ OUTPUT STRUCTURE:
 [For any commands shown:]
 
 ### Command: {Purpose}
+
 ```bash
 {exact command}
 ```
+
 **Prerequisites**: {what must be installed}
-**Flags Explained**: 
+**Flags Explained**:
+
 - `--flag`: {what it does}
 
 ---
@@ -394,6 +419,7 @@ OUTPUT STRUCTURE:
 [For each tool mentioned:]
 
 ### {Tool Name} v{version}
+
 - **Purpose**: {what it does}
 - **Setup Complexity**: [Easy/Moderate/Complex]
 - **Cost**: [Free/Paid/API costs]
@@ -431,6 +457,7 @@ EXTRACTION PRIORITIES (in order):
 10. **Best Practices**: Optimization strategies with reasoning
 
 AVOID:
+
 - Marketing fluff or sponsor content
 - General concepts already widely known
 - Vague advice without implementation details
@@ -438,6 +465,7 @@ AVOID:
 - Theoretical explanations without practical application
 
 SPECIAL EXTRACTIONS:
+
 - If video shows file structure, recreate as tree diagram
 - If video shows a directory layout, capture exact paths
 - If video mentions "this broke in version X", flag prominently
@@ -445,6 +473,7 @@ SPECIAL EXTRACTIONS:
 - If video shows error messages, capture exact text
 
 QUALITY CHECKS:
+
 - Every item must have actionable "How to Implement" section
 - Code blocks must be complete and copy-paste ready
 - Commands must include prerequisites
@@ -452,14 +481,17 @@ QUALITY CHECKS:
 - Timestamps must be included for verification
 
 FORMAT: Output as markdown following structure above
+
 ```
 
 #### Synthesis Generation Prompt v2.0
 ```
+
 SYSTEM ROLE:
 You are a senior technical architect synthesizing AI development implementation guidance from multiple tutorial sources. Your synthesis creates a strategic implementation guide for building AI applications.
 
 CRITICAL OBJECTIVES:
+
 1. Reveal META-PATTERNS visible only across multiple sources
 2. Build COMPLETE WORKFLOWS by combining partial info from different videos
 3. Create DECISION FRAMEWORKS (when to use X vs Y)
@@ -470,11 +502,14 @@ CRITICAL OBJECTIVES:
 INPUT SUMMARIES:
 {summary_1}
 ---
+
 {summary_2}
 ---
+
 [...all summaries...]
 
 METADATA:
+
 - Total Videos: {n}
 - Date Range: {earliest} to {latest}
 - Total Views: {sum_views}
@@ -484,6 +519,7 @@ METADATA:
 OUTPUT STRUCTURE:
 
 # Comprehensive Synthesis: {project_name}
+
 ## AI Development Intelligence Report from {n} Video Sources
 
 **Generated**: {today}
@@ -497,16 +533,19 @@ OUTPUT STRUCTURE:
 ## 📊 Executive Dashboard
 
 **Technology Maturity**:
+
 - Stable Tools: {list tools mentioned 5+ times}
 - Emerging Tools: {list tools mentioned 1-2 times}
 - Deprecated Warnings: {list obsolete approaches}
 
 **Implementation Readiness**:
+
 - ✅ Ready Now: {count items marked ready}
 - ⚠️ Needs Setup: {count items needing prerequisites}
 - 🔬 Experimental: {count cutting-edge items}
 
 **Estimated ROI**:
+
 - Total Implementation Time: {hours}
 - Estimated Time Savings: {hours/week}
 - Break-even: {weeks}
@@ -517,18 +556,21 @@ OUTPUT STRUCTURE:
 
 [This is the MOST IMPORTANT section - detailed ordering by dependencies]
 
-### Phase 1: Foundation (Week 1) 
+### Phase 1: Foundation (Week 1)
+
 **Goal**: Set up development environment with core tools
 **Time**: 4-6 hours
 **Prerequisites**: None
 
 #### Task 1.1: Environment Setup
+
 - [ ] Install {tool} v{version} (Video {n}, {timestamp})
 - [ ] Configure {config_file} with settings from Video {x}
 - [ ] Verify with: `{test_command}` → Expected: {output}
 - **Why This First**: Required for 85% of later protocols
 
 #### Task 1.2: Core MCP Installation
+
 - [ ] {specific steps extracted from multiple videos}
 - **Combines Best Of**: Video 2's setup + Video 5's troubleshooting
 - **Common Pitfall**: {error} → Fix: {solution from Video 8}
@@ -536,6 +578,7 @@ OUTPUT STRUCTURE:
 [Continue with ordered tasks...]
 
 ### Phase 2: Integration (Week 2)
+
 **Goal**: Connect tools into working workflows
 **Time**: 6-8 hours
 **Prerequisites**: Phase 1 complete, API keys obtained
@@ -543,6 +586,7 @@ OUTPUT STRUCTURE:
 [Detailed tasks...]
 
 ### Phase 3: Optimization (Week 3+)
+
 **Goal**: Implement advanced patterns and optimizations
 **Time**: Ongoing
 **Prerequisites**: Phase 2 complete, 2+ working projects
@@ -556,32 +600,40 @@ OUTPUT STRUCTURE:
 [For each major workflow mentioned across videos, create COMPLETE guide]
 
 ### Playbook 1: {Workflow Name}
+
 **Source Videos**: {list videos that contributed}
 **Complexity**: [Beginner/Intermediate/Advanced]
 **Time to Complete**: {hours}
 **Business Value**: {time saved per use}
 
 **Prerequisites**:
+
 - [ ] {item} - Install: `{command}`
 - [ ] {item} - From Video {n}
 
 **Step-by-Step Implementation**:
 
 #### Step 1: {Action}
+
 ```bash
 {exact command from Video X}
 ```
+
 **What This Does**: {explanation}
 **Expected Output**:
+
 ```
 {example output}
 ```
+
 **If You See Error**: "{error message}" → {solution from Video Y}
 
 #### Step 2: {Action}
+
 [Combines approach from Video A with refinement from Video B]
 
 **Create File**: `{path/to/file}`
+
 ```language
 {complete code synthesized from multiple sources}
 ```
@@ -589,11 +641,13 @@ OUTPUT STRUCTURE:
 [Continue with complete workflow...]
 
 **Verification**:
+
 - [ ] Run: `{test_command}`
 - [ ] Expected result: {description}
 - [ ] Troubleshooting: {common issues + fixes}
 
 **Optimization Tips** (from multiple sources):
+
 - {Tip from Video 3}: {explanation}
 - {Tip from Video 7}: {explanation}
 
@@ -606,6 +660,7 @@ OUTPUT STRUCTURE:
 ### Category: Agent Setup Prompts
 
 #### Prompt: Agentic Coding Setup (Synthesized Best Practice)
+
 **Source**: Combined from Video 2, Video 5, Video 9
 **Use Case**: Initial Claude Code agent configuration
 
@@ -617,7 +672,8 @@ Variables:
 - {var2}: {explanation + example}
 ```
 
-**Evolution Notes**: 
+**Evolution Notes**:
+
 - Video 2 (April): Used approach A
 - Video 5 (June): Refined with technique B
 - Video 9 (Oct): Current best practice is C
@@ -643,11 +699,13 @@ Variables:
 
 **Synthesis Recommendation**:
 Based on {n} video comparisons:
+
 - **Use Claude Code if**: {specific criteria from videos}
 - **Use Cursor if**: {specific criteria from videos}
 - **Use Windsurf if**: {specific criteria from videos}
 
 **Version Notes**:
+
 - Claude Code 2.0 (Oct) significantly improved over 1.x (Videos 2 vs 8)
 - Cursor composition feature (Video 3) still experimental as of {date}
 
@@ -662,15 +720,16 @@ Based on {n} video comparisons:
 ### Pattern 1: MCP Security Evolution
 
 **Observation Across {n} Videos**:
+
 - **April Videos (1,2)**: No mention of security concerns
 - **June Videos (4,5)**: Beginners started raising security questions
 - **October Videos (8,9,10)**: Advanced users implementing sandboxing
 
 **What This Reveals**:
-Community maturity increased significantly. Early adopters focused on functionality, 
+Community maturity increased significantly. Early adopters focused on functionality,
 later adopters prioritized security. Current best practice (Video 9): {approach}
 
-**Your Action**: 
+**Your Action**:
 If you're just starting, implement security from Day 1 using approach from Video 9.
 Don't follow early videos' permissive configurations.
 
@@ -678,6 +737,7 @@ Don't follow early videos' permissive configurations.
 
 **Extracted from Videos {list}**:
 All advanced users converged on similar cost optimization:
+
 1. {Technique mentioned in 5+ videos}
 2. {Technique mentioned in 4+ videos}
 3. {Technique mentioned in 3+ videos}
@@ -752,13 +812,16 @@ graph TD
 ### Critical Warnings (Mentioned 3+ times)
 
 #### Warning 1: {Issue Description}
+
 **Videos Mentioning**: {2, 5, 8, 10}
 **Severity**: 🔴 High - Can cause data loss
 **Context**: When implementing {specific workflow}
-**Error Message**: 
+**Error Message**:
+
 ```
 {exact error text from video}
 ```
+
 **Solution** (Best approach synthesized):
 {Combines fix from Video 5 with prevention from Video 8}
 
@@ -775,6 +838,7 @@ graph TD
 ### High-ROI Implementations (Do These First)
 
 #### 1. Gmail MCP Setup
+
 **Implementation Time**: 45 minutes (Videos 2, 7)
 **Time Savings**: 2 hours/week (email automation)
 **Annual Savings**: 104 hours
@@ -783,6 +847,7 @@ graph TD
 **Recommendation**: ✅ Implement in Week 1, Phase 2
 
 #### 2. Claude Code Agentic Workflow
+
 **Implementation Time**: 3 hours (Videos 5, 8, 9)
 **Time Savings**: 5 hours/week (automated coding tasks)
 **Annual Savings**: 260 hours
@@ -795,7 +860,9 @@ graph TD
 ### Low-ROI or Experimental (Defer or Skip)
 
 #### {Protocol Name}
+
 **Why Low Priority**:
+
 - Only mentioned in 1 video (not proven)
 - Experimental flag raised in Video {n}
 - Requires 10+ hours setup for minimal gain
@@ -825,6 +892,7 @@ graph TD
 ### Version-Specific Notes
 
 **Claude Code 1.x → 2.0 Migration**:
+
 - Breaking changes: {list from Video 8}
 - Migration guide: {synthesized from Videos 8,9}
 - Timeline: Upgrade by {date} (official deprecation from Video 9)
@@ -838,11 +906,13 @@ graph TD
 ### Contradiction 1: MCP Security Approach
 
 **Camp A (Videos 2, 3)**: "Approve all MCPs, trust ecosystem"
+
 - Argument: Speeds development, ecosystem is small/trustworthy
 - Representative: {Channel names}
 - Date Context: April-May 2025 (early days)
 
 **Camp B (Videos 8, 9, 10)**: "Sandbox MCPs, audit permissions"
+
 - Argument: Production safety, potential supply chain attacks
 - Representative: {Channel names}
 - Date Context: Sept-Oct 2025 (mature ecosystem)
@@ -874,6 +944,7 @@ and sandboxing tools are available (didn't exist during Camp A's timeframe).
 ### Cross-Reference Index
 
 **By Topic**:
+
 - **MCP Setup**: Videos 1, 2, 5, 7, 9
 - **Claude Code**: Videos 2, 5, 8, 9, 10
 - **Gmail Automation**: Videos 2, 3, 7
@@ -881,6 +952,7 @@ and sandboxing tools are available (didn't exist during Camp A's timeframe).
 [...all topics...]
 
 **By Tool**:
+
 - **Claude Code**: Mentioned in videos {list}
 - **Cursor**: Mentioned in videos {list}
 - **Windsurf**: Mentioned in videos {list}
@@ -895,6 +967,7 @@ and sandboxing tools are available (didn't exist during Camp A's timeframe).
 ### My Implementation Journal
 
 #### {Date}: {Protocol Name}
+
 **Source**: Video {n}, timestamp {XX:XX}
 **Status**: ✅ Complete | ⏳ In Progress | ❌ Blocked
 
@@ -940,11 +1013,13 @@ META-ANALYSIS REQUIREMENTS:
 6. PROVEN vs EXPERIMENTAL: What's battle-tested vs. cutting-edge?
 
 OUTPUT FORMAT: Markdown with Mermaid diagrams as specified above
+
 ```
 
 ### CORE-001.3 File Structure & Naming
 
 ```
+
 {output_directory}/
 ├── 00_TRANSCRIPTS/
 │   ├── Video1_Title_Channel_2025-10-06.md
@@ -982,6 +1057,7 @@ OUTPUT FORMAT: Markdown with Mermaid diagrams as specified above
     ├── scrape_log.json
     ├── cost_tracker.json
     └── version_tracker.json
+
 ```
 
 ### CORE-001.4 API Specifications
@@ -1027,6 +1103,7 @@ class YouTubeScraperCore:
 ```
 
 #### API: GPT-4 Interface
+
 ```python
 class GPT4Interface:
     """Abstraction for GPT-4 API calls"""
@@ -1057,6 +1134,7 @@ class GPT4Interface:
 ### CORE-001.5 Testing Requirements
 
 **Unit Tests**:
+
 ```python
 def test_transcript_extraction():
     """Verify transcript extraction with metadata"""
@@ -1075,6 +1153,7 @@ def test_file_structure_creation():
 ```
 
 **Integration Tests**:
+
 ```python
 def test_full_scrape_pipeline():
     """End-to-end test: URLs → all outputs generated"""
@@ -1101,6 +1180,7 @@ def test_cost_estimation_accuracy():
 ---
 
 ## MODULE: INTEL-001
+
 ## Intelligence & Smart Analysis Layer
 
 **STATUS**: Can run parallel with VISUAL-001, KNOWLEDGE-001, EXEC-001
@@ -1141,6 +1221,7 @@ class ReadinessScorer:
 ```
 
 **Scoring Algorithm**:
+
 ```
 Factors for Readiness Status:
 
@@ -1220,6 +1301,7 @@ class ROICalculator:
 ```
 
 **ROI Scoring Logic**:
+
 ```
 Time Savings Estimation:
 - Look for automation keywords: "automates", "no longer need to"
@@ -1303,6 +1385,7 @@ class LearningPathGenerator:
 ```
 
 **Learning Path Structure**:
+
 ```markdown
 # Your Personalized Learning Path
 
@@ -1356,12 +1439,14 @@ graph TD
 ```
 
 ## Quick Wins (Implement First)
+
 [High ROI, low complexity items regardless of dependency order]
 
 1. **{Item Name}** (Video {n})
    - ROI: 89x
    - Time: 15 minutes
    - Immediate value: Saves 30min/day
+
 ```
 
 #### Sub-Module 4: Technology Freshness Tracker
@@ -1412,6 +1497,7 @@ class FreshnessTracker:
 ```
 
 **Freshness Rules**:
+
 ```
 Status Determination:
 
@@ -1440,6 +1526,7 @@ Deprecation Keywords:
 ### INTEL-001.2 Integration Points
 
 **Input from CORE-001**:
+
 ```python
 # INTEL-001 receives from CORE-001
 summaries: List[SummaryData]
@@ -1447,6 +1534,7 @@ synthesis: SynthesisData
 ```
 
 **Output for UI-001**:
+
 ```python
 # INTEL-001 provides to UI-001
 intelligence_report = IntelligenceReport(
@@ -1458,6 +1546,7 @@ intelligence_report = IntelligenceReport(
 ```
 
 **Files Generated**:
+
 ```
 02_SYNTHESIS/
 ├── 05_INTELLIGENCE_REPORT.md
@@ -1506,6 +1595,7 @@ def test_quick_wins_identification():
 ---
 
 ## MODULE: VISUAL-001
+
 ## Visual Synthesis & Diagram Generation
 
 **STATUS**: Can run parallel with INTEL-001, KNOWLEDGE-001, EXEC-001
@@ -1567,6 +1657,7 @@ class MermaidGenerator:
 **Diagram Types**:
 
 1. **Timeline Diagram**:
+
 ```mermaid
 timeline
     title AI Development Tools Evolution
@@ -1577,6 +1668,7 @@ timeline
 ```
 
 2. **Workflow Flowchart**:
+
 ```mermaid
 graph TD
     A[Start: User Request] --> B{Analysis Type?}
@@ -1597,6 +1689,7 @@ graph TD
 ```
 
 3. **Architecture Diagram**:
+
 ```mermaid
 graph LR
     U[User] --> CC[Claude Code]
@@ -1619,6 +1712,7 @@ graph LR
 ```
 
 4. **Dependency Graph**:
+
 ```mermaid
 graph TD
     Foundation[Foundation Phase]
@@ -1731,21 +1825,25 @@ class VisualDashboard:
 ```
 
 **Dashboard Output**:
+
 ```markdown
 # 📊 Research Intelligence Dashboard
 
 ## At a Glance
 
 ```
+
 Total Videos: 10              Complexity Distribution:
 Total Duration: 2h 15m        ███████░░░ Beginner: 35%
 Date Range: Apr - Oct 2025    ████████░░ Intermediate: 40%
 Total Views: 1.4M             █████░░░░░ Advanced: 25%
 
 Top Topics:                   Implementation Status:
+
 1. Claude Code (8 mentions)   ✅ Ready: 45 items (60%)
 2. MCP Protocol (10 mentions) ⚠️ Setup: 25 items (33%)
 3. Gmail Automation (5)       🔬 Experimental: 5 items (7%)
+
 ```
 
 ## ROI Quick View
@@ -1782,6 +1880,7 @@ graph LR
     style P3 fill:#FFD700
     style QW fill:#FF6B6B
 ```
+
 ```
 
 ### VISUAL-001.2 Integration Points
@@ -1793,12 +1892,14 @@ summaries: List[SummaryData]
 ```
 
 **Input from INTEL-001** (optional, enhances visuals):
+
 ```python
 intelligence_report: IntelligenceReport
 learning_path: LearningPath
 ```
 
 **Output Files**:
+
 ```
 02_SYNTHESIS/
 ├── 02_VISUAL_DIAGRAMS.md
@@ -1846,6 +1947,7 @@ def test_diagram_rendering():
 ---
 
 ## MODULE: KNOWLEDGE-001
+
 ## Persistent Knowledge Base & Memory System
 
 **STATUS**: Can run parallel with INTEL-001, VISUAL-001, EXEC-001
@@ -1926,6 +2028,7 @@ class KnowledgeBaseManager:
 ```
 
 **Master Knowledge Base Structure**:
+
 ```markdown
 # Master Knowledge Base
 **Last Updated**: {date}
@@ -2011,6 +2114,7 @@ class ImplementationJournal:
 ```
 
 **Journal Structure**:
+
 ```markdown
 # Implementation Journal
 
@@ -2031,7 +2135,9 @@ class ImplementationJournal:
 
 **Errors Encountered**:
 ```
+
 {error messages}
+
 ```
 
 **Solutions Found**:
@@ -2094,6 +2200,7 @@ class ToolRegistry:
 ```
 
 **Tool Registry Structure**:
+
 ```markdown
 # Tool Registry
 **Last Updated**: {date}
@@ -2190,6 +2297,7 @@ class SemanticSearchEngine:
 ```
 
 **Search Interface** (for UI integration):
+
 ```python
 # Example searches:
 search("gmail automation with mcp")
@@ -2208,12 +2316,14 @@ find_related("KB-042")  # Entry about Gmail MCP
 ### KNOWLEDGE-001.2 Integration Points
 
 **Input from CORE-001**:
+
 ```python
 summaries: List[SummaryData]
 synthesis: SynthesisData
 ```
 
 **Output Files**:
+
 ```
 05_KNOWLEDGE_BASE/
 ├── _MASTER_KNOWLEDGE.md
@@ -2233,6 +2343,7 @@ synthesis: SynthesisData
 ```
 
 **API for Other Modules**:
+
 ```python
 class KnowledgeAPI:
     """Public API for other modules to query KB"""
@@ -2286,6 +2397,7 @@ def test_user_journal_persistence():
 ---
 
 ## MODULE: EXEC-001
+
 ## Executable Playbooks & Prompt Library
 
 **STATUS**: Can run parallel with INTEL-001, VISUAL-001, KNOWLEDGE-001
@@ -2349,6 +2461,7 @@ class PlaybookGenerator:
 ```
 
 **Playbook Structure**:
+
 ```markdown
 # Playbook: {Workflow Name}
 
@@ -2411,14 +2524,17 @@ class PlaybookGenerator:
 ```
 
 **Expected Output**:
+
 ```
 {example output}
 ```
 
 **If You See This Error**:
+
 ```
 Error: {common error message}
 ```
+
 **Solution**: {fix from video sources}
 
 **Source**: Video {n}, timestamp {XX:XX}
@@ -2439,16 +2555,20 @@ setting_2: {what it does}
 ```
 
 **Variables to Customize**:
+
 - `{var1}`: {your value} - {explanation}
 - `{var2}`: {your value} - {explanation}
 
 **Verification**:
+
 ```bash
 {command to verify config}
 ```
+
 Expected: {description of success}
 
 **Common Issues**:
+
 - If `{error}`: {solution from Video X}
 - If `{error}`: {solution from Video Y}
 
@@ -2477,6 +2597,7 @@ Expected: {description of success}
 {Line-by-line explanation of key parts}
 
 **Customization Points**:
+
 - Line {X}: Change `{var}` to your value
 - Line {Y}: Optional feature, can be removed
 
@@ -2485,16 +2606,20 @@ Expected: {description of success}
 ## Verification & Testing
 
 ### Test 1: Basic Functionality
+
 ```bash
 {test command}
 ```
+
 **Expected**: {description}
 **If Failed**: {troubleshooting steps}
 
 ### Test 2: Integration
+
 ```bash
 {integration test}
 ```
+
 **Expected**: {description}
 **If Failed**: {troubleshooting steps}
 
@@ -2503,11 +2628,13 @@ Expected: {description of success}
 ## Troubleshooting Guide
 
 ### Issue 1: {Common Problem}
+
 **Symptoms**: {how it manifests}
 **Cause**: {why it happens}
 **Solution**: {fix, sourced from Video {n}}
 
 ### Issue 2: {Common Problem}
+
 [Continue with all known issues from sources...]
 
 ---
@@ -2527,11 +2654,13 @@ Expected: {description of success}
 ## Next Steps
 
 **After Completing This Playbook**:
+
 - [ ] Implement {related playbook}
 - [ ] Explore {advanced topic}
 - [ ] Optimize {specific aspect}
 
 **Related Playbooks**:
+
 - {Playbook B} - Builds on this
 - {Playbook C} - Alternative approach
 - {Playbook D} - Advanced patterns
@@ -2555,18 +2684,16 @@ Expected: {description of success}
 
 **What Worked**:
 
-
 **What Didn't Work**:
 
-
 **Deviations from Playbook**:
-
 
 **Time Taken**: _______ ({X} hours estimated)
 
 **Would I Recommend**: Yes / No
 
 **Notes for Future**:
+
 ```
 
 #### Sub-Module 2: Prompt Template Library
@@ -2615,6 +2742,7 @@ class PromptLibraryManager:
 ```
 
 **Prompt Library Structure**:
+
 ```markdown
 # Prompt Template Library
 
@@ -2635,6 +2763,7 @@ class PromptLibraryManager:
 
 **Template**:
 ```
+
 You are an expert software engineer working on {PROJECT_TYPE}.
 
 Project Structure:
@@ -2644,6 +2773,7 @@ Your task:
 {SPECIFIC_TASK}
 
 Guidelines:
+
 1. Plan before coding - outline your approach
 2. Create/modify files as needed using proper tools
 3. Run tests after each change
@@ -2651,12 +2781,14 @@ Guidelines:
 5. Use git for version control
 
 Available tools:
+
 - edit_file: Modify existing files
 - create_file: Create new files
 - bash: Run commands and tests
 - read_file: Review existing code
 
 Before starting, show me your implementation plan.
+
 ```
 
 **Variables to Customize**:
@@ -2690,17 +2822,20 @@ Before starting, show me your implementation plan.
 
 **Template**:
 ```
-You have access to Gmail via MCP. 
+
+You have access to Gmail via MCP.
 
 Your task: {EMAIL_TASK}
 
 Available MCP functions:
+
 - gmail_search(query): Search emails
 - gmail_send(to, subject, body): Send email
 - gmail_label(message_id, label): Add label
 - gmail_read(message_id): Read full email
 
 Guidelines:
+
 1. Search before acting - verify you have right emails
 2. Show me results before taking action
 3. Confirm destructive operations (delete, archive)
@@ -2710,6 +2845,7 @@ Approach:
 {STEP_BY_STEP_APPROACH}
 
 Start by showing me what emails match your search.
+
 ```
 
 **Variables**:
@@ -2809,6 +2945,7 @@ class CommandReferenceBuilder:
 ```
 
 **Command Reference Structure**:
+
 ```markdown
 # Command Reference
 
@@ -2830,17 +2967,20 @@ claude --init
 ```
 
 **What It Does**:
+
 - Creates `.claude/` directory
 - Sets up default configuration
 - Initializes project context
 
 **Options**:
+
 ```bash
 claude --init --template react      # Use React template
 claude --init --no-git              # Don't initialize git
 ```
 
 **Example Output**:
+
 ```
 ✓ Created .claude/ directory
 ✓ Initialized project config
@@ -2848,6 +2988,7 @@ claude --init --no-git              # Don't initialize git
 ```
 
 **Common Issues**:
+
 - **Error**: "Already initialized"
   **Fix**: Remove `.claude/` directory first
   **Source**: Video 5, 8:42
@@ -2855,10 +2996,12 @@ claude --init --no-git              # Don't initialize git
 ---
 
 ### `claude ask "{question}"`
+
 **Purpose**: Quick question to Claude without starting session
 **Source**: Video 9
 
 **Usage**:
+
 ```bash
 claude ask "What's the best way to handle auth in Next.js?"
 ```
@@ -2874,15 +3017,18 @@ claude ask "What's the best way to handle auth in Next.js?"
 ## MCP Commands
 
 ### Gmail MCP: Search
+
 **Purpose**: Search Gmail via MCP
 **Source**: Videos 2, 7
 
 **Usage**:
+
 ```python
 mcp.gmail_search("from:example.com after:2025-01-01")
 ```
 
 **Query Syntax**:
+
 - `from:{email}` - From specific sender
 - `to:{email}` - To specific recipient
 - `subject:{text}` - Subject contains text
@@ -2892,6 +3038,7 @@ mcp.gmail_search("from:example.com after:2025-01-01")
 - `is:unread` - Unread only
 
 **Example Queries**:
+
 ```python
 # All unread emails from boss
 mcp.gmail_search("from:boss@company.com is:unread")
@@ -2923,6 +3070,7 @@ mcp.gmail_search("subject:receipt after:2025-09-01 before:2025-10-01")
 | Search Gmail | `mcp.gmail_search()` | Video 7 |
 | Send email | `mcp.gmail_send()` | Video 7 |
 [...all commands in quick-lookup format...]
+
 ```
 
 ### EXEC-001.2 Integration Points
@@ -2935,12 +3083,14 @@ extracted_commands: List[Command]
 ```
 
 **Input from INTEL-001** (optional, enhances playbooks):
+
 ```python
 learning_path: LearningPath
 readiness_scores: Dict[ItemID, ReadinessScore]
 ```
 
 **Output Files**:
+
 ```
 03_PLAYBOOKS/
 ├── 01_Gmail_MCP_Setup.md
@@ -2991,6 +3141,7 @@ def test_verification_steps():
 ---
 
 ## MODULE: UI-001
+
 ## Enhanced User Interface
 
 **STATUS**: Can develop mockup early, full implementation after other modules
@@ -3241,6 +3392,7 @@ def test_settings_persistence():
 ---
 
 ## MODULE: INTEGRATE-001
+
 ## Module Integration & Final Assembly
 
 **STATUS**: Final phase, requires all modules complete
@@ -3424,21 +3576,25 @@ def test_cross_module_consistency():
 ## Development Roadmap
 
 ### Phase 1: Foundation (Weeks 1-2)
+
 **Goal**: Core functionality operational
 
 **Week 1: CORE-001 Development**
+
 - Day 1-2: Enhanced transcript extraction
 - Day 3-4: Summary generation with new prompts
 - Day 5-6: Synthesis generation with intelligence
 - Day 7: Testing and bug fixes
 
 **Week 2: CORE-001 Completion**
+
 - Day 1-2: File structure management
 - Day 3-4: Error handling and resilience
 - Day 5: Cost estimation and progress tracking
 - Day 6-7: Integration testing
 
 **Deliverables**:
+
 - ✅ Working scraper with enhanced summaries
 - ✅ Comprehensive synthesis generation
 - ✅ Basic file organization
@@ -3447,28 +3603,34 @@ def test_cross_module_consistency():
 ---
 
 ### Phase 2: Intelligence & Features (Weeks 3-6)
+
 **Goal**: All advanced modules functional
 
 **Week 3: INTEL-001 Development**
+
 - Day 1-2: Readiness scoring implementation
 - Day 3-4: ROI calculation system
 - Day 5-7: Learning path generator
 
 **Week 4: INTEL-001 Completion + VISUAL-001 Start**
+
 - Day 1-2: Freshness tracking
 - Day 3-4: Intelligence report generation
 - Day 5-7: Mermaid diagram generator (VISUAL-001)
 
 **Week 5: VISUAL-001 + KNOWLEDGE-001**
+
 - Day 1-3: Comparison matrices, dashboard (VISUAL-001)
 - Day 4-7: Knowledge base manager (KNOWLEDGE-001)
 
 **Week 6: KNOWLEDGE-001 + EXEC-001**
+
 - Day 1-3: Implementation journal, tool registry (KNOWLEDGE-001)
 - Day 4-5: Semantic search (KNOWLEDGE-001)
 - Day 6-7: Playbook generator start (EXEC-001)
 
 **Deliverables**:
+
 - ✅ Intelligence analysis working
 - ✅ Visual diagrams generating
 - ✅ Knowledge base persisting
@@ -3477,19 +3639,23 @@ def test_cross_module_consistency():
 ---
 
 ### Phase 3: Execution Layer (Weeks 7-8)
+
 **Goal**: Complete executable outputs
 
 **Week 7: EXEC-001 Completion**
+
 - Day 1-3: Playbook generation complete
 - Day 4-5: Prompt library manager
 - Day 6-7: Command reference builder
 
 **Week 8: EXEC-001 Testing**
+
 - Day 1-3: Playbook quality validation
 - Day 4-5: Prompt extraction accuracy
 - Day 6-7: Command reference testing
 
 **Deliverables**:
+
 - ✅ Executable playbooks generating
 - ✅ Prompt library complete
 - ✅ Command reference built
@@ -3497,19 +3663,23 @@ def test_cross_module_consistency():
 ---
 
 ### Phase 4: User Interface (Weeks 9-10)
+
 **Goal**: Enhanced UI operational
 
 **Week 9: UI-001 Development**
+
 - Day 1-3: Enhanced GUI layout
 - Day 4-5: Analysis mode selection
 - Day 6-7: Progress tracking improvements
 
 **Week 10: UI-001 Completion**
+
 - Day 1-2: Completion dialog with dashboard
 - Day 3-4: Settings panel
 - Day 5-7: Knowledge base viewer
 
 **Deliverables**:
+
 - ✅ Enhanced GUI complete
 - ✅ All features accessible from UI
 - ✅ Settings management working
@@ -3517,20 +3687,24 @@ def test_cross_module_consistency():
 ---
 
 ### Phase 5: Integration & Polish (Weeks 11-12)
+
 **Goal**: Complete, production-ready system
 
 **Week 11: INTEGRATE-001**
+
 - Day 1-3: Module integration
 - Day 4-5: Error handling across modules
 - Day 6-7: End-to-end testing
 
 **Week 12: Final Testing & Launch**
+
 - Day 1-3: User acceptance testing
 - Day 4-5: Performance optimization
 - Day 6: Documentation
 - Day 7: Launch preparation
 
 **Deliverables**:
+
 - ✅ Fully integrated system
 - ✅ All tests passing
 - ✅ Documentation complete
@@ -3541,6 +3715,7 @@ def test_cross_module_consistency():
 ## Parallel Development Strategy
 
 ### Track A: Core Foundation (Sequential)
+
 ```
 [CORE-001] → Must complete before other tracks
     ↓
@@ -3548,6 +3723,7 @@ def test_cross_module_consistency():
 ```
 
 ### Track B: Feature Modules (Parallel)
+
 ```
 After CORE-001 completes, these run simultaneously:
 
@@ -3558,12 +3734,14 @@ Agent 4: [EXEC-001]      ─┘
 ```
 
 ### Track C: Interface (Parallel with Track B)
+
 ```
 [UI-001] → Can develop mockup during Track B
          → Integrate with modules as they complete
 ```
 
 ### Track D: Final Integration (Sequential)
+
 ```
 All modules complete → [INTEGRATE-001] → Launch
 ```
@@ -3573,31 +3751,37 @@ All modules complete → [INTEGRATE-001] → Launch
 ## Agent Assignment Strategy
 
 ### Agent 1: Core Developer
+
 **Modules**: CORE-001 (sequential), INTEGRATE-001 (final)
 **Skills**: Python, GPT-4 API, YouTube scraping
 **Timeline**: Weeks 1-2, Week 11
 
 ### Agent 2: Intelligence Developer
+
 **Modules**: INTEL-001
 **Skills**: ML/scoring algorithms, dependency graphing
 **Timeline**: Weeks 3-4
 
 ### Agent 3: Visualization Developer
+
 **Modules**: VISUAL-001
 **Skills**: Mermaid, data visualization, markdown
 **Timeline**: Weeks 4-5
 
 ### Agent 4: Knowledge Systems Developer
+
 **Modules**: KNOWLEDGE-001
 **Skills**: Databases, semantic search, embeddings
 **Timeline**: Weeks 5-6
 
 ### Agent 5: Execution Layer Developer
+
 **Modules**: EXEC-001
 **Skills**: Documentation, technical writing, prompt engineering
 **Timeline**: Weeks 6-8
 
 ### Agent 6: UI Developer
+
 **Modules**: UI-001
 **Skills**: GUI development, UX design
 **Timeline**: Weeks 9-10 (can start mockup in Week 3)
@@ -3607,25 +3791,33 @@ All modules complete → [INTEGRATE-001] → Launch
 ## Risk Mitigation Plan
 
 ### Risk: Module dependencies block parallel work
-**Mitigation**: 
+
+**Mitigation**:
+
 - Clear API contracts defined upfront
 - Agents use mock data during development
 - Integration happens only after all modules complete
 
 ### Risk: Scope creep during development
+
 **Mitigation**:
+
 - PRD locked after approval
 - Changes require formal review
 - "Nice to have" features deferred to v3.0
 
 ### Risk: Performance issues with large video sets
+
 **Mitigation**:
+
 - Performance testing at 25%, 50%, 75% completion
 - Optimization pass in Week 11-12
 - Parallel processing where possible
 
 ### Risk: GPT-4 cost exceeds budget
+
 **Mitigation**:
+
 - Cost caps enforced in UI
 - Optimization of prompts to reduce tokens
 - Batch processing where possible
@@ -3856,6 +4048,7 @@ class PromptTemplate:
 ## Appendix C: Testing Strategy
 
 ### Unit Testing (Per Module)
+
 ```python
 # Each module has comprehensive unit tests
 
@@ -3896,6 +4089,7 @@ test_settings_persistence()
 ```
 
 ### Integration Testing
+
 ```python
 def test_core_to_intel_integration():
     """Verify data flows correctly from CORE to INTEL"""
@@ -3914,6 +4108,7 @@ def test_cross_module_references():
 ```
 
 ### End-to-End Testing
+
 ```python
 def test_full_pipeline_10_videos():
     """Complete pipeline with 10 videos"""
@@ -3932,6 +4127,7 @@ def test_error_recovery():
 ```
 
 ### Performance Testing
+
 ```python
 def test_performance_10_videos():
     """Verify <10 minutes for 10 videos"""
@@ -3950,23 +4146,27 @@ def test_cost_accuracy():
 ### Quantitative Metrics
 
 **Performance**:
+
 - [ ] Process 10 videos in <10 minutes
 - [ ] Memory usage <2GB during execution
 - [ ] Cost estimation accuracy within 20%
 
 **Quality**:
+
 - [ ] 90%+ of summaries have 15-20 items (developer mode)
 - [ ] 95%+ of playbooks have all required sections
 - [ ] 85%+ of prompts extracted correctly
 - [ ] 90%+ of commands extracted correctly
 
 **Intelligence**:
+
 - [ ] Learning path has correct dependency ordering
 - [ ] ROI calculations within reasonable range
 - [ ] Readiness scores match manual assessment (80%+)
 - [ ] Duplicate detection accuracy >85%
 
 **User Experience**:
+
 - [ ] Full workflow completes without errors
 - [ ] All outputs accessible from UI
 - [ ] Settings persist correctly
@@ -3975,6 +4175,7 @@ def test_cost_accuracy():
 ### Qualitative Metrics
 
 **User Validation**:
+
 - [ ] "I know exactly what to implement next"
 - [ ] "Playbooks work without modification"
 - [ ] "Learning path saves me hours of planning"
@@ -3982,6 +4183,7 @@ def test_cost_accuracy():
 - [ ] "ROI analysis helps prioritize effectively"
 
 **Output Quality**:
+
 - [ ] Summaries are actionable (not just informational)
 - [ ] Synthesis reveals cross-video insights
 - [ ] Playbooks are executable (copy-paste ready)
@@ -3995,24 +4197,28 @@ def test_cost_accuracy():
 ### Version 3.0 Features (3-6 months)
 
 **Advanced Intelligence**:
+
 - Machine learning for better readiness scoring
 - Predictive learning path based on user progress
 - Automated prompt optimization suggestions
 - Community knowledge sharing (opt-in)
 
 **Enhanced Memory**:
+
 - Graph database for knowledge relationships
 - Time-travel view (see knowledge evolution)
 - Conflict resolution suggestions
 - Personal AI assistant mode (proactive recommendations)
 
 **Collaboration**:
+
 - Team knowledge bases
 - Shared implementation journals
 - Collaborative playbook editing
 - Progress tracking across team
 
 **Integrations**:
+
 - Obsidian plugin for KB integration
 - Notion export
 - GitHub integration for code snippets
@@ -4021,18 +4227,21 @@ def test_cost_accuracy():
 ### Version 4.0 Features (6-12 months)
 
 **Autonomous Research Agent**:
+
 - Automatically find related videos
 - Proactive research suggestions
 - Gap analysis ("You haven't learned about X yet")
 - Trend detection across YouTube
 
 **Interactive Features**:
+
 - Web app with live collaboration
 - Mobile app for learning path tracking
 - Voice interface for queries
 - AR visualization of knowledge graphs
 
 **Advanced Analytics**:
+
 - ROI tracking with actual outcomes
 - Learning velocity metrics
 - Knowledge retention testing
@@ -4083,6 +4292,7 @@ def test_cost_accuracy():
 **Date**: 2025-10-06
 
 **Next Steps**:
+
 1. ✅ PRD approved
 2. ⏳ Agent assignment
 3. ⏳ Development kickoff (Week 1)
@@ -4090,6 +4300,7 @@ def test_cost_accuracy():
 5. ⏳ Final delivery (Week 12)
 
 **Changes from v1.0**:
+
 - Added 5 new intelligence modules (INTEL, VISUAL, KNOWLEDGE, EXEC, INTEGRATE)
 - Structured for parallel development by separate agents
 - Enhanced prompts for actionable outputs

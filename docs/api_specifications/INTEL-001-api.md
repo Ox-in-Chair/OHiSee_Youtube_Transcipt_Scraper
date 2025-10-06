@@ -1,4 +1,5 @@
 # INTEL-001 API Specification
+
 ## ROI Scoring & Intelligence Layer
 
 **Version**: 1.0.0
@@ -65,9 +66,11 @@ IntelligenceEngine(callback=None)
 ```
 
 **Parameters:**
+
 - `callback` (callable, optional): Logging callback function
 
 **Example:**
+
 ```python
 engine = IntelligenceEngine()
 
@@ -99,6 +102,7 @@ analyze_items(
 | `include_learning_path` | bool | No | Generate learning path (default True) |
 
 **Returns:**
+
 ```python
 {
     "readiness_scores": Dict[str, ReadinessScore],
@@ -110,6 +114,7 @@ analyze_items(
 ```
 
 **Example:**
+
 ```python
 items = [...]  # From CORE-001
 result = engine.analyze_items(items)
@@ -132,13 +137,16 @@ generate_report(
 ```
 
 **Parameters:**
+
 - `items`: List of notable items
 - `analysis_result`: Result from `analyze_items()`
 
 **Returns:**
+
 - Markdown report string with executive summary, quick wins, prioritization dashboard, and learning path
 
 **Example:**
+
 ```python
 result = engine.analyze_items(items)
 report = engine.generate_report(items, result)

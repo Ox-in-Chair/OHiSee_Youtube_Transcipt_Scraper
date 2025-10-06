@@ -1,4 +1,5 @@
 # CORE-001 API Specification
+
 ## Enhanced Summary & Synthesis Engine
 
 **Version**: 1.0.0
@@ -74,10 +75,12 @@ CoreEngine(api_key: str, callback=None)
 ```
 
 **Parameters:**
+
 - `api_key` (str, required): OpenAI API key for GPT-4 access
 - `callback` (callable, optional): Logging callback function that receives string messages
 
 **Example:**
+
 ```python
 engine = CoreEngine(api_key="sk-...")
 
@@ -111,6 +114,7 @@ enhance_summary(
 | `mode` | str | No | Analysis depth: `"quick"`, `"developer"`, `"research"` |
 
 **Metadata Dictionary Structure:**
+
 ```python
 {
     "title": str,           # Video title
@@ -124,6 +128,7 @@ enhance_summary(
 ```
 
 **Returns:**
+
 ```python
 {
     "notable_items": list[dict],         # 50+ structured insights
@@ -142,6 +147,7 @@ enhance_summary(
 ```
 
 **Notable Item Structure:**
+
 ```python
 {
     "id": str,                        # "item_1", "item_2", etc.
@@ -165,6 +171,7 @@ enhance_summary(
 | `research` | 75-150 | $0.50 | Exhaustive analysis, comparative context |
 
 **Example:**
+
 ```python
 summary = engine.enhance_summary(
     transcript="In this tutorial...",
@@ -205,6 +212,7 @@ synthesize_videos(
 | `context` | Dict | No | Optional collection metadata (name, goals, etc.) |
 
 **Context Dictionary Structure:**
+
 ```python
 {
     "collection_name": str,      # e.g., "AI Development Research"
@@ -214,6 +222,7 @@ synthesize_videos(
 ```
 
 **Returns:**
+
 ```python
 {
     "executive_summary": str,              # High-level synthesis
@@ -231,6 +240,7 @@ synthesize_videos(
 ```
 
 **Example:**
+
 ```python
 summaries = [
     engine.enhance_summary(transcript1, metadata1),
@@ -271,6 +281,7 @@ extract_entities(
 | `entity_types` | List[str] | No | Types to extract: `["tools", "commands", "prompts", "versions"]` |
 
 **Returns:**
+
 ```python
 {
     "tools": list[dict],      # AI tools mentioned
@@ -281,6 +292,7 @@ extract_entities(
 ```
 
 **Example:**
+
 ```python
 entities = engine.extract_entities(
     text="Use Claude v3.5 and run: npm install -g claude-code",
@@ -450,6 +462,7 @@ for cmd in entities["commands"]:
 ### Common Errors
 
 #### 1. Invalid API Key
+
 ```python
 try:
     engine = CoreEngine(api_key="invalid-key")
@@ -460,6 +473,7 @@ except Exception as e:
 ```
 
 #### 2. Invalid Analysis Mode
+
 ```python
 try:
     summary = engine.enhance_summary(transcript, metadata, mode="invalid")
@@ -469,6 +483,7 @@ except ValueError as e:
 ```
 
 #### 3. Long Transcript Chunking
+
 ```python
 # Engine automatically handles long transcripts with chunking
 # No explicit error handling needed - transparent to caller
@@ -624,6 +639,7 @@ A: Network latency or GPT-4 API rate limits. Implement retry with exponential ba
 ### Contact
 
 For issues or questions:
+
 - GitHub Issues: [Link to repo]
 - Documentation: See `docs/` folder
 - Implementation Guide: See `IMPLEMENTATION_PLAN_v2.md`

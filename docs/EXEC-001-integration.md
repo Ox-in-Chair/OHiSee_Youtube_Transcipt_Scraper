@@ -1,4 +1,5 @@
 # EXEC-001 Integration Guide
+
 ## Playbook & Execution Engine
 
 **Version**: 1.0.0
@@ -558,18 +559,22 @@ def test_integration_with_core():
 ### Common Integration Issues
 
 **Issue**: No playbooks generated
+
 - **Cause**: Insights lack implementation_steps
 - **Solution**: Ensure CORE-001 mode is "developer" or "research"
 
 **Issue**: Prompts not extracted
+
 - **Cause**: Content doesn't match prompt patterns
 - **Solution**: Check if prompts use standard delimiters (quotes, backticks)
 
 **Issue**: Commands not parsed
+
 - **Cause**: Commands not in code blocks or backticks
 - **Solution**: Use proper markdown formatting for code
 
 **Issue**: Checklist HTML not rendering
+
 - **Cause**: JavaScript disabled or file not opened in browser
 - **Solution**: Open .html file in modern browser with JS enabled
 

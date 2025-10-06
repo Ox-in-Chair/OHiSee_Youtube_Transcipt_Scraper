@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code when working with code in this repository.
 
-**Repository**: https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git
+**Repository**: <https://github.com/Ox-in-Chair/OHiSee_Youtube_Transcipt_Scraper.git>
 
 ## Project Overview
 
@@ -43,11 +43,13 @@ Transparent logging shows which tier succeeded. Fully backward compatible.
 ### Enhanced Video Metadata (NEW)
 
 **Displayed inline in results**:
+
 - ⏱ Duration (HH:MM:SS format)
 - 📅 Upload Date (YYYY-MM-DD)
 - 👁 View Count (formatted, e.g., "1.2M")
 
 **Included in MD files**:
+
 ```markdown
 ## Video Information
 - **Channel**: [Channel Name]
@@ -62,6 +64,7 @@ Transparent logging shows which tier succeeded. Fully backward compatible.
 ### Search Optimization Log (NEW)
 
 **Visible in GUI** - Shows AI optimization comparison:
+
 ```
 Original Query: "workflow automation BRCGS manufacturing"
 Optimized Query: "workflow automation manufacturing BRCGS compliance"
@@ -82,6 +85,7 @@ Helps users understand what changes AI made and assess search effectiveness.
 ### Code Structure
 
 **v1.0 Core** (1,652 lines - Production):
+
 ```
 src/app.py:                   27 lines  # Entry point
 src/main.py:                 723 lines  # GUI application
@@ -94,6 +98,7 @@ TOTAL v1.0:                1,652 lines
 ```
 
 **v2.0 Intelligence Modules** (12,187 lines - ✅ PRODUCTION READY):
+
 ```
 src/modules/core_001/        2,100 lines  # Enhanced summary engine (✅ COMPLETE)
 src/modules/visual_001/      1,652 lines  # Diagram generation (✅ COMPLETE)
@@ -107,6 +112,7 @@ TOTAL v2.0:              12,187 lines (ALL 7 modules complete)
 ```
 
 **Design Principles**:
+
 - v1.0: Minimalism with reliability
 - v2.0: Modular intelligence with parallel development
 
@@ -153,6 +159,7 @@ def search_videos(self, query, max_results=10, filters=None, original_query=None
 ```
 
 **Benefits**:
+
 - Prevents zero-result failures from over-guardrailing
 - Transparent logging (user sees which tier worked)
 - Graceful degradation (returns best attempt even if all fail)
@@ -165,6 +172,7 @@ def search_videos(self, query, max_results=10, filters=None, original_query=None
 **Prompt**: `src/utils/prompts.py` - `GODLY_SEARCH_PROMPT`
 
 **Rules**:
+
 - Keep queries 6-10 words (YouTube algorithm optimized)
 - Preserve critical terms (standards, technical jargon)
 - Remove filler words, extract core concepts
@@ -190,6 +198,7 @@ def search_videos(self, query, max_results=10, filters=None, original_query=None
 7. Format into paragraphs
 
 **Why DOM vs Network Interception**:
+
 - More stable across YouTube UI changes
 - Handles dynamic/lazy-loaded content reliably
 - No fragile network request dependencies
@@ -201,12 +210,14 @@ python scripts/build.py
 ```
 
 **PyInstaller Configuration**:
+
 - `--onefile` - Single executable (~80MB)
 - `--windowed` - No console window
 - Bundles: Python runtime + all dependencies
 - **NOT bundled**: Chrome browser (must be installed separately)
 
 **Distribution**:
+
 - Portable executable (no Python required)
 - Requires: Chrome browser + Internet connection
 - Target PC: Windows 7/10/11 (64-bit)
@@ -227,6 +238,7 @@ python -m black src/ --check       # Formatted
 ```
 
 **Test Coverage** (11 tests):
+
 - Module imports validation
 - Config manager (save/load API key)
 - Scraper search functionality
@@ -311,6 +323,7 @@ youtube-transcript-scraper/
 ### Code Quality Standards
 
 **Quality Gates (Required Before Commit)**:
+
 - ✅ pytest: All tests passing
 - ✅ flake8: 0 linting errors
 - ✅ pylint: Score ≥9.0/10
@@ -318,6 +331,7 @@ youtube-transcript-scraper/
 - ✅ No breaking changes to public API
 
 **Performance Targets**:
+
 - Startup: <0.5s
 - Memory: <50MB idle
 - Search: 3-5s for 10 results
@@ -334,12 +348,14 @@ youtube-transcript-scraper/
 ### Common Modifications
 
 **Adding new search filter**:
+
 1. Update `src/utils/filters.py` - Add option to dictionaries
 2. Update `src/core/scraper_engine.py` - Handle new filter in `_attempt_search()`
 3. Update `src/main.py` - Add GUI control (dropdown/checkbox)
 4. Test with multi-tier search (ensure fallback still works)
 
 **Modifying GPT-4 prompt**:
+
 1. Update `src/utils/prompts.py` - Edit `GODLY_SEARCH_PROMPT` or add new function
 2. Update `src/core/search_optimizer.py` - Use new prompt
 3. Test query optimization quality (compare before/after)
@@ -348,21 +364,25 @@ youtube-transcript-scraper/
 ## Troubleshooting
 
 **Search returns 0 results**:
+
 - Check tier logs (which tier was last attempted?)
 - Verify GPT-4 optimization didn't over-narrow query
 - Try disabling AI optimization (use original query directly)
 - Check upload_date filter (try "Any time")
 
 **Transcript cutoff (incomplete)**:
+
 - Fixed in v1.2.0 (scroll loading implemented)
 - Verify `scraper_engine.py` has scrolling logic (lines 215-233)
 
 **Chrome driver errors**:
+
 - Ensure Chrome browser installed (not just Chromium)
 - Check Chrome version compatibility
 - Webdriver auto-downloads correct version via `webdriver_manager`
 
 **Build fails**:
+
 - Verify PyInstaller installed: `pip install pyinstaller`
 - Check Python version (3.8+ required)
 - Run from project root directory
@@ -378,6 +398,7 @@ MIT License - See [LICENSE](LICENSE) file
 **Project Status**: 🎉 **100% COMPLETE** - All 7 Modules Production Ready
 
 **Completed Modules** (7/7):
+
 - ✅ **CORE-001**: Enhanced summary engine (2,100 lines, 28 tests ✅)
   - 50+ insights per video
   - 3 processing modes (quick/developer/research)
@@ -420,6 +441,7 @@ MIT License - See [LICENSE](LICENSE) file
   - ExportManager (multi-format export pipeline)
 
 **Test Results**:
+
 - v1.0 Core: 11/11 passing ✅
 - CORE-001: 28/28 passing ✅
 - VISUAL-001: 87/87 passing ✅
@@ -430,12 +452,14 @@ MIT License - See [LICENSE](LICENSE) file
 - **Total**: 257/257 tests passing (100%)
 
 **Code Statistics**:
+
 - Production code: 12,187 lines (ALL 7 modules complete)
 - Test code: 4,230 lines
 - Total: 16,417 lines implemented
 - Quality: Pylint avg 9.60/10, Flake8 ✅, Black ✅
 
 **Documentation**:
+
 - 7 API Specifications (all modules)
 - 7 Integration Guides
 - 7 Completion Summaries

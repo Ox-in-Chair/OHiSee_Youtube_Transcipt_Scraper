@@ -1,4 +1,5 @@
 # YouTube Scraper Enhancement - Implementation Plan v2.0
+
 ## Transforming to AI Research Intelligence System
 
 **Document Version**: 1.0.0
@@ -13,12 +14,14 @@
 ### Vision Transformation
 
 **From (v1.0)**: Single-purpose transcript scraper with basic summaries
+
 - 1,652 lines of code
 - Simple 3-panel GUI
 - 15-20 bullet point summaries per video
 - Individual video processing only
 
 **To (v2.0)**: AI Research Intelligence System
+
 - Estimated 8,000-10,000 lines of code
 - Intelligent 5-layer processing stack
 - Cross-video synthesis and learning paths
@@ -37,6 +40,7 @@
 ### Success Metrics
 
 **Quantitative Metrics**:
+
 - ✅ Process 10+ videos in single batch
 - ✅ Generate 50+ actionable insights per video (up from 15-20)
 - ✅ 90% deduplication accuracy across videos
@@ -44,6 +48,7 @@
 - ✅ ROI scoring variance <10% on re-runs
 
 **Qualitative Metrics**:
+
 - ✅ Learning paths logically sequenced
 - ✅ Playbooks immediately executable
 - ✅ Visual diagrams clarify complex relationships
@@ -96,18 +101,22 @@ CORE-001 (Foundation)
 ### Parallel Development Strategy
 
 **Stream 1**: Core Enhancement (Week 1-2)
+
 - Agent: `backend-developer`
 - Focus: CORE-001 foundation
 
 **Stream 2**: Intelligence Layer (Week 2-3)
+
 - Agent: `architecture-specialist`
 - Focus: INTEL-001 + KNOWLEDGE-001
 
 **Stream 3**: Visualization (Week 2-3)
+
 - Agent: `frontend-developer`
 - Focus: VISUAL-001 + UI-001
 
 **Stream 4**: Execution Layer (Week 3-4)
+
 - Agent: `backend-developer`
 - Focus: EXEC-001 + INTEGRATE-001
 
@@ -136,100 +145,120 @@ class ModuleInterface:
 ## Phased Implementation Roadmap
 
 ### Phase 1: Foundation Enhancement (Week 1-2)
+
 **Objective**: Upgrade core summarization with enhanced prompts
 
 **Deliverables**:
+
 - Enhanced summary generation (50+ items)
 - Cross-video synthesis capability
 - Modular architecture refactor
 - Unit test coverage >80%
 
 **Resources**:
+
 - Lead: `backend-developer`
 - Support: `architecture-specialist`
 - Validation: `critic-agent`
 
 **Milestones**:
+
 - Day 3: Core module skeleton complete
 - Day 7: Enhanced prompts implemented
 - Day 10: Summary generation validated
 - Day 14: Synthesis engine operational
 
 ### Phase 2: Intelligence Layer (Week 2-3)
+
 **Objective**: Add ROI scoring and learning paths
 
 **Deliverables**:
+
 - Readiness assessment algorithm
 - ROI scoring engine
 - Learning path generator
 - Knowledge deduplication
 
 **Resources**:
+
 - Lead: `architecture-specialist`
 - Support: `backend-developer`
 - Validation: `development-quality-specialist`
 
 **Milestones**:
+
 - Day 17: Readiness scorer complete
 - Day 21: ROI calculator operational
 - Day 24: Learning path generator tested
 - Day 28: Knowledge base integrated
 
 ### Phase 3: Visual & Action Layers (Week 3-4)
+
 **Objective**: Generate diagrams and playbooks
 
 **Deliverables**:
+
 - Mermaid diagram generator
 - Playbook template engine
 - Prompt library builder
 - CLI command extractor
 
 **Resources**:
+
 - Lead: `frontend-developer` (Visual)
 - Lead: `backend-developer` (Action)
 - Validation: `critic-agent`
 
 **Milestones**:
+
 - Day 21: Diagram generation working
 - Day 24: Playbook templates created
 - Day 28: Prompt extraction validated
 - Day 31: CLI parsing complete
 
 ### Phase 4: Integration & UI (Week 4-5)
+
 **Objective**: Assemble complete system
 
 **Deliverables**:
+
 - Enhanced GUI with dashboard
 - Module orchestration
 - End-to-end testing
 - Performance optimization
 
 **Resources**:
+
 - Lead: `devops-infrastructure-specialist`
 - Support: `frontend-developer`
 - Validation: `development-quality-specialist`
 
 **Milestones**:
+
 - Day 28: UI mockups approved
 - Day 31: Dashboard implementation started
 - Day 35: Orchestration layer complete
 - Day 38: E2E tests passing
 
 ### Phase 5: Deployment & Documentation (Week 5-6)
+
 **Objective**: Production release
 
 **Deliverables**:
+
 - Deployment package (.exe build)
 - User documentation
 - Migration guide (v1→v2)
 - Training materials
 
 **Resources**:
+
 - Lead: `documentation-specialist`
 - Support: `devops-infrastructure-specialist`
 - Validation: `critic-agent`
 
 **Milestones**:
+
 - Day 35: Documentation draft
 - Day 38: Build pipeline operational
 - Day 42: Beta deployment
@@ -244,6 +273,7 @@ class ModuleInterface:
 **Purpose**: Foundation layer for all intelligence processing
 
 **Input Contract**:
+
 ```python
 {
     "videos": [
@@ -271,6 +301,7 @@ class ModuleInterface:
 ```
 
 **Output Contract**:
+
 ```python
 {
     "summaries": {
@@ -298,6 +329,7 @@ class ModuleInterface:
 ```
 
 **API Specification**:
+
 ```python
 class CoreEngine:
     """Enhanced summary and synthesis engine"""
@@ -357,6 +389,7 @@ class CoreEngine:
 ```
 
 **Enhanced Prompt Template**:
+
 ```
 SYSTEM ROLE:
 You are a technical research analyst extracting ACTIONABLE implementation guidance
@@ -389,6 +422,7 @@ OUTPUT STRUCTURE:
 **Source Timestamp**: {MM:SS}
 
 EXTRACTION PRIORITIES:
+
 1. Executable Protocols
 2. Copy-Paste Ready Code
 3. CLI Commands with flags explained
@@ -399,6 +433,7 @@ EXTRACTION PRIORITIES:
 8. Error Solutions
 9. Workflow Decisions
 10. Best Practices
+
 ```
 
 **Testing Requirements**:
@@ -448,6 +483,7 @@ EXTRACTION PRIORITIES:
 ```
 
 **Output Contract**:
+
 ```python
 {
     "readiness_scores": {
@@ -478,6 +514,7 @@ EXTRACTION PRIORITIES:
 ```
 
 **API Specification**:
+
 ```python
 class IntelligenceEngine:
     """Readiness assessment and ROI calculation"""
@@ -536,6 +573,7 @@ class IntelligenceEngine:
 ```
 
 **Readiness Scoring Algorithm**:
+
 ```
 READY ✅:
 - No prerequisites mentioned
@@ -573,6 +611,7 @@ Signals:
 ```
 
 **ROI Calculation Logic**:
+
 ```python
 # Time Savings Estimation
 time_saved_per_use = detect_automation_savings(insight)
@@ -598,6 +637,7 @@ else:
 ```
 
 **Testing Requirements**:
+
 - Consistency tests (same input = same score ±10%)
 - Edge case handling (missing context)
 - Learning path logic validation
@@ -605,6 +645,7 @@ else:
 - Dependency graph correctness
 
 **Acceptance Criteria**:
+
 - ✅ Scoring variance <10% on re-runs
 - ✅ Learning paths logically sequenced
 - ✅ ROI factors transparent and adjustable
@@ -612,6 +653,7 @@ else:
 - ✅ Dependency cycles detected and broken
 
 **Risk Assessment**:
+
 | Risk | Mitigation |
 |------|------------|
 | Subjective scoring without validation | Explainable factors + confidence scores |
@@ -629,6 +671,7 @@ else:
 **Purpose**: Create Mermaid diagrams for visual understanding
 
 **Input Contract**:
+
 ```python
 {
     "synthesis": dict,  # From CORE-001
@@ -639,6 +682,7 @@ else:
 ```
 
 **Output Contract**:
+
 ```python
 {
     "diagrams": {
@@ -672,6 +716,7 @@ else:
 ```
 
 **API Specification**:
+
 ```python
 class VisualEngine:
     """Mermaid diagram generation"""
@@ -734,6 +779,7 @@ class VisualEngine:
 **Diagram Templates**:
 
 **Timeline Template**:
+
 ```mermaid
 timeline
     title Technology Evolution Timeline
@@ -744,6 +790,7 @@ timeline
 ```
 
 **Architecture Template**:
+
 ```mermaid
 graph TD
     A[User Interface] --> B[Core Engine]
@@ -757,6 +804,7 @@ graph TD
 ```
 
 **Comparison Template**:
+
 ```mermaid
 graph LR
     subgraph Tool A
@@ -772,6 +820,7 @@ graph LR
 ```
 
 **Testing Requirements**:
+
 - Mermaid syntax validation (100% valid)
 - Diagram rendering tests
 - Complexity scaling tests
@@ -779,6 +828,7 @@ graph LR
 - Export format compatibility
 
 **Acceptance Criteria**:
+
 - ✅ Valid Mermaid syntax 100%
 - ✅ Diagrams render without errors
 - ✅ Automatic complexity adjustment
@@ -786,6 +836,7 @@ graph LR
 - ✅ Theme support working
 
 **Risk Assessment**:
+
 | Risk | Mitigation |
 |------|------------|
 | Complex diagrams unreadable | Auto-simplification rules |
@@ -803,6 +854,7 @@ graph LR
 **Purpose**: Persistent knowledge storage with deduplication
 
 **Input Contract**:
+
 ```python
 {
     "new_insights": list[dict],  # From all modules
@@ -819,6 +871,7 @@ graph LR
 ```
 
 **Output Contract**:
+
 ```python
 {
     "knowledge_base": {
@@ -852,6 +905,7 @@ graph LR
 ```
 
 **API Specification**:
+
 ```python
 class KnowledgeEngine:
     """Persistent knowledge base with deduplication"""
@@ -934,6 +988,7 @@ class KnowledgeEngine:
 ```
 
 **Deduplication Algorithm**:
+
 ```python
 def deduplicate_insight(new_insight: dict, existing: list[dict]) -> str:
     """
@@ -961,6 +1016,7 @@ def deduplicate_insight(new_insight: dict, existing: list[dict]) -> str:
 ```
 
 **Storage Schema (SQLite)**:
+
 ```sql
 CREATE TABLE insights (
     id TEXT PRIMARY KEY,
@@ -1006,6 +1062,7 @@ CREATE TABLE relationships (
 ```
 
 **Testing Requirements**:
+
 - Deduplication accuracy tests (90%+ precision)
 - Search relevance validation
 - Data persistence verification
@@ -1013,6 +1070,7 @@ CREATE TABLE relationships (
 - Backup/restore functionality
 
 **Acceptance Criteria**:
+
 - ✅ 90%+ deduplication accuracy
 - ✅ Sub-second search response (<1s)
 - ✅ Zero data loss on crashes
@@ -1020,6 +1078,7 @@ CREATE TABLE relationships (
 - ✅ Journal tracks progress accurately
 
 **Risk Assessment**:
+
 | Risk | Mitigation |
 |------|------------|
 | Knowledge base corruption | Regular backups + validation |
@@ -1037,6 +1096,7 @@ CREATE TABLE relationships (
 **Purpose**: Generate executable guides and templates
 
 **Input Contract**:
+
 ```python
 {
     "insights": list[dict],  # From CORE-001
@@ -1051,6 +1111,7 @@ CREATE TABLE relationships (
 ```
 
 **Output Contract**:
+
 ```python
 {
     "playbooks": {
@@ -1093,6 +1154,7 @@ CREATE TABLE relationships (
 ```
 
 **API Specification**:
+
 ```python
 class ExecutionEngine:
     """Playbook and template generation"""
@@ -1174,6 +1236,7 @@ class ExecutionEngine:
 ```
 
 **Playbook Template Structure**:
+
 ```markdown
 # Playbook: {Title}
 
@@ -1200,6 +1263,7 @@ class ExecutionEngine:
 **What This Does**: {explanation}
 
 **Expected Output**:
+
 ```
 {example output}
 ```
@@ -1207,31 +1271,38 @@ class ExecutionEngine:
 **If You See Error**: "{error}" → {solution}
 
 ### Step 2: {Action}
+
 [Repeat structure...]
 
 ## Verification
 
 **How to Test**:
+
 - [ ] Run: `{test_command}`
 - [ ] Expected: {description}
 - [ ] Success indicator: {what to look for}
 
 **Troubleshooting**:
+
 | Issue | Solution |
 |-------|----------|
 | {common issue} | {fix} |
 
 ## Optimization Tips
+
 - {Tip from Video 3}: {explanation}
 - {Tip from Video 7}: {explanation}
 
 ## Related Playbooks
+
 - [{Related Playbook 1}](#) - Prerequisite
 - [{Related Playbook 2}](#) - Advanced version
 
 ## Sources
+
 - Video {n}: {title} ({timestamp})
 - Video {n}: {title} ({timestamp})
+
 ```
 
 **Prompt Library Template**:
@@ -1244,7 +1315,9 @@ class ExecutionEngine:
 
 ### Template
 ```
+
 {Exact prompt text with {variables}}
+
 ```
 
 ### Variables
@@ -1254,12 +1327,16 @@ class ExecutionEngine:
 ### Example Usage
 **Input**:
 ```
+
 {Filled template example}
+
 ```
 
 **Expected Output**:
 ```
+
 {What you should get}
+
 ```
 
 ### Variations
@@ -1272,6 +1349,7 @@ class ExecutionEngine:
 ```
 
 **Testing Requirements**:
+
 - Playbook executability validation (manual testing)
 - Prompt effectiveness testing (output quality)
 - CLI command syntax checking (platform-specific)
@@ -1279,6 +1357,7 @@ class ExecutionEngine:
 - Template variable coverage
 
 **Acceptance Criteria**:
+
 - ✅ Playbooks immediately actionable
 - ✅ Prompts properly formatted with variables
 - ✅ CLI commands validated and tested
@@ -1286,6 +1365,7 @@ class ExecutionEngine:
 - ✅ Troubleshooting sections comprehensive
 
 **Risk Assessment**:
+
 | Risk | Mitigation |
 |------|------------|
 | Generic playbooks not useful | Context-aware generation + examples |
@@ -1303,6 +1383,7 @@ class ExecutionEngine:
 **Purpose**: Intelligent dashboard for all features
 
 **Input Contract**:
+
 ```python
 {
     "modules": dict,  # All module states
@@ -1321,6 +1402,7 @@ class ExecutionEngine:
 ```
 
 **Output Contract**:
+
 ```python
 {
     "ui_state": {
@@ -1407,6 +1489,7 @@ class ExecutionEngine:
 ```
 
 **API Specification**:
+
 ```python
 class UIController:
     """Enhanced user interface controller"""
@@ -1470,6 +1553,7 @@ class UIController:
    - Direct folder access
 
 **Testing Requirements**:
+
 - GUI responsiveness tests (<100ms)
 - Feature accessibility validation
 - Export functionality verification
@@ -1477,6 +1561,7 @@ class UIController:
 - Cross-platform compatibility (Windows primary)
 
 **Acceptance Criteria**:
+
 - ✅ <100ms UI response time
 - ✅ All features accessible with <3 clicks
 - ✅ Progress clearly visible in real-time
@@ -1484,6 +1569,7 @@ class UIController:
 - ✅ Error messages actionable
 
 **Risk Assessment**:
+
 | Risk | Mitigation |
 |------|------------|
 | UI complexity overwhelming | Progressive disclosure + tooltips |
@@ -1501,6 +1587,7 @@ class UIController:
 **Purpose**: Orchestrate all modules into cohesive system
 
 **Input Contract**:
+
 ```python
 {
     "workflow": str,  # "standard" | "quick" | "comprehensive"
@@ -1517,6 +1604,7 @@ class UIController:
 ```
 
 **Output Contract**:
+
 ```python
 {
     "execution_status": {
@@ -1546,6 +1634,7 @@ class UIController:
 ```
 
 **API Specification**:
+
 ```python
 class IntegrationOrchestrator:
     """System-wide orchestration and workflow management"""
@@ -1752,6 +1841,7 @@ class PerformanceOptimizer:
 ```
 
 **Testing Requirements**:
+
 - End-to-end workflow tests (all workflows)
 - Failure recovery scenarios (each module fails)
 - Performance benchmarking (<30s per video)
@@ -1759,6 +1849,7 @@ class PerformanceOptimizer:
 - Memory usage profiling (<500MB peak)
 
 **Acceptance Criteria**:
+
 - ✅ All workflows execute successfully
 - ✅ Graceful degradation on failures
 - ✅ <30s total processing per video
@@ -1767,6 +1858,7 @@ class PerformanceOptimizer:
 - ✅ Error recovery functional
 
 **Risk Assessment**:
+
 | Risk | Mitigation |
 |------|------------|
 | Module communication failures | Robust error handling + retries |
@@ -1939,6 +2031,7 @@ graph TD
 ### Parallel Work Streams
 
 **Week 1-2: Foundation**
+
 ```
 Stream 1: CORE-001 (backend-developer)
   ├── Enhanced prompts
@@ -1948,6 +2041,7 @@ Stream 1: CORE-001 (backend-developer)
 ```
 
 **Week 2-3: Intelligence + Visualization**
+
 ```
 Stream 2: INTEL-001 (architecture-specialist)
   ├── Readiness scoring
@@ -1963,6 +2057,7 @@ Stream 3: VISUAL-001 + UI-001 (frontend-developer)
 ```
 
 **Week 3-4: Execution + Knowledge**
+
 ```
 Stream 4: EXEC-001 (backend-developer)
   ├── Playbook generator
@@ -1978,6 +2073,7 @@ Stream 5: KNOWLEDGE-001 (backend-developer + data-operations-specialist)
 ```
 
 **Week 4-5: Integration**
+
 ```
 Stream 6: INTEGRATE-001 (devops-infrastructure-specialist)
   ├── Orchestration
@@ -2007,6 +2103,7 @@ Stream 6: INTEGRATE-001 (devops-infrastructure-specialist)
 ### Unit Test Requirements
 
 **Per Module Coverage**:
+
 ```python
 # Minimum coverage requirements
 coverage_requirements = {
@@ -2023,6 +2120,7 @@ coverage_requirements = {
 **Test Categories**:
 
 1. **Functional Tests**: Core logic validation
+
    ```python
    def test_summary_extraction():
        """Verify 50+ items extracted from transcript"""
@@ -2034,6 +2132,7 @@ coverage_requirements = {
    ```
 
 2. **Edge Cases**: Boundary conditions
+
    ```python
    def test_empty_transcript():
        """Handle empty transcript gracefully"""
@@ -2045,6 +2144,7 @@ coverage_requirements = {
    ```
 
 3. **Error Handling**: Exception scenarios
+
    ```python
    def test_api_failure_recovery():
        """Verify retry logic on API failure"""
@@ -2056,6 +2156,7 @@ coverage_requirements = {
    ```
 
 4. **Performance**: Speed and memory usage
+
    ```python
    def test_processing_time():
        """Verify <30s per video"""
@@ -2067,6 +2168,7 @@ coverage_requirements = {
    ```
 
 5. **API Contracts**: Input/output validation
+
    ```python
    def test_core_output_contract():
        """Verify CORE-001 output matches contract"""
@@ -2076,6 +2178,7 @@ coverage_requirements = {
 ### Integration Test Scenarios
 
 **Scenario 1: Single Video Processing**
+
 ```python
 def test_single_video_e2e():
     """
@@ -2105,6 +2208,7 @@ def test_single_video_e2e():
 ```
 
 **Scenario 2: Batch Processing**
+
 ```python
 def test_batch_processing():
     """
@@ -2130,6 +2234,7 @@ def test_batch_processing():
 ```
 
 **Scenario 3: Failure Recovery**
+
 ```python
 def test_module_failure_recovery():
     """
@@ -2155,6 +2260,7 @@ def test_module_failure_recovery():
 ```
 
 **Scenario 4: Parallel Execution**
+
 ```python
 def test_parallel_module_execution():
     """
@@ -2181,6 +2287,7 @@ def test_parallel_module_execution():
 ### Quality Metrics
 
 **Code Quality Standards**:
+
 ```python
 quality_standards = {
     "pylint": ">=9.0/10",
@@ -2193,6 +2300,7 @@ quality_standards = {
 ```
 
 **Performance Benchmarks**:
+
 ```python
 performance_targets = {
     "single_video": {
@@ -2213,6 +2321,7 @@ performance_targets = {
 ```
 
 **Reliability Targets**:
+
 ```python
 reliability_requirements = {
     "uptime": 99.9,  # % (local app)
@@ -2225,6 +2334,7 @@ reliability_requirements = {
 ### Validation Checkpoints
 
 **Pre-Commit Validation**:
+
 ```bash
 #!/bin/bash
 # pre-commit-check.sh
@@ -2248,6 +2358,7 @@ echo "✅ All validation checks passed"
 ```
 
 **Module Completion Validation**:
+
 ```python
 def validate_module_completion(module_id: str) -> bool:
     """
@@ -2288,6 +2399,7 @@ def validate_module_completion(module_id: str) -> bool:
 ### Incremental Rollout Plan
 
 **Phase 1: Alpha Release** (Internal Testing)
+
 - **Duration**: 3 days
 - **Modules**: CORE-001 only
 - **Users**: Development team (2-3 people)
@@ -2299,6 +2411,7 @@ def validate_module_completion(module_id: str) -> bool:
   - ✅ API costs within expected range
 
 **Phase 2: Beta Release** (Limited Users)
+
 - **Duration**: 1 week
 - **Modules**: CORE + INTEL + VISUAL
 - **Users**: 5-10 beta testers
@@ -2311,6 +2424,7 @@ def validate_module_completion(module_id: str) -> bool:
   - ✅ Positive user feedback (4/5 rating)
 
 **Phase 3: Release Candidate**
+
 - **Duration**: 1 week
 - **Modules**: All except final polish
 - **Users**: 20-30 early adopters
@@ -2323,6 +2437,7 @@ def validate_module_completion(module_id: str) -> bool:
   - ✅ 90% user satisfaction
 
 **Phase 4: Production Release**
+
 - **Duration**: Ongoing
 - **Modules**: Complete system
 - **Users**: General availability
@@ -2375,6 +2490,7 @@ def disable_feature(feature: str):
 ### Rollback Procedures
 
 **Level 1: Feature Rollback** (5 minutes)
+
 ```bash
 # Disable specific feature
 python scripts/manage_features.py disable roi_scoring
@@ -2383,6 +2499,7 @@ python src/app.py
 ```
 
 **Level 2: Module Rollback** (15 minutes)
+
 ```bash
 # Revert to previous module version
 git checkout tags/v1.9.0 -- src/modules/INTEL-001/
@@ -2393,6 +2510,7 @@ pytest tests/integration/ -k INTEL
 ```
 
 **Level 3: Full Rollback** (30 minutes)
+
 ```bash
 # Complete rollback to v1.0
 git checkout tags/v1.0.0
@@ -2407,6 +2525,7 @@ python scripts/deploy.py --version v1.0.0
 ### User Migration Path (v1→v2)
 
 **Step 1: Data Backup** (Automatic)
+
 ```python
 def backup_v1_data():
     """
@@ -2431,6 +2550,7 @@ def backup_v1_data():
 ```
 
 **Step 2: Configuration Migration**
+
 ```python
 def migrate_config():
     """Migrate v1 settings to v2 format"""
@@ -2457,6 +2577,7 @@ def migrate_config():
 ```
 
 **Step 3: Feature Introduction** (Interactive)
+
 ```markdown
 ## Welcome to YouTube Scraper v2.0!
 
@@ -2483,6 +2604,7 @@ Your familiar scraper now has AI-powered intelligence features!
 ```
 
 **Step 4: Progressive Enablement**
+
 - **Week 1**: Core features only (summaries + synthesis)
 - **Week 2**: Enable intelligence features (user opts in)
 - **Week 3**: Enable visual features (user opts in)
@@ -2495,6 +2617,7 @@ Your familiar scraper now has AI-powered intelligence features!
 ### Update Procedures
 
 **Daily Updates**:
+
 ```bash
 # Update implementation progress
 python scripts/update_plan.py \
@@ -2516,6 +2639,7 @@ git commit -m "status: CORE-001 75% complete - synthesis engine testing"
 ```
 
 **Weekly Reviews**:
+
 ```markdown
 ## Week [N] Review Checklist
 
@@ -2553,6 +2677,7 @@ git commit -m "status: CORE-001 75% complete - synthesis engine testing"
 ### Change Management
 
 **Change Request Template**:
+
 ```markdown
 ## Change Request #[ID]
 **Date**: YYYY-MM-DD
@@ -2589,6 +2714,7 @@ git commit -m "status: CORE-001 75% complete - synthesis engine testing"
 ```
 
 **Change Evaluation Criteria**:
+
 ```python
 def evaluate_change_request(change: dict) -> str:
     """
@@ -2626,6 +2752,7 @@ def evaluate_change_request(change: dict) -> str:
 ### Documentation Maintenance
 
 **Documentation Update Triggers**:
+
 1. Module completion → Update module specs
 2. API changes → Update API documentation
 3. Architecture decisions → Add to ADR log
@@ -2634,6 +2761,7 @@ def evaluate_change_request(change: dict) -> str:
 6. User feedback → Update known issues / FAQ
 
 **Documentation Responsibilities**:
+
 | Document | Owner | Update Frequency |
 |----------|-------|------------------|
 | Implementation Plan | `orchestrator-agent` | Daily |
@@ -2648,6 +2776,7 @@ def evaluate_change_request(change: dict) -> str:
 ### Lessons Learned Capture
 
 **Sprint Retrospective Template**:
+
 ```markdown
 ## Sprint [N] Retrospective - Week [Dates]
 
@@ -2683,6 +2812,7 @@ def evaluate_change_request(change: dict) -> str:
 ```
 
 **Continuous Learning System**:
+
 ```python
 class LearningCapture:
     """Capture and apply lessons learned"""
@@ -2807,6 +2937,7 @@ class LearningCapture:
 **Handoff Package Contents**:
 
 **1. Code Repository**
+
 ```bash
 # Clone with full history
 git clone --depth=full [repo-url]
@@ -2819,6 +2950,7 @@ hotfix/*           # Emergency fixes
 ```
 
 **2. Documentation**
+
 ```
 docs/
 ├── implementation_plan.md       # This document
@@ -2841,6 +2973,7 @@ docs/
 ```
 
 **3. Context**
+
 ```markdown
 ## Current Sprint Status
 **Sprint**: [N]
@@ -2864,6 +2997,7 @@ docs/
 ```
 
 **4. Communication**
+
 ```markdown
 ## Stakeholder Contacts
 - **Product Owner**: [Name] - [Email] - [Slack]
@@ -2884,6 +3018,7 @@ docs/
 ```
 
 **5. Decision Log**
+
 ```markdown
 ## Key Decisions Made
 
@@ -2905,6 +3040,7 @@ docs/
 ### Critical Path Documentation
 
 **Critical Dependencies**:
+
 ```mermaid
 graph TD
     A[CORE-001<br/>Foundation] -->|Required| B[INTEL-001<br/>Intelligence]
@@ -2925,6 +3061,7 @@ graph TD
 ```
 
 **Cannot Start Without**:
+
 1. **CORE-001 completion** - All modules depend on it
    - Provides summary/synthesis foundation
    - Defines data structures
@@ -2941,11 +3078,13 @@ graph TD
    - Performance benchmarks
 
 **Can Parallelize**:
+
 - **After CORE-001**: INTEL, VISUAL, EXEC (independent)
 - **Always**: Unit tests and documentation
 - **Before CORE-001**: UI mockups and backend planning
 
 **Critical Path** (Longest dependency chain):
+
 ```
 CORE-001 (2 weeks)
   → KNOWLEDGE-001 (1.75 weeks, depends on CORE + INTEL)
@@ -2958,6 +3097,7 @@ Total Critical Path: 6.5 weeks
 ### Handoff Checklists
 
 **Module Handoff Checklist**:
+
 ```markdown
 ## Module [MODULE-ID] Handoff
 
@@ -3017,6 +3157,7 @@ Total Critical Path: 6.5 weeks
 ```
 
 **Project Handoff Checklist**:
+
 ```markdown
 ## Complete Project Handoff
 
@@ -3085,6 +3226,7 @@ Total Critical Path: 6.5 weeks
 ### Mitigation Strategies
 
 **1. API Cost Control**:
+
 ```python
 class CostController:
     """Comprehensive cost management"""
@@ -3128,6 +3270,7 @@ class CostController:
 ```
 
 **2. Graceful Degradation**:
+
 ```python
 class FeatureFallback:
     """Fallback strategies for module failures"""
@@ -3165,6 +3308,7 @@ class FeatureFallback:
 ```
 
 **3. Performance Monitoring**:
+
 ```python
 @performance_monitor
 def process_video(video_data):
@@ -3253,6 +3397,7 @@ def process_video(video_data):
 ### Cost Control Mechanisms
 
 **Budget Configuration**:
+
 ```python
 BUDGET_CONFIG = {
     "per_video_limit": 0.10,      # Max cost per video
@@ -3265,6 +3410,7 @@ BUDGET_CONFIG = {
 ```
 
 **Cost Tracking**:
+
 ```python
 class CostTracker:
     """Real-time cost tracking and alerting"""
@@ -3300,6 +3446,7 @@ class CostTracker:
 **Optimization Strategies**:
 
 1. **Caching**
+
    ```python
    # Cache API responses for 24h
    @cache(ttl=86400)
@@ -3308,6 +3455,7 @@ class CostTracker:
    ```
 
 2. **Batching**
+
    ```python
    # Batch similar requests
    def batch_process_videos(videos: list) -> list:
@@ -3319,6 +3467,7 @@ class CostTracker:
    ```
 
 3. **Token Compression**
+
    ```python
    # Reduce tokens before API call
    compressed = compress_text(transcript)  # Remove redundancy
@@ -3326,6 +3475,7 @@ class CostTracker:
    ```
 
 4. **Selective Features**
+
    ```python
    # Allow users to disable expensive features
    if config["enable_deep_analysis"]:
@@ -3467,18 +3617,21 @@ youtube-scraper-v2/
 ### Appendix B: Technology Stack
 
 **Core Technologies**:
+
 - **Python**: 3.8+ (primary language)
 - **Tkinter**: Built-in GUI framework
 - **Selenium**: Web scraping
 - **OpenAI GPT-4**: Intelligence layer
 
 **New Dependencies**:
+
 - **SQLite3**: Knowledge base storage
 - **Mermaid**: Diagram generation (rendered externally)
 - **Jinja2**: Template engine for playbooks
 - **APScheduler**: Background task scheduling
 
 **Development Tools**:
+
 - **pytest**: Testing framework
 - **pytest-cov**: Coverage reporting
 - **black**: Code formatting
@@ -3487,6 +3640,7 @@ youtube-scraper-v2/
 - **flake8**: Style checking
 
 **Optional/Future**:
+
 - **FastAPI**: REST API (if needed)
 - **PostgreSQL**: Scalable database (future)
 - **Docker**: Containerization (future)
@@ -3495,6 +3649,7 @@ youtube-scraper-v2/
 ### Appendix C: Communication Templates
 
 **Daily Status Update**:
+
 ```markdown
 ## Daily Status - [YYYY-MM-DD]
 
@@ -3528,6 +3683,7 @@ youtube-scraper-v2/
 ```
 
 **Module Completion Report**:
+
 ```markdown
 ## Module [MODULE-ID] Completion Report
 
@@ -3573,6 +3729,7 @@ youtube-scraper-v2/
 ```
 
 **Weekly Summary Report**:
+
 ```markdown
 ## Week [N] Summary Report
 
@@ -3622,6 +3779,7 @@ youtube-scraper-v2/
 ### Appendix D: Performance Benchmarks
 
 **Baseline Metrics (v1.0)**:
+
 | Metric | Value | Notes |
 |--------|-------|-------|
 | Single video processing | 15-20s | Includes transcript + summary |
@@ -3630,6 +3788,7 @@ youtube-scraper-v2/
 | Summary items | 15-20 | Fixed output |
 
 **Target Metrics (v2.0)**:
+
 | Metric | Target | Stretch Goal |
 |--------|--------|--------------|
 | Single video processing | <30s | <25s |
@@ -3641,6 +3800,7 @@ youtube-scraper-v2/
 | Search response time | <1s | <500ms |
 
 **Performance Test Suite**:
+
 ```python
 performance_benchmarks = {
     "test_single_video": {
@@ -3677,6 +3837,7 @@ performance_benchmarks = {
 ```
 
 **Profiling Commands**:
+
 ```bash
 # Memory profiling
 python -m memory_profiler src/main.py --profile
@@ -3793,6 +3954,7 @@ This implementation plan provides a comprehensive roadmap for transforming the Y
 ### Expected Outcomes
 
 **Quantitative**:
+
 - ✅ 50+ actionable insights per video (vs. 15-20)
 - ✅ 90% deduplication accuracy across videos
 - ✅ 95% reduction in post-scrape analysis time
@@ -3800,6 +3962,7 @@ This implementation plan provides a comprehensive roadmap for transforming the Y
 - ✅ 3x faster from "learning" → "building"
 
 **Qualitative**:
+
 - ✅ Users know exactly what to implement next
 - ✅ Never re-research the same topic
 - ✅ Summaries include working copy-paste code
@@ -3809,6 +3972,7 @@ This implementation plan provides a comprehensive roadmap for transforming the Y
 ### Next Steps
 
 **Immediate Actions** (This Week):
+
 1. [ ] Review this implementation plan
 2. [ ] Approve approach and timeline
 3. [ ] Assign agents to modules
@@ -3818,6 +3982,7 @@ This implementation plan provides a comprehensive roadmap for transforming the Y
 7. [ ] Set up communication channels
 
 **Phase 1 Kickoff** (Next Week):
+
 1. [ ] Daily sync schedule established
 2. [ ] Backend-developer begins CORE-001
 3. [ ] Architecture-specialist reviews design
@@ -3825,6 +3990,7 @@ This implementation plan provides a comprehensive roadmap for transforming the Y
 5. [ ] Week 1 deliverables identified
 
 **Ongoing**:
+
 - Daily progress updates
 - Weekly retrospectives
 - Continuous integration
@@ -3834,6 +4000,7 @@ This implementation plan provides a comprehensive roadmap for transforming the Y
 ### Plan Maintenance
 
 This document is **living** and should be updated:
+
 - **Daily**: Progress percentages, blockers, status changes
 - **Weekly**: Metrics, risks, learnings, retrospective
 - **As needed**: Architecture decisions, API changes, scope adjustments
@@ -3858,6 +4025,7 @@ Use the provided templates and procedures to maintain currency and relevance thr
 ---
 
 *This implementation plan was generated using the orchestrator-agent pattern with input from:*
+
 - *PRD v1.0 (foundation context)*
 - *PRD v2.0 (enhanced requirements)*
 - *Existing codebase analysis (1,652 lines)*

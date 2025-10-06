@@ -60,6 +60,7 @@ Prevents frustrating zero-result searches with intelligent fallback strategy:
 ### Complete Transcript Extraction
 
 Unlike basic scrapers, this tool:
+
 - ✅ Scrolls transcript panels to load ALL segments (no cutoffs)
 - ✅ Handles videos of any length (tested up to 3+ hours)
 - ✅ Formats cleanly into paragraphs (removes timestamps automatically)
@@ -71,12 +72,14 @@ User Query → GPT-4 Optimization → Multi-Tier Search → Extract Transcripts 
 ```
 
 **Example**:
+
 ```
 Input:  "videos about workflow automation in manufacturing"
 Output: 10 transcripts saved to ./transcripts/
 ```
 
 **Each transcript includes**:
+
 - Video title and channel
 - Uploader information
 - Upload date (YYYY-MM-DD)
@@ -89,6 +92,7 @@ Output: 10 transcripts saved to ./transcripts/
 ## ⚙️ Installation
 
 ### Requirements
+
 - Python 3.8+
 - Google Chrome browser
 - OpenAI API key (optional, for query optimization)
@@ -150,6 +154,7 @@ python scripts/build.py
 ```
 
 **Distribution Requirements**:
+
 - Target PC needs Google Chrome installed
 - No Python installation required
 - Fully portable (~80MB single file)
@@ -206,17 +211,20 @@ API key saved to `~/.youtube_scraper_config.json` (auto-loaded next time).
 ## 💡 Tips & Best Practices
 
 **For Best Search Results**:
+
 - Use specific keywords (e.g., "Python list comprehension" vs "Python tricks")
 - Enable GPT-4 optimization for natural language queries
 - Start with shorter timeframes (last 30 days) for recent content
 - Use "Sort by rating" for highest quality videos
 
 **For Large Batches**:
+
 - Search returns up to 50 results per query
 - Select 10-15 videos at a time for faster downloads
 - Enable progress logging to monitor extraction status
 
 **GPT-4 Costs**:
+
 - Query optimization: ~$0.02-0.04 per search
 - Synonym expansion (Tier 4): ~$0.02 per fallback
 - Optional feature - works fine without API key
@@ -224,22 +232,26 @@ API key saved to `~/.youtube_scraper_config.json` (auto-loaded next time).
 ## 🐛 Troubleshooting
 
 **Search returns 0 results**:
+
 - Check tier logs in output panel (which tier was attempted?)
 - Try disabling AI optimization (use your original query directly)
 - Expand date range (try "Any time")
 - Simplify query (fewer keywords often works better)
 
 **Transcript shows as "Not available"**:
+
 - Video doesn't have captions (check for CC icon on YouTube)
 - Video may be age-restricted or region-locked
 - Private/unlisted videos not accessible
 
 **Chrome driver errors**:
+
 - Ensure Google Chrome (not Chromium) is installed
 - Driver auto-downloads on first run
 - Check Chrome is up to date
 
 **Build fails**:
+
 - Verify PyInstaller installed: `pip install pyinstaller`
 - Run from project root directory
 - Python 3.8+ required
@@ -247,12 +259,14 @@ API key saved to `~/.youtube_scraper_config.json` (auto-loaded next time).
 ## 📚 Documentation
 
 **v1.0 Documentation**:
+
 - **[CLAUDE.md](CLAUDE.md)** - Development guide for AI assistants
 - **[docs/BUILDING.md](docs/BUILDING.md)** - Build & distribution guide
 - **[docs/USAGE.md](docs/USAGE.md)** - Detailed user manual
 - **[docs/How to search YouTube.md](docs/How%20to%20search%20YouTube.md)** - Search optimization tips
 
 **v2.0 Documentation**:
+
 - **[IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md)** - Complete development roadmap
 - **[docs/PRD_YouTube_Scraper_Summary_Enhancement_v2.md](docs/PRD_YouTube_Scraper_Summary_Enhancement_v2.md)** - Product requirements
 - **[docs/api_specifications/](docs/api_specifications/)** - API contracts for all modules
@@ -261,6 +275,7 @@ API key saved to `~/.youtube_scraper_config.json` (auto-loaded next time).
 ## 🤝 Contributing
 
 Contributions welcome! Please:
+
 1. Fork the repository
 2. Create feature branch (`git checkout -b feature/amazing-feature`)
 3. Run quality gates (`pytest`, `flake8`, `pylint`, `black`)
@@ -269,6 +284,7 @@ Contributions welcome! Please:
 6. Open Pull Request
 
 **Code Quality Requirements**:
+
 - All tests must pass (pytest)
 - Linting score ≥9.0/10 (pylint)
 - Code formatted with black (120 char line length)
@@ -290,34 +306,41 @@ MIT License - See [LICENSE](LICENSE) for details
 ## 🎯 Development Status
 
 **v1.0**: Production-ready ✅
+
 - 11/11 tests passing
 - Multi-tier search fallback
 - Zero-result prevention
 
 **v2.0**: 🚀 43% Complete - 3 of 7 Modules Production Ready
+
 - **165/165 tests passing (100%)**
 - **8,992 total lines** (6,387 production + 2,605 tests)
 
 **Completed Modules** (3/7):
+
 - ✅ **CORE-001** - Enhanced summary engine (2,100 lines, 28 tests)
 - ✅ **VISUAL-001** - Diagram generation (1,652 lines, 87 tests)
 - ✅ **EXEC-001** - Playbook & execution (2,635 lines, 39 tests)
 
 **Next Up**:
+
 - ⏳ **INTEL-001** - ROI scoring & learning paths (ready to start)
 
 **Planned**:
+
 - 📅 **KNOWLEDGE-001** - Persistent knowledge base (Week 4)
 - 📅 **UI-001** - Enhanced intelligence dashboard (Week 5)
 - 📅 **INTEGRATE-001** - Final system assembly (Week 6)
 
 **Quality Gates**:
+
 - Pylint: 9.57/10 ✅
 - Flake8: Zero errors ✅
 - Black: All formatted ✅
 - Performance: All targets exceeded ✅
 
 **Documentation**:
+
 - See [PROGRESS.md](PROGRESS.md) for detailed module tracking
 - See [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md) for complete roadmap
 - See `docs/` for API specs, integration guides, and completion summaries

@@ -1,4 +1,5 @@
 # VISUAL-001 API Specification
+
 ## Diagram Generation Engine
 
 **Version**: 1.0.0
@@ -71,9 +72,11 @@ VisualEngine(callback=None)
 ```
 
 **Parameters:**
+
 - `callback` (callable, optional): Logging callback function that receives string messages
 
 **Example:**
+
 ```python
 engine = VisualEngine()
 
@@ -105,6 +108,7 @@ generate_all(
 | `config` | Dict | Yes | Generation configuration |
 
 **Synthesis Dictionary Structure** (from CORE-001):
+
 ```python
 {
     "chronological_timeline": [
@@ -122,6 +126,7 @@ generate_all(
 ```
 
 **Config Dictionary Structure:**
+
 ```python
 {
     "diagram_types": list[str],  # ["timeline", "architecture", "comparison", "flowchart"]
@@ -131,6 +136,7 @@ generate_all(
 ```
 
 **Returns:**
+
 ```python
 {
     "diagrams": {
@@ -172,6 +178,7 @@ generate_all(
 ```
 
 **Example:**
+
 ```python
 synthesis = core_engine.synthesize_videos(summaries)
 
@@ -201,16 +208,19 @@ if not result["validation"]["all_valid"]:
 **Purpose**: Show technology evolution chronologically
 
 **Input Requirements**:
+
 - Events with dates (YYYY-MM-DD format)
 - Event descriptions
 - Tool names and versions
 
 **Complexity Levels**:
+
 - **Simple**: Top 5 most important events
 - **Detailed**: Monthly grouping
 - **Comprehensive**: Weekly granularity
 
 **Example Output**:
+
 ```mermaid
 timeline
     title Technology Evolution Timeline
@@ -246,16 +256,19 @@ print(result["mermaid_code"])
 **Purpose**: Visualize system component relationships
 
 **Input Requirements**:
+
 - List of component names
 - Relationships (from → to)
 - Optional relationship labels
 
 **Diagram Styles**:
+
 - **Layered**: Horizontal layers (UI → Core → Data)
 - **Hub**: Central hub with spokes
 - **Flow**: Directional workflow
 
 **Example Output**:
+
 ```mermaid
 graph LR
     User_Interface[User Interface]
@@ -292,16 +305,19 @@ print(result["mermaid_code"])
 **Purpose**: Compare tools/technologies side-by-side
 
 **Input Requirements**:
+
 - List of tools to compare
 - List of attributes/features
 - Comparison data (tool → attribute → value)
 
 **Value Types Supported**:
+
 - Boolean (True/False → ✅/❌)
 - String ("supported"/"partial"/"not supported")
 - Numeric (for scoring)
 
 **Example Output**:
+
 ```mermaid
 graph TD
     Header["Comparison"]
@@ -336,16 +352,19 @@ print(f"Winner: {result['winner']}")  # Claude Code
 **Purpose**: Visualize decision trees and workflows
 
 **Input Requirements**:
+
 - Decision tree structure
 - Node types (start, end, decision, action)
 - Branch conditions (Yes/No paths)
 
 **Node Types**:
+
 - **Start/End**: Rounded rectangles `(text)`
 - **Decision**: Diamonds `{text?}`
 - **Action**: Rectangles `[text]`
 
 **Example Output**:
+
 ```mermaid
 graph TD
     A(Start)
@@ -415,6 +434,7 @@ if not is_valid:
 ```
 
 **Validation Checks**:
+
 - ✅ Valid diagram type
 - ✅ Proper node syntax (brackets, parentheses, braces)
 - ✅ Valid edge syntax (arrows, lines)
@@ -634,6 +654,7 @@ A: Indicates a tie. Check `calculate_winner()` scoring logic.
 ### Contact
 
 For issues or questions:
+
 - GitHub Issues: [Link to repo]
 - Documentation: See `docs/` folder
 - Implementation Guide: See `IMPLEMENTATION_PLAN_v2.md`
