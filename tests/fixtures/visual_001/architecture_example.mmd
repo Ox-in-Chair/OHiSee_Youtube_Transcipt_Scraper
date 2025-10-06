@@ -1,0 +1,15 @@
+graph LR
+    User_Interface[User Interface]
+    Core_Engine[Core Engine]
+    Search_Optimizer[Search Optimizer]
+    Transcript_Scraper[Transcript Scraper]
+    Database[Database]
+    User_Interface --> Core_Engine
+    Core_Engine --> Search_Optimizer
+    Core_Engine --> Transcript_Scraper
+    Core_Engine --> Database
+    style User_Interface fill:#90EE90
+    style Core_Engine fill:#87CEEB
+    style Search_Optimizer fill:#87CEEB
+    style Transcript_Scraper fill:#87CEEB
+    style Database fill:#FFB6C1

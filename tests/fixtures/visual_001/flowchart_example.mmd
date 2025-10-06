@@ -1,0 +1,17 @@
+graph TD
+    A(Start Research Process)
+    B{Found consensus points?}
+    C[Apply best practices]
+    D{Any contradictions?}
+    E[Investigate contradictions]
+    F(Complete)
+    G[Gather more research]
+    H(Incomplete)
+    A --> B
+    B -->|Yes| C
+    B -->|No| G
+    C --> D
+    D -->|Yes| E
+    D -->|No| F
+    E --> F
+    G --> H

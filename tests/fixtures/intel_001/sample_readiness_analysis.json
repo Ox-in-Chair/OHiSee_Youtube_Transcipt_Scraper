@@ -1,0 +1,60 @@
+{
+  "item_1": {
+    "status": "NEEDS_SETUP",
+    "complexity": 0.0,
+    "setup_time": 40,
+    "prerequisites": [
+      "Install simple"
+    ],
+    "confidence": 0.7,
+    "blockers": [],
+    "reasoning": "Requires setup before implementation. Low complexity (beginner-friendly). 1 prerequisite(s) required."
+  },
+  "item_2": {
+    "status": "NEEDS_SETUP",
+    "complexity": 0.5,
+    "setup_time": 115,
+    "prerequisites": [
+      "Requires multiple tools",
+      "Install Claude",
+      "Setup Git",
+      "Configure MCP"
+    ],
+    "confidence": 0.7,
+    "blockers": [
+      "4 prerequisites to set up"
+    ],
+    "reasoning": "Requires setup before implementation. Moderate complexity (some experience needed). 4 prerequisite(s) required. Blockers: 4 prerequisites to set up."
+  },
+  "item_3": {
+    "status": "EXPERIMENTAL",
+    "complexity": 0.1,
+    "setup_time": 90,
+    "prerequisites": [],
+    "confidence": 0.5,
+    "blockers": [
+      "Experimental/beta software"
+    ],
+    "reasoning": "Experimental - proceed with caution. Low complexity (beginner-friendly). Blockers: Experimental/beta software."
+  },
+  "item_4": {
+    "status": "READY",
+    "complexity": 0.1,
+    "setup_time": 15,
+    "prerequisites": [],
+    "confidence": 0.7,
+    "blockers": [],
+    "reasoning": "Ready for immediate implementation. Low complexity (beginner-friendly)."
+  },
+  "item_5": {
+    "status": "NEEDS_SETUP",
+    "complexity": 0.2,
+    "setup_time": 40,
+    "prerequisites": [
+      "Advanced Workflow Automation"
+    ],
+    "confidence": 0.7,
+    "blockers": [],
+    "reasoning": "Requires setup before implementation. Low complexity (beginner-friendly). 1 prerequisite(s) required."
+  }
+}

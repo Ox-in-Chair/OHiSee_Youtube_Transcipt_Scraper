@@ -1,0 +1,57 @@
+{
+  "item_1": {
+    "implementation_time": 1,
+    "time_saved_per_use": 5,
+    "use_frequency": "monthly",
+    "annual_time_savings": 1,
+    "cost": 75.0,
+    "roi_score": 562.5,
+    "breakeven_period": 4,
+    "recommendation": "MEDIUM",
+    "reasoning": "Positive ROI (562x). Breaks even in 4 week(s). Schedule for implementation."
+  },
+  "item_2": {
+    "implementation_time": 2,
+    "time_saved_per_use": 120,
+    "use_frequency": "daily",
+    "annual_time_savings": 500,
+    "cost": 400.0,
+    "roi_score": 32812.5,
+    "breakeven_period": 1,
+    "recommendation": "HIGH",
+    "reasoning": "Exceptional ROI (32812x). Breaks even in 1 week(s). Implement immediately."
+  },
+  "item_3": {
+    "implementation_time": 1,
+    "time_saved_per_use": 5,
+    "use_frequency": "monthly",
+    "annual_time_savings": 1,
+    "cost": 150.0,
+    "roi_score": -75.0,
+    "breakeven_period": 9999,
+    "recommendation": "LOW",
+    "reasoning": "Negative ROI (-75x). Cost exceeds savings. Consider only if strategic value."
+  },
+  "item_4": {
+    "implementation_time": 1,
+    "time_saved_per_use": 30,
+    "use_frequency": "weekly",
+    "annual_time_savings": 25,
+    "cost": 150.0,
+    "roi_score": 3562.5,
+    "breakeven_period": 1,
+    "recommendation": "HIGH",
+    "reasoning": "Exceptional ROI (3562x). Breaks even in 1 week(s). Implement immediately."
+  },
+  "item_5": {
+    "implementation_time": 1,
+    "time_saved_per_use": 5,
+    "use_frequency": "monthly",
+    "annual_time_savings": 1,
+    "cost": 150.0,
+    "roi_score": -75.0,
+    "breakeven_period": 9999,
+    "recommendation": "LOW",
+    "reasoning": "Negative ROI (-75x). Cost exceeds savings. Consider only if strategic value."
+  }
+}

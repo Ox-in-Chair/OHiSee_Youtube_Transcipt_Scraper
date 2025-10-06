@@ -1,5 +1,14 @@
+# v1.0 Core Dependencies
 yt-dlp
 selenium-wire>=5.1.0
 webdriver-manager>=4.0.0
 blinker==1.5
 openai>=1.0.0
+
+# v2.0 Intelligence Modules (Optional - for development)
+# pytest>=7.0.0              # Testing framework
+# pytest-cov>=4.0.0          # Coverage reporting
+# black>=23.0.0              # Code formatting
+# pylint>=2.15.0             # Linting
+# flake8>=6.0.0              # Style checking
+# mypy>=1.0.0                # Type checking
